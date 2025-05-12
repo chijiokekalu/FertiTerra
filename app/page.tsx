@@ -29,8 +29,8 @@ export default function Home() {
             <Link href="/test-kits" className="text-sm font-medium">
               Test Kits
             </Link>
-            <Link href="/about" className="text-sm font-medium">
-              About Us
+            <Link href="/blog" className="text-sm font-medium">
+              Blog
             </Link>
             <Link href="/community" className="text-sm font-medium">
               Community
@@ -165,6 +165,9 @@ export default function Home() {
             <p className="text-sm text-muted-foreground">Empowering women through fertility awareness and support.</p>
           </div>
           <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+            <Link href="/about" className="text-sm">
+              About Us
+            </Link>
             <Link href="/privacy" className="text-sm">
               Privacy Policy
             </Link>

@@ -34,6 +34,9 @@ export default function DashboardPage() {
             <Link href="/resources" className="text-sm font-medium">
               Resources
             </Link>
+            <Link href="/blog" className="text-sm font-medium">
+              Blog
+            </Link>
           </nav>
           <div className="ml-4 flex items-center gap-4">
             <Button variant="ghost" size="icon">

@@ -29,6 +29,9 @@ export default function Home() {
             <Link href="/test-kits" className="text-sm font-medium">
               Test Kits
             </Link>
+            <Link href="/shop" className="text-sm font-medium">
+              Shop
+            </Link>
             <Link href="/blog" className="text-sm font-medium">
               Blog
             </Link>

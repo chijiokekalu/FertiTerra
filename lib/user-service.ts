@@ -53,6 +53,8 @@ export async function processUserMessage(message: string, userData: UserData): P
 
   // Use AI to determine intent and generate response
   try {
+    console.log("Processing message with AI:", message)
+
     const { text: aiResponse } = await generateText({
       model: openai("gpt-4o"),
       prompt: `
@@ -74,6 +76,8 @@ Format your response as JSON:
       system:
         "You are Makoko, a fertility health assistant for FertiTerra Technologies. You help users track their menstrual cycles, predict ovulation, and provide fertility education. Be friendly, informative, and sensitive to the personal nature of fertility health.",
     })
+
+    console.log("AI response received:", aiResponse.substring(0, 200) + "...")
 
     try {
       // Parse the AI response as JSON
@@ -114,12 +118,12 @@ Format your response as JSON:
     } catch (error) {
       // If JSON parsing fails, use the AI response directly
       console.error("Error parsing AI response:", error)
-      response = aiResponse
-      intent = "general_info"
+      response = "I'm having trouble understanding right now. Could you try rephrasing your message?"
+      intent = "error"
     }
   } catch (error) {
     console.error("Error generating AI response:", error)
-    response = "I'm having trouble understanding right now. Could you try rephrasing your message?"
+    response = "I'm having trouble connecting right now. Please try again in a moment."
     intent = "error"
   }
 

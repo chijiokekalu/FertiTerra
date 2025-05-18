@@ -14,8 +14,8 @@ export function GET(request) {
   console.log("Token:", token)
   console.log("Challenge:", challenge)
 
-  // Hardcoded token - make it very simple
-  const VERIFY_TOKEN = "abc123"
+  // Use the original token
+  const VERIFY_TOKEN = "makoko_fertility_verify_token"
 
   // Verification logic
   if (mode === "subscribe" && token === VERIFY_TOKEN) {

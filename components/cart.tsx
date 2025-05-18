@@ -1,136 +1,88 @@
 "use client"
-
-import { useEffect } from "react"
-import { X, ShoppingCart, Plus, Minus, Trash2 } from "lucide-react"
 import { useCart } from "@/context/cart-context"
 import { Button } from "@/components/ui/button"
+import { X, ShoppingCart, Plus, Minus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
 export function Cart() {
-  const { items, removeItem, updateQuantity, isOpen, setIsOpen, totalItems, totalPrice } = useCart()
-
-  // Close cart when pressing escape
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener("keydown", handleEscape)
-    return () => document.removeEventListener("keydown", handleEscape)
-  }, [setIsOpen])
-
-  // Prevent scrolling when cart is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "auto"
-    }
-    return () => {
-      document.body.style.overflow = "auto"
-    }
-  }, [isOpen])
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, totalItems, totalPrice } = useCart()
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setIsOpen(false)}>
-      <div
-        className="absolute right-0 top-0 h-full w-full max-w-md bg-background p-6 shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b pb-4">
-          <h2 className="text-xl font-bold">Your Cart ({totalItems})</h2>
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+    <div className="fixed inset-0 z-50 flex justify-end">
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/50" onClick={() => setIsOpen(false)} aria-hidden="true" />
+
+      {/* Cart panel */}
+      <div className="relative w-full max-w-md bg-white dark:bg-gray-950 h-full overflow-auto p-6 shadow-xl">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">Your Cart ({totalItems})</h2>
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Close cart">
             <X className="h-5 w-5" />
-            <span className="sr-only">Close</span>
           </Button>
         </div>
 
         {items.length === 0 ? (
-          <div className="flex h-[50vh] flex-col items-center justify-center space-y-4">
-            <ShoppingCart className="h-16 w-16 text-muted-foreground" />
-            <div className="text-center">
-              <h3 className="text-lg font-medium">Your cart is empty</h3>
-              <p className="text-muted-foreground">Add some test kits to get started</p>
-            </div>
-            <Button onClick={() => setIsOpen(false)}>
-              <Link href="/test-kits">Browse Test Kits</Link>
-            </Button>
+          <div className="text-center py-12">
+            <ShoppingCart className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <p className="text-lg text-gray-500 mb-4">Your cart is empty</p>
+            <Button onClick={() => setIsOpen(false)}>Continue Shopping</Button>
           </div>
         ) : (
           <>
-            <div className="flex-1 overflow-auto py-4">
-              <ul className="space-y-4">
-                {items.map((item) => (
-                  <li key={item.id} className="flex items-start space-x-4 border-b pb-4">
-                    <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
-                      <Image
-                        src={item.image || "/placeholder.svg"}
-                        alt={item.name}
-                        width={80}
-                        height={80}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium">{item.name}</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">{item.type}</p>
-                      <p className="mt-1 text-sm font-medium">${item.price.toFixed(2)}</p>
-                    </div>
-                    <div className="flex flex-col items-end space-y-2">
-                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeItem(item.id)}>
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Remove</span>
+            <div className="space-y-4 mb-6">
+              {items.map((item) => (
+                <div key={item.id} className="flex items-center gap-4 border-b pb-4">
+                  <div className="relative h-20 w-20 rounded-md overflow-hidden bg-gray-100">
+                    <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium">{item.name}</h3>
+                    <p className="text-sm text-gray-500">${item.price.toFixed(2)}</p>
+                    <div className="flex items-center mt-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        aria-label="Decrease quantity"
+                      >
+                        <Minus className="h-3 w-3" />
                       </Button>
-                      <div className="flex items-center rounded-md border">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 rounded-none"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-3 w-3" />
-                          <span className="sr-only">Decrease</span>
-                        </Button>
-                        <span className="w-8 text-center text-sm">{item.quantity}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 rounded-none"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                          <span className="sr-only">Increase</span>
-                        </Button>
-                      </div>
+                      <span className="w-8 text-center">{item.quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
                     </div>
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeItem(item.id)}
+                    aria-label={`Remove ${item.name} from cart`}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
             </div>
+
             <div className="border-t pt-4">
-              <div className="flex items-center justify-between py-2">
-                <span className="text-base font-medium">Subtotal</span>
-                <span className="text-base font-medium">${totalPrice.toFixed(2)}</span>
+              <div className="flex justify-between text-lg font-semibold mb-4">
+                <span>Total</span>
+                <span>${totalPrice.toFixed(2)}</span>
               </div>
-              <div className="flex items-center justify-between py-2">
-                <span className="text-base font-medium">Shipping</span>
-                <span className="text-base font-medium">Calculated at checkout</span>
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <span className="text-lg font-bold">Total</span>
-                <span className="text-lg font-bold">${totalPrice.toFixed(2)}</span>
-              </div>
-              <Button className="mt-4 w-full" size="lg">
-                <Link href="/checkout">Proceed to Checkout</Link>
-              </Button>
-              <Button variant="outline" className="mt-2 w-full" onClick={() => setIsOpen(false)}>
-                Continue Shopping
-              </Button>
+              <Link href="/checkout" onClick={() => setIsOpen(false)}>
+                <Button className="w-full">Proceed to Checkout</Button>
+              </Link>
             </div>
           </>
         )}

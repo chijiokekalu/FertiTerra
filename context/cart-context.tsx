@@ -1,21 +1,19 @@
 "use client"
 
 import type React from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 
-import { createContext, useContext, useEffect, useState } from "react"
-
-export type CartItem = {
+type Product = {
   id: string
   name: string
   price: number
-  type: string
-  quantity: number
   image: string
+  quantity: number
 }
 
 type CartContextType = {
-  items: CartItem[]
-  addItem: (item: CartItem) => void
+  items: Product[]
+  addItem: (product: Omit<Product, "quantity">) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
@@ -28,7 +26,7 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
+  const [items, setItems] = useState<Product[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -36,58 +34,51 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const totalItems = items.reduce((total, item) => total + item.quantity, 0)
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0)
 
-  // Load cart from localStorage on mount
+  // Initialize cart from localStorage on client side
   useEffect(() => {
     setMounted(true)
-    const storedCart = localStorage.getItem("fertiterra-cart")
+    const storedCart = localStorage.getItem("cart")
     if (storedCart) {
       try {
         setItems(JSON.parse(storedCart))
       } catch (error) {
         console.error("Failed to parse cart from localStorage", error)
-        localStorage.removeItem("fertiterra-cart")
+        localStorage.removeItem("cart")
       }
     }
   }, [])
 
-  // Save cart to localStorage when it changes
+  // Update localStorage when cart changes
   useEffect(() => {
     if (mounted) {
-      localStorage.setItem("fertiterra-cart", JSON.stringify(items))
+      localStorage.setItem("cart", JSON.stringify(items))
     }
   }, [items, mounted])
 
-  // Add item to cart
-  const addItem = (item: CartItem) => {
+  const addItem = (product: Omit<Product, "quantity">) => {
     setItems((prevItems) => {
-      const existingItem = prevItems.find((i) => i.id === item.id)
+      const existingItem = prevItems.find((item) => item.id === product.id)
       if (existingItem) {
-        // If item already exists, update quantity
-        return prevItems.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i))
-      } else {
-        // Otherwise add new item
-        return [...prevItems, item]
+        return prevItems.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
       }
+      return [...prevItems, { ...product, quantity: 1 }]
     })
-    // Open cart when adding item
     setIsOpen(true)
   }
 
-  // Remove item from cart
   const removeItem = (id: string) => {
     setItems((prevItems) => prevItems.filter((item) => item.id !== id))
   }
 
-  // Update item quantity
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
       removeItem(id)
       return
     }
+
     setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity } : item)))
   }
 
-  // Clear cart
   const clearCart = () => {
     setItems([])
   }

@@ -1,118 +1,19 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, Calendar, MessageCircle, Users } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Header } from "@/components/header"
 import HeroSection from "@/components/hero-section"
 import TestimonialSection from "@/components/testimonial-section"
 import PlanCards from "@/components/plan-cards"
 import HowItWorks from "@/components/how-it-works"
-import { CartButton } from "@/components/cart-button"
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="container flex h-16 items-center">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/images/fertiterra-logo.png"
-              alt="FertiTerra Logo"
-              width={140}
-              height={40}
-              className="h-10 w-auto"
-            />
-          </Link>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link href="/plans" className="text-sm font-medium">
-              Plans
-            </Link>
-            <Link href="/test-kits" className="text-sm font-medium">
-              Test Kits
-            </Link>
-            <Link href="/shop" className="text-sm font-medium">
-              Shop
-            </Link>
-            <Link href="/blog" className="text-sm font-medium">
-              Blog
-            </Link>
-            <Link href="/community" className="text-sm font-medium">
-              Community
-            </Link>
-          </nav>
-          <div className="ml-4 flex items-center gap-2">
-            <CartButton />
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700"
-              >
-                Sign up
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
       <main className="flex-1">
         <HeroSection />
-
-        <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-b from-teal-50 to-purple-50 relative overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 -left-24 w-64 h-64 rounded-full bg-teal-200 opacity-20 blur-3xl"></div>
-            <div className="absolute bottom-1/4 -right-24 w-64 h-64 rounded-full bg-purple-200 opacity-20 blur-3xl"></div>
-          </div>
-
-          <div className="container px-4 md:px-6 relative z-10">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-gradient-to-r from-teal-100 to-purple-100 px-3 py-1 text-sm text-teal-700">
-                  Why Choose FertiTerra
-                </div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-gradient-to-r from-teal-600 via-purple-600 to-rose-600 bg-clip-text text-transparent">
-                  Your Fertility Journey, Supported Every Step
-                </h2>
-                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                  We combine medical expertise with personalized care to help you navigate your unique fertility path.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3 lg:gap-12 mt-8">
-              <div className="flex flex-col items-center space-y-2 rounded-xl p-6 bg-white/80 backdrop-blur-sm shadow-md border border-teal-100 transform transition-transform hover:scale-105">
-                <div className="rounded-full bg-gradient-to-r from-teal-400 to-teal-500 p-3">
-                  <Calendar className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-teal-700">Personalized Plans</h3>
-                <p className="text-center text-muted-foreground">
-                  Tailored fertility plans based on your unique health profile and goals.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-xl p-6 bg-white/80 backdrop-blur-sm shadow-md border border-purple-100 transform transition-transform hover:scale-105">
-                <div className="rounded-full bg-gradient-to-r from-purple-400 to-purple-500 p-3">
-                  <MessageCircle className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-purple-700">Expert Consultations</h3>
-                <p className="text-center text-muted-foreground">
-                  Connect with specialized fertility doctors from the comfort of your home.
-                </p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 rounded-xl p-6 bg-white/80 backdrop-blur-sm shadow-md border border-rose-100 transform transition-transform hover:scale-105">
-                <div className="rounded-full bg-gradient-to-r from-rose-400 to-rose-500 p-3">
-                  <Users className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-rose-700">Supportive Community</h3>
-                <p className="text-center text-muted-foreground">
-                  Join a stigma-free community of women on similar journeys.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <HowItWorks />
         <PlanCards />
         <TestimonialSection />

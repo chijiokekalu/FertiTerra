@@ -1,249 +1,208 @@
-import Link from "next/link"
-import { Bell, Calendar, FileText, MessageCircle, User } from "lucide-react"
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Image from "next/image"
+import { CalendarDays, FileText, ShoppingBag, Users } from "lucide-react"
+import { Header } from "@/components/header"
 
-export default function DashboardPage() {
+export default function Dashboard() {
+  const { user, loading, signOut } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!user && !loading) {
+      router.push("/login")
+    }
+  }, [user, loading, router])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-rose-600"></div>
+          <p className="mt-2">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // Will redirect in useEffect
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/images/fertiterra-logo.png"
-              alt="FertiTerra Logo"
-              width={140}
-              height={40}
-              className="h-10 w-auto"
-            />
-          </Link>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link href="/dashboard" className="text-sm font-medium">
-              Dashboard
-            </Link>
-            <Link href="/appointments" className="text-sm font-medium">
-              Appointments
-            </Link>
-            <Link href="/community" className="text-sm font-medium">
-              Community
-            </Link>
-            <Link href="/resources" className="text-sm font-medium">
-              Resources
-            </Link>
-            <Link href="/blog" className="text-sm font-medium">
-              Blog
-            </Link>
-          </nav>
-          <div className="ml-4 flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Avatar>
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-              <AvatarFallback>AD</AvatarFallback>
-            </Avatar>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Welcome to Your Dashboard</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4">Your Profile</h2>
+            <p className="text-gray-600 mb-2">Email: {user.email}</p>
+            <p className="text-gray-600">Member since: {new Date(user.created_at).toLocaleDateString()}</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4">Upcoming Appointments</h2>
+            <p className="text-gray-600">You have no upcoming appointments.</p>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4">Test Kit Status</h2>
+            <p className="text-gray-600">No active test kits.</p>
           </div>
         </div>
-      </header>
-      <main className="flex-1 container py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back, Ada</h1>
-            <p className="text-muted-foreground">Track your progress and manage your fertility journey.</p>
-          </div>
-          <Button>
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Message Doctor
-          </Button>
-        </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Your Plan</CardTitle>
-              <CardDescription>TTC 60-Day Plan</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div>Progress</div>
-                    <div className="font-medium">Day 23 of 60</div>
-                  </div>
-                  <Progress value={38} className="h-2" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="w-full">
-                    <FileText className="mr-2 h-4 w-4" />
-                    View Plan
-                  </Button>
-                  <Button className="w-full">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Schedule
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="overview" className="space-y-8 mt-8">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="appointments">Appointments</TabsTrigger>
+            <TabsTrigger value="test-results">Test Results</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+          </TabsList>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Next Appointment</CardTitle>
-              <CardDescription>Upcoming consultation</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-rose-100 p-2">
-                    <Calendar className="h-5 w-5 text-rose-700" />
-                  </div>
-                  <div>
-                    <div className="font-medium">Follow-up Consultation</div>
-                    <div className="text-sm text-muted-foreground">May 15, 2025 • 10:00 AM</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="w-full">
-                    Reschedule
-                  </Button>
-                  <Button className="w-full">Join Call</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Your Doctor</CardTitle>
-              <CardDescription>Fertility specialist</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="/placeholder.svg?height=48&width=48" alt="Doctor" />
-                    <AvatarFallback>DR</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">Dr. Sarah Johnson</div>
-                    <div className="text-sm text-muted-foreground">OB/GYN, Fertility Specialist</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="w-full">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Button>
-                  <Button className="w-full">
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Message
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="mt-8">
-          <Tabs defaultValue="tracking">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="tracking">Fertility Tracking</TabsTrigger>
-              <TabsTrigger value="tasks">Tasks & Reminders</TabsTrigger>
-              <TabsTrigger value="resources">Resources</TabsTrigger>
-            </TabsList>
-            <TabsContent value="tracking" className="space-y-4">
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>Fertility Tracking</CardTitle>
-                  <CardDescription>Track your cycle and fertility indicators</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Upcoming Appointments</CardTitle>
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground mb-4">
-                      Your fertility tracking dashboard will appear here after your initial consultation.
+                  <div className="text-2xl font-bold">0</div>
+                  <p className="text-xs text-muted-foreground">No upcoming appointments</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Test Results</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">0</div>
+                  <p className="text-xs text-muted-foreground">No test results available</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Recent Orders</CardTitle>
+                  <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">0</div>
+                  <p className="text-xs text-muted-foreground">No recent orders</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Community Activity</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">0</div>
+                  <p className="text-xs text-muted-foreground">No recent community activity</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Get Started</CardTitle>
+                <CardDescription>Complete these steps to get the most out of FertiTerra</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-medium">Complete your profile</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Add your personal information to personalize your experience
                     </p>
-                    <Button>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Start Tracking
-                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="tasks" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tasks & Reminders</CardTitle>
-                  <CardDescription>Your upcoming tasks and reminders</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4">
-                    <li className="flex items-center gap-4 p-3 rounded-lg border">
-                      <div className="rounded-full bg-rose-100 p-2">
-                        <FileText className="h-5 w-5 text-rose-700" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium">Complete health questionnaire</div>
-                        <div className="text-sm text-muted-foreground">Due in 2 days</div>
-                      </div>
-                      <Button size="sm">Complete</Button>
-                    </li>
-                    <li className="flex items-center gap-4 p-3 rounded-lg border">
-                      <div className="rounded-full bg-rose-100 p-2">
-                        <Calendar className="h-5 w-5 text-rose-700" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium">Schedule hormone test</div>
-                        <div className="text-sm text-muted-foreground">Due in 5 days</div>
-                      </div>
-                      <Button size="sm">Schedule</Button>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="resources" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Resources</CardTitle>
-                  <CardDescription>Educational materials and resources</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4">
-                    <li className="flex items-center gap-4 p-3 rounded-lg border">
-                      <div className="rounded-full bg-rose-100 p-2">
-                        <FileText className="h-5 w-5 text-rose-700" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium">Understanding Your Fertility</div>
-                        <div className="text-sm text-muted-foreground">Guide • 10 min read</div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Read
-                      </Button>
-                    </li>
-                    <li className="flex items-center gap-4 p-3 rounded-lg border">
-                      <div className="rounded-full bg-rose-100 p-2">
-                        <FileText className="h-5 w-5 text-rose-700" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium">Nutrition for Fertility</div>
-                        <div className="text-sm text-muted-foreground">Guide • 15 min read</div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Read
-                      </Button>
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+                  <Button onClick={() => router.push("/profile")}>Complete</Button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-medium">Take the fertility assessment</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Answer a few questions to get personalized recommendations
+                    </p>
+                  </div>
+                  <Button onClick={() => router.push("/questionnaire")}>Start</Button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-medium">Order your first test kit</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Begin your fertility journey with our comprehensive test kit
+                    </p>
+                  </div>
+                  <Button onClick={() => router.push("/test-kits")}>Shop Now</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="appointments">
+            <Card>
+              <CardHeader>
+                <CardTitle>Appointments</CardTitle>
+                <CardDescription>Manage your upcoming and past appointments</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">You don&apos;t have any appointments scheduled</p>
+                  <Button className="mt-4" onClick={() => router.push("/consultation")}>
+                    Schedule Consultation
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="test-results">
+            <Card>
+              <CardHeader>
+                <CardTitle>Test Results</CardTitle>
+                <CardDescription>View your test results and recommendations</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">You don&apos;t have any test results yet</p>
+                  <Button className="mt-4" onClick={() => router.push("/test-kits")}>
+                    Order Test Kit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <Card>
+              <CardHeader>
+                <CardTitle>Orders</CardTitle>
+                <CardDescription>Track your orders and purchase history</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">You haven&apos;t placed any orders yet</p>
+                  <Button className="mt-4" onClick={() => router.push("/shop")}>
+                    Visit Shop
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   )

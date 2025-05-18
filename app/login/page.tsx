@@ -1,53 +1,99 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import Image from "next/image"
+import { useAuth } from "@/context/auth-context"
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const { signIn } = useAuth()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    try {
+      const { error } = await signIn(email, password)
+
+      if (error) {
+        setError("Invalid email or password")
+      } else {
+        router.push("/dashboard")
+      }
+    } catch (err) {
+      setError("An unexpected error occurred")
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <Link href="/" className="flex items-center mb-8">
-          <Image
-            src="/images/fertiterra-logo.png"
-            alt="FertiTerra Logo"
-            width={160}
-            height={45}
-            className="h-12 w-auto"
-          />
-        </Link>
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Log in</CardTitle>
-            <CardDescription>Enter your email and password to access your account</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="name@example.com" required />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-sm text-rose-500 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-              <Input id="password" type="password" required />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button className="w-full">Log in</Button>
-            <div className="text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-rose-500 hover:underline">
-                Sign up
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-purple-50 p-4">
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-lg">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold">Welcome Back</h1>
+          <p className="mt-2 text-gray-600">Log in to your FertiTerra account</p>
+        </div>
+
+        {error && <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+            />
+            <div className="text-right text-sm">
+              <Link href="/forgot-password" className="text-purple-600 hover:underline">
+                Forgot password?
               </Link>
             </div>
-          </CardFooter>
-        </Card>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Log In"}
+          </Button>
+        </form>
+
+        <div className="mt-4 text-center text-sm">
+          Don't have an account?{" "}
+          <Link href="/signup" className="text-purple-600 hover:underline">
+            Sign up
+          </Link>
+        </div>
       </div>
     </div>
   )

@@ -1,60 +1,89 @@
-import { ArrowRight } from "lucide-react"
+import { CheckCircle } from "lucide-react"
 
 export default function HowItWorks() {
   return (
-    <section className="py-12 md:py-16 lg:py-20 bg-white relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-purple-50 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-teal-50 to-transparent"></div>
-
-      <div className="container px-4 md:px-6 relative z-10">
+    <section className="py-16 bg-white">
+      <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-gradient-to-r from-rose-100 to-teal-100 px-3 py-1 text-sm text-rose-700">
-              How It Works
+            <div className="inline-block rounded-lg bg-purple-100 px-3 py-1 text-sm text-purple-700">
+              Simple Process
             </div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-gradient-to-r from-rose-600 via-purple-600 to-teal-600 bg-clip-text text-transparent">
-              Your Journey with FertiTerra
-            </h2>
-            <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-              We've designed a simple, supportive process to help you understand and improve your fertility health.
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How FertiTerra Works</h2>
+            <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl">
+              Our comprehensive approach to fertility care is designed to be simple, convenient, and effective.
             </p>
           </div>
         </div>
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12 mt-12">
-          <div className="relative flex flex-col items-center space-y-4 rounded-xl border border-rose-100 p-6 bg-white shadow-md transform transition-transform hover:scale-105">
-            <div className="absolute -top-4 rounded-full bg-gradient-to-r from-rose-400 to-rose-500 px-4 py-1 text-lg font-bold text-white">
-              1
+          <div className="flex flex-col items-center space-y-4 rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="rounded-full bg-purple-100 p-3">
+              <span className="text-2xl font-bold text-purple-700">1</span>
             </div>
-            <h3 className="text-xl font-bold text-rose-700">Assessment</h3>
-            <p className="text-center text-muted-foreground">
-              Complete our comprehensive fertility questionnaire to help us understand your unique health profile.
+            <h3 className="text-xl font-bold">Order Your Test Kit</h3>
+            <p className="text-center text-gray-500">
+              Choose the right test kit for your needs and have it delivered discreetly to your door.
             </p>
-            <div className="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 z-10">
-              <ArrowRight className="h-6 w-6 text-rose-400" />
-            </div>
+            <ul className="space-y-2 text-left w-full">
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Comprehensive hormone panels</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Easy-to-follow instructions</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Prepaid return shipping</span>
+              </li>
+            </ul>
           </div>
-          <div className="relative flex flex-col items-center space-y-4 rounded-xl border border-purple-100 p-6 bg-white shadow-md transform transition-transform hover:scale-105">
-            <div className="absolute -top-4 rounded-full bg-gradient-to-r from-purple-400 to-purple-500 px-4 py-1 text-lg font-bold text-white">
-              2
+          <div className="flex flex-col items-center space-y-4 rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="rounded-full bg-teal-100 p-3">
+              <span className="text-2xl font-bold text-teal-700">2</span>
             </div>
-            <h3 className="text-xl font-bold text-purple-700">Consultation</h3>
-            <p className="text-center text-muted-foreground">
-              Connect with a fertility specialist for a personalized 15-minute video consultation.
+            <h3 className="text-xl font-bold">Complete Your Test</h3>
+            <p className="text-center text-gray-500">
+              Collect your sample at home and send it back to our CLIA-certified laboratory.
             </p>
-            <div className="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 z-10">
-              <ArrowRight className="h-6 w-6 text-purple-400" />
-            </div>
+            <ul className="space-y-2 text-left w-full">
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Simple collection process</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Video instructions available</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Track your sample status</span>
+              </li>
+            </ul>
           </div>
-          <div className="relative flex flex-col items-center space-y-4 rounded-xl border border-teal-100 p-6 bg-white shadow-md transform transition-transform hover:scale-105">
-            <div className="absolute -top-4 rounded-full bg-gradient-to-r from-teal-400 to-teal-500 px-4 py-1 text-lg font-bold text-white">
-              3
+          <div className="flex flex-col items-center space-y-4 rounded-xl p-6 shadow-sm border border-gray-100">
+            <div className="rounded-full bg-rose-100 p-3">
+              <span className="text-2xl font-bold text-rose-700">3</span>
             </div>
-            <h3 className="text-xl font-bold text-teal-700">Personalized Plan</h3>
-            <p className="text-center text-muted-foreground">
-              Receive a tailored care plan based on your needs—whether you're trying to conceive, managing
-              perimenopause, or focusing on general wellness.
+            <h3 className="text-xl font-bold">Get Personalized Care</h3>
+            <p className="text-center text-gray-500">
+              Receive your results and connect with a fertility specialist to create your personalized plan.
             </p>
+            <ul className="space-y-2 text-left w-full">
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Detailed results explanation</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Virtual doctor consultation</span>
+              </li>
+              <li className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <span>Customized treatment plan</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

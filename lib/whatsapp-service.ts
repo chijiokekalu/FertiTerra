@@ -3,7 +3,7 @@ const WHATSAPP_API_URL = "https://graph.facebook.com/v17.0"
 const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN
 
-export async function sendTextMessage(to: string, message: string) {
+export async function sendTextMessage(to, message) {
   return sendWhatsAppMessage(to, {
     type: "text",
     text: {
@@ -12,7 +12,7 @@ export async function sendTextMessage(to: string, message: string) {
   })
 }
 
-export async function sendImageMessage(to: string, imageUrl: string, caption?: string) {
+export async function sendImageMessage(to, imageUrl, caption) {
   return sendWhatsAppMessage(to, {
     type: "image",
     image: {
@@ -22,7 +22,7 @@ export async function sendImageMessage(to: string, imageUrl: string, caption?: s
   })
 }
 
-export async function sendButtonMessage(to: string, bodyText: string, buttons: { id: string; title: string }[]) {
+export async function sendButtonMessage(to, bodyText, buttons) {
   return sendWhatsAppMessage(to, {
     type: "interactive",
     interactive: {
@@ -43,7 +43,23 @@ export async function sendButtonMessage(to: string, bodyText: string, buttons: {
   })
 }
 
-async function sendWhatsAppMessage(to: string, messageContent: any) {
+export async function sendListMessage(to, bodyText, sections) {
+  return sendWhatsAppMessage(to, {
+    type: "interactive",
+    interactive: {
+      type: "list",
+      body: {
+        text: bodyText,
+      },
+      action: {
+        button: "View Options",
+        sections: sections,
+      },
+    },
+  })
+}
+
+async function sendWhatsAppMessage(to, messageContent) {
   try {
     console.log("Sending WhatsApp message:", { to, messageType: messageContent.type })
 

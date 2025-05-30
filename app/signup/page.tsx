@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "@/context/auth-context"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle, Mail, CheckCircle } from "lucide-react"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
@@ -20,49 +19,45 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [needsConfirmation, setNeedsConfirmation] = useState(false)
   const { signUp } = useAuth()
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setIsLoading(true)
 
-    // Validate form
+    // Basic validation
     if (!email || !password || !confirmPassword) {
       setError("All fields are required")
+      setIsLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match")
+      setIsLoading(false)
       return
     }
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters")
+      setIsLoading(false)
       return
     }
 
-    setIsLoading(true)
-
     try {
-      const { error, success } = await signUp(email, password)
+      const result = await signUp(email, password)
 
-      if (error) {
-        setError(error.message || "An error occurred during signup")
-        return
+      if (result.error) {
+        setError(result.error.message || "Failed to create account")
+      } else if (result.success) {
+        if (result.needsConfirmation) {
+          setNeedsConfirmation(true)
+        }
       }
-
-      if (success) {
-        setSuccess(true)
-        // Wait a moment before redirecting
-        setTimeout(() => {
-          router.push("/dashboard")
-        }, 2000)
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred")
+    } catch (err) {
+      setError("Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -73,34 +68,67 @@ export default function SignupPage() {
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
         <Link href="/" className="flex items-center mb-8">
           <Image
-            src="/images/fertiterra-logo.png"
+            src="/placeholder.svg?height=45&width=160"
             alt="FertiTerra Logo"
             width={160}
             height={45}
             className="h-12 w-auto"
           />
         </Link>
+
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-            <CardDescription>Enter your information to create your FertiTerra account</CardDescription>
+            {needsConfirmation ? (
+              <>
+                <Mail className="mx-auto h-12 w-12 text-blue-500 mb-4" />
+                <CardTitle className="text-2xl font-bold text-center">Check Your Email</CardTitle>
+                <CardDescription className="text-center">
+                  We've sent a confirmation link to <strong>{email}</strong>. Please check your email and click the link
+                  to activate your account.
+                </CardDescription>
+              </>
+            ) : (
+              <>
+                <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+                <CardDescription>Enter your information to create your FertiTerra account</CardDescription>
+              </>
+            )}
           </CardHeader>
-          {success ? (
+
+          {needsConfirmation ? (
             <CardContent className="space-y-4">
               <Alert className="bg-green-50 border-green-200">
+                <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  Account created successfully! You will be redirected to your dashboard shortly.
+                  Account created successfully! Please check your email to confirm your account.
                 </AlertDescription>
               </Alert>
+
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>• Check your spam/junk folder if you don't see the email</p>
+                <p>• The confirmation link will expire in 24 hours</p>
+                <p>• Make sure to click the link from the same device</p>
+              </div>
+
+              <div className="flex flex-col space-y-2">
+                <Button asChild>
+                  <Link href="/auth/resend-confirmation">Resend Confirmation Email</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/login">Back to Login</Link>
+                </Button>
+              </div>
             </CardContent>
           ) : (
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 {error && (
                   <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -110,29 +138,37 @@ export default function SignupPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
+                    placeholder="At least 6 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">Confirm password</Label>
                   <Input
                     id="confirm-password"
                     type="password"
+                    placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </CardContent>
+
               <CardFooter className="flex flex-col space-y-4">
                 <Button className="w-full" type="submit" disabled={isLoading}>
                   {isLoading ? (
@@ -144,6 +180,7 @@ export default function SignupPage() {
                     "Create account"
                   )}
                 </Button>
+
                 <div className="text-center text-sm">
                   Already have an account?{" "}
                   <Link href="/login" className="text-rose-500 hover:underline">
@@ -154,6 +191,18 @@ export default function SignupPage() {
             </form>
           )}
         </Card>
+
+        {/* Debug info for development */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-4 p-4 bg-gray-100 rounded-lg text-xs max-w-md">
+            <p>
+              <strong>Debug Info:</strong>
+            </p>
+            <p>Environment: {process.env.NODE_ENV}</p>
+            <p>Supabase URL: {process.env.NEXT_PUBLIC_SUPABASE_URL ? "✓" : "✗"}</p>
+            <p>Supabase Key: {process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "✓" : "✗"}</p>
+          </div>
+        )}
       </div>
     </div>
   )

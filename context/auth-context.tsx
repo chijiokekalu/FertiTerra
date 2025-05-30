@@ -1,11 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useRouter } from "next/navigation"
 import type { User, Session } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase"
 
 type UserRole = "admin" | "doctor" | "patient" | "support"
 
@@ -25,22 +24,15 @@ type AuthContextType = {
   session: Session | null
   isLoading: boolean
   isAdmin: boolean
+  isEmailConfirmed: boolean
   signUp: (
     email: string,
     password: string,
-  ) => Promise<{
-    error: any | null
-    success: boolean
-  }>
-  signIn: (
-    email: string,
-    password: string,
-  ) => Promise<{
-    error: any | null
-    success: boolean
-  }>
+  ) => Promise<{ error: any | null; success: boolean; needsConfirmation?: boolean }>
+  signIn: (email: string, password: string) => Promise<{ error: any | null; success: boolean }>
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  resendConfirmation: (email: string) => Promise<{ error: any | null; success: boolean }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -51,94 +43,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
-  // Check if user is admin
   const isAdmin = profile?.role === "admin"
-
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
-
-      if (error) {
-        console.error("Error fetching profile:", error)
-        return null
-      }
-
-      return data as UserProfile
-    } catch (error) {
-      console.error("Unexpected error fetching profile:", error)
-      return null
-    }
-  }
-
-  const refreshProfile = async () => {
-    if (user) {
-      const userProfile = await fetchUserProfile(user.id)
-      setProfile(userProfile)
-    }
-  }
+  const isEmailConfirmed = user?.email_confirmed_at !== null
 
   useEffect(() => {
     const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-
-      setSession(session)
-      setUser(session?.user ?? null)
-
-      if (session?.user) {
-        const userProfile = await fetchUserProfile(session.user.id)
-        setProfile(userProfile)
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+        setSession(session)
+        setUser(session?.user ?? null)
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Error getting session:", error)
+        setIsLoading(false)
       }
-
-      setIsLoading(false)
     }
 
     getSession()
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
-
-      if (session?.user) {
-        const userProfile = await fetchUserProfile(session.user.id)
-        setProfile(userProfile)
-      } else {
-        setProfile(null)
-      }
-
       setIsLoading(false)
     })
 
-    return () => {
-      subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, [supabase.auth])
 
   const signUp = async (email: string, password: string) => {
     try {
-      // Create the user in Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       })
 
       if (error) {
-        console.error("Signup error:", error.message)
         return { error, success: false }
       }
 
-      // Wait a moment for the trigger to create the profile
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      return { error: null, success: true }
+      return { error: null, success: true, needsConfirmation: !data.user?.email_confirmed_at }
     } catch (error) {
-      console.error("Unexpected signup error:", error)
-      return { error, success: false }
+      return { error: { message: "Network error. Please try again." }, success: false }
     }
   }
 
@@ -150,22 +101,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
-        console.error("Login error:", error.message)
         return { error, success: false }
+      }
+
+      if (data.user && !data.user.email_confirmed_at) {
+        await supabase.auth.signOut()
+        return {
+          error: { message: "Please confirm your email address before signing in." },
+          success: false,
+        }
       }
 
       router.push("/dashboard")
       return { error: null, success: true }
     } catch (error) {
-      console.error("Unexpected login error:", error)
-      return { error, success: false }
+      return { error: { message: "Network error. Please try again." }, success: false }
+    }
+  }
+
+  const resendConfirmation = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email,
+      })
+
+      if (error) {
+        return { error, success: false }
+      }
+
+      return { error: null, success: true }
+    } catch (error) {
+      return { error: { message: "Network error. Please try again." }, success: false }
     }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    setProfile(null)
-    router.push("/")
+    try {
+      await supabase.auth.signOut()
+      setProfile(null)
+      router.push("/")
+    } catch (error) {
+      console.error("Error signing out:", error)
+    }
+  }
+
+  const refreshProfile = async () => {
+    // Placeholder for profile refresh
   }
 
   return (
@@ -176,10 +158,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         session,
         isLoading,
         isAdmin,
+        isEmailConfirmed,
         signUp,
         signIn,
         signOut,
         refreshProfile,
+        resendConfirmation,
       }}
     >
       {children}

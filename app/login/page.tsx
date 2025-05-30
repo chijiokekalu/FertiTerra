@@ -3,134 +3,99 @@
 import type React from "react"
 
 import { useState } from "react"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/context/auth-context"
-import { Loader2 } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const { signIn } = useAuth()
+  const [error, setError] = useState<string | JSX.Element>("")
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const message = searchParams.get("message")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
-
-    if (!email || !password) {
-      setError("Email and password are required")
-      return
-    }
-
-    setIsLoading(true)
 
     try {
-      const { error, success } = await signIn(email, password)
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
 
-      if (error) {
-        setError(error.message || "Invalid email or password")
+      if (res?.error) {
+        setError("Invalid Credentials")
         return
       }
 
-      if (success) {
+      if (res?.ok) {
         router.push("/dashboard")
       }
     } catch (err: any) {
-      setError(err.message || "An unexpected error occurred")
-    } finally {
-      setIsLoading(false)
+      // console.log(err);
+      const error = err as Error
+      if (error) {
+        if (error.message?.includes("confirm your email")) {
+          setError(
+            <div>
+              Please confirm your email address before signing in.{" "}
+              <Link href="/auth/resend-confirmation" className="text-rose-500 hover:underline">
+                Resend confirmation email
+              </Link>
+            </div>,
+          )
+        } else {
+          setError(error.message || "Invalid email or password")
+        }
+        return
+      }
     }
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <Link href="/" className="flex items-center mb-8">
-          <Image
-            src="/images/fertiterra-logo.png"
-            alt="FertiTerra Logo"
-            width={160}
-            height={45}
-            className="h-12 w-auto"
-          />
-        </Link>
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Log in</CardTitle>
-            <CardDescription>Enter your credentials to access your account</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {message && (
-                <Alert className="bg-green-50 border-green-200">
-                  <AlertDescription className="text-green-800">{message}</AlertDescription>
-                </Alert>
-              )}
-
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <div className="text-right text-sm">
-                  <Link href="/forgot-password" className="text-rose-500 hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex flex-col space-y-4">
-              <Button className="w-full" type="submit" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logging in...
-                  </>
-                ) : (
-                  "Log in"
-                )}
-              </Button>
-              <div className="text-center text-sm">
-                Don't have an account?{" "}
-                <Link href="/signup" className="text-rose-500 hover:underline">
-                  Sign up
-                </Link>
-              </div>
-            </CardFooter>
-          </form>
-        </Card>
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-96">
+        <h1 className="text-2xl font-semibold mb-4">Login</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          {error && <div className="text-red-500">{error}</div>}
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Login
+          </button>
+          <div className="mt-4">
+            <Link href="/register" className="text-blue-500 hover:underline">
+              Don't have an account? Register
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   )

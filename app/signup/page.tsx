@@ -1,8 +1,5 @@
 "use client"
-
-import type React from "react"
-
-import { useState } from "react"
+import { useState, useActionState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,63 +8,44 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, AlertCircle, Mail, CheckCircle } from "lucide-react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { signUpAction } from "@/actions/auth"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [needsConfirmation, setNeedsConfirmation] = useState(false)
-  const [signupEmail, setSignupEmail] = useState("")
+  const [clientError, setClientError] = useState<string | null>(null)
+  const [state, formAction, isPending] = useActionState(signUpAction, null)
 
-  const supabase = createClientComponentClient()
+  const handleSubmit = async (formData: FormData) => {
+    setClientError(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setIsLoading(true)
+    // Client-side validation
+    const emailValue = formData.get("email") as string
+    const passwordValue = formData.get("password") as string
+    const confirmPasswordValue = confirmPassword
 
-    // Basic validation
-    if (!email || !password || !confirmPassword) {
-      setError("All fields are required")
-      setIsLoading(false)
+    if (!emailValue || !passwordValue || !confirmPasswordValue) {
+      setClientError("All fields are required")
       return
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      setIsLoading(false)
+    if (passwordValue !== confirmPasswordValue) {
+      setClientError("Passwords do not match")
       return
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters")
-      setIsLoading(false)
+    if (passwordValue.length < 6) {
+      setClientError("Password must be at least 6 characters")
       return
     }
 
-    try {
-      const { data, error: signupError } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-
-      if (signupError) {
-        setError(signupError.message)
-      } else {
-        setSignupEmail(email)
-        setNeedsConfirmation(true)
-      }
-    } catch (err) {
-      setError("Something went wrong. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
+    // If validation passes, submit to server action
+    formAction(formData)
   }
 
-  if (needsConfirmation) {
+  // Show success state if signup was successful
+  if (state?.success && state?.needsConfirmation) {
     return (
       <div className="flex min-h-screen flex-col">
         <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
@@ -86,7 +64,7 @@ export default function SignupPage() {
               <Mail className="mx-auto h-12 w-12 text-blue-500 mb-4" />
               <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
               <CardDescription>
-                We've sent a confirmation link to <strong>{signupEmail}</strong>
+                We've sent a confirmation link to <strong>{state.email}</strong>
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -149,12 +127,12 @@ export default function SignupPage() {
             </CardDescription>
           </CardHeader>
 
-          <form onSubmit={handleSubmit}>
+          <form action={handleSubmit}>
             <CardContent className="space-y-4">
-              {error && (
+              {(clientError || state?.error) && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription>{clientError || state?.error}</AlertDescription>
                 </Alert>
               )}
 
@@ -162,12 +140,13 @@ export default function SignupPage() {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isPending}
                 />
               </div>
 
@@ -175,12 +154,13 @@ export default function SignupPage() {
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   placeholder="At least 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isPending}
                 />
               </div>
 
@@ -188,12 +168,13 @@ export default function SignupPage() {
                 <Label htmlFor="confirm-password">Confirm password</Label>
                 <Input
                   id="confirm-password"
+                  name="confirm-password"
                   type="password"
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isPending}
                 />
               </div>
 
@@ -209,8 +190,8 @@ export default function SignupPage() {
             </CardContent>
 
             <CardFooter className="flex flex-col space-y-4">
-              <Button className="w-full" type="submit" disabled={isLoading}>
-                {isLoading ? (
+              <Button className="w-full" type="submit" disabled={isPending}>
+                {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating account...

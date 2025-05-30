@@ -207,9 +207,14 @@ export default function ProfilePage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button variant="outline" type="button" onClick={handleSignOut}>
-                  Sign Out
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" type="button" onClick={handleSignOut}>
+                    Sign Out
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/profile/health">Health Profile</Link>
+                  </Button>
+                </div>
                 <Button type="submit" disabled={isSaving}>
                   {isSaving ? (
                     <>

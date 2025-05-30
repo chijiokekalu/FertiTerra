@@ -1,100 +1,91 @@
 "use client"
 
 import type React from "react"
+
 import { createContext, useContext, useState, useEffect } from "react"
 
-type Product = {
+interface CartItem {
   id: string
   name: string
   price: number
-  image: string
   quantity: number
+  image: string
 }
 
-type CartContextType = {
-  items: Product[]
-  addItem: (product: Omit<Product, "quantity">) => void
-  removeItem: (id: string) => void
+interface CartContextType {
+  items: CartItem[]
+  addToCart: (item: CartItem) => void
+  removeFromCart: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-  totalItems: number
-  totalPrice: number
+  getTotal: () => number
+  getItemCount: () => number
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<Product[]>([])
-  const [isOpen, setIsOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [items, setItems] = useState<CartItem[]>([])
 
-  // Calculate total items and price
-  const totalItems = items.reduce((total, item) => total + item.quantity, 0)
-  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0)
-
-  // Initialize cart from localStorage on client side
+  // Load cart from localStorage on mount
   useEffect(() => {
-    setMounted(true)
-    const storedCart = localStorage.getItem("cart")
-    if (storedCart) {
-      try {
-        setItems(JSON.parse(storedCart))
-      } catch (error) {
-        console.error("Failed to parse cart from localStorage", error)
-        localStorage.removeItem("cart")
-      }
+    const savedCart = localStorage.getItem("fertiterra-cart")
+    if (savedCart) {
+      setItems(JSON.parse(savedCart))
     }
   }, [])
 
-  // Update localStorage when cart changes
+  // Save cart to localStorage whenever items change
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem("cart", JSON.stringify(items))
-    }
-  }, [items, mounted])
+    localStorage.setItem("fertiterra-cart", JSON.stringify(items))
+  }, [items])
 
-  const addItem = (product: Omit<Product, "quantity">) => {
-    setItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id)
+  const addToCart = (newItem: CartItem) => {
+    setItems((currentItems) => {
+      const existingItem = currentItems.find((item) => item.id === newItem.id)
       if (existingItem) {
-        return prevItems.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
+        return currentItems.map((item) =>
+          item.id === newItem.id ? { ...item, quantity: item.quantity + newItem.quantity } : item,
+        )
       }
-      return [...prevItems, { ...product, quantity: 1 }]
+      return [...currentItems, newItem]
     })
-    setIsOpen(true)
   }
 
-  const removeItem = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+  const removeFromCart = (id: string) => {
+    setItems((currentItems) => currentItems.filter((item) => item.id !== id))
   }
 
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(id)
+      removeFromCart(id)
       return
     }
-
-    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity } : item)))
+    setItems((currentItems) => currentItems.map((item) => (item.id === id ? { ...item, quantity } : item)))
   }
 
   const clearCart = () => {
     setItems([])
   }
 
+  const getTotal = () => {
+    return items.reduce((total, item) => total + item.price * item.quantity, 0)
+  }
+
+  const getItemCount = () => {
+    return items.reduce((count, item) => count + item.quantity, 0)
+  }
+
   return (
     <CartContext.Provider
       value={{
         items,
-        addItem,
-        removeItem,
+        addToCart,
+        removeFromCart,
         updateQuantity,
         clearCart,
-        isOpen,
-        setIsOpen,
-        totalItems,
-        totalPrice,
+        getTotal,
+        getItemCount,
       }}
     >
       {children}

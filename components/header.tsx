@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/navigation-menu"
 
 export function Header() {
-  const { user, signOut } = useAuth()
+  const { user, profile, isAdmin, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const toggleMobileMenu = () => {
@@ -254,9 +254,23 @@ export function Header() {
             </Link>
 
             {user ? (
-              <Link href="/dashboard">
-                <Button variant="ghost">Dashboard</Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <Link href="/admin">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                    >
+                      Admin Panel
+                    </Button>
+                  </Link>
+                )}
+                <Link href="/dashboard">
+                  <Button variant="ghost">Dashboard</Button>
+                </Link>
+                {profile && <div className="text-sm text-muted-foreground">{profile.full_name || profile.email}</div>}
+              </div>
             ) : (
               <>
                 <Link href="/login">
@@ -373,6 +387,13 @@ export function Header() {
             <div className="pt-4 flex flex-col space-y-2">
               {user ? (
                 <>
+                  {isAdmin && (
+                    <Link href="/admin" onClick={toggleMobileMenu}>
+                      <Button variant="outline" className="w-full bg-purple-50 text-purple-700 border-purple-200">
+                        Admin Panel
+                      </Button>
+                    </Link>
+                  )}
                   <Link href="/dashboard" onClick={toggleMobileMenu}>
                     <Button variant="outline" className="w-full">
                       Dashboard

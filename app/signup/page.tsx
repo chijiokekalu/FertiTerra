@@ -13,11 +13,13 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [debugInfo, setDebugInfo] = useState<any>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
+    setDebugInfo(null)
 
     // Basic validation
     if (!email || !password || !confirmPassword) {
@@ -52,8 +54,17 @@ export default function SignupPage() {
 
       if (data.error) {
         setError(data.error)
+        if (data.debug) {
+          setDebugInfo(data.debug)
+        }
       } else {
         setSuccess(true)
+        setDebugInfo(data.debug)
+
+        // Store credentials in localStorage for auto-login
+        localStorage.setItem("lastSignupEmail", email)
+        localStorage.setItem("lastSignupPassword", password)
+
         setEmail("")
         setPassword("")
         setConfirmPassword("")
@@ -63,6 +74,17 @@ export default function SignupPage() {
       console.error("Signup error:", err)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // Function to check current users in the database
+  const checkUsers = async () => {
+    try {
+      const response = await fetch("/api/debug-users")
+      const data = await response.json()
+      setDebugInfo(data)
+    } catch (err) {
+      console.error("Error checking users:", err)
     }
   }
 
@@ -101,10 +123,19 @@ export default function SignupPage() {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-green-800">Account created successfully!</h3>
                 <div className="mt-2 text-sm text-green-700">
-                  <p>Please check your email to confirm your account.</p>
+                  <p>Your account has been created. You can now log in.</p>
                 </div>
                 <div className="mt-4">
-                  <Link href="/login" className="text-sm font-medium text-green-600 hover:text-green-500">
+                  <Link
+                    href="/login"
+                    className="text-sm font-medium text-green-600 hover:text-green-500"
+                    onClick={() => {
+                      // Pre-fill login form if possible
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("prefillEmail", localStorage.getItem("lastSignupEmail") || "")
+                      }
+                    }}
+                  >
                     Go to login page →
                   </Link>
                 </div>
@@ -236,6 +267,21 @@ export default function SignupPage() {
                 </Link>
               </p>
             </div>
+
+            {/* Debug button - only in development */}
+            {process.env.NODE_ENV !== "production" && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <button type="button" onClick={checkUsers} className="text-xs text-gray-500 hover:text-gray-700">
+                  Check registered users
+                </button>
+
+                {debugInfo && (
+                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs font-mono overflow-auto max-h-40">
+                    <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+                  </div>
+                )}
+              </div>
+            )}
           </form>
         )}
       </div>

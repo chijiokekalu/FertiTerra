@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -12,12 +12,31 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [messageType, setMessageType] = useState<"success" | "error" | "">("")
+  const [debugInfo, setDebugInfo] = useState<any>(null)
+
+  // Check for auto-login from signup
+  useEffect(() => {
+    const prefillEmail = localStorage.getItem("prefillEmail")
+    if (prefillEmail) {
+      setEmail(prefillEmail)
+      localStorage.removeItem("prefillEmail")
+    }
+
+    // For testing: auto-login with last signup credentials
+    const lastEmail = localStorage.getItem("lastSignupEmail")
+    const lastPassword = localStorage.getItem("lastSignupPassword")
+    if (lastEmail && lastPassword) {
+      setEmail(lastEmail)
+      setPassword(lastPassword)
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setMessage("")
     setMessageType("")
+    setDebugInfo(null)
 
     // Basic validation
     if (!email || !password) {
@@ -28,6 +47,12 @@ export default function LoginPage() {
     }
 
     try {
+      // Check users first (for debugging)
+      const usersResponse = await fetch("/api/debug-users")
+      const usersData = await usersResponse.json()
+      setDebugInfo(usersData)
+
+      // Try to login
       const response = await fetch("/api/direct-login", {
         method: "POST",
         headers: {
@@ -53,13 +78,38 @@ export default function LoginPage() {
       } else {
         setMessage(result.error || "Login failed")
         setMessageType("error")
+
+        // Add debug info if available
+        if (result.debug) {
+          setDebugInfo(result.debug)
+        }
+
+        // Special case: if account not found but we have signup credentials, try to create it
+        if (result.error === "Account not found. Please sign up first.") {
+          // Try to use test account as fallback
+          setMessage("Trying test account as fallback...")
+          setEmail("test@example.com")
+          setPassword("test123")
+        }
       }
     } catch (error) {
       setMessage("Connection error. Please try again.")
       setMessageType("error")
+      console.error("Login error:", error)
     }
 
     setIsLoading(false)
+  }
+
+  // Function to check current users in the database
+  const checkUsers = async () => {
+    try {
+      const response = await fetch("/api/debug-users")
+      const data = await response.json()
+      setDebugInfo(data)
+    } catch (err) {
+      console.error("Error checking users:", err)
+    }
   }
 
   return (
@@ -199,6 +249,78 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
+
+        {/* Debug section */}
+        {process.env.NODE_ENV !== "production" && (
+          <div style={{ marginTop: "2rem", borderTop: "1px solid #e5e7eb", paddingTop: "1rem" }}>
+            <button
+              onClick={checkUsers}
+              style={{
+                fontSize: "0.75rem",
+                color: "#6b7280",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              Check registered users
+            </button>
+
+            {debugInfo && (
+              <div
+                style={{
+                  marginTop: "0.5rem",
+                  padding: "0.5rem",
+                  backgroundColor: "#f3f4f6",
+                  borderRadius: "4px",
+                  fontSize: "0.75rem",
+                  fontFamily: "monospace",
+                  overflowX: "auto",
+                  maxHeight: "10rem",
+                }}
+              >
+                <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
+              </div>
+            )}
+
+            {/* Quick login buttons */}
+            <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
+              <button
+                onClick={() => {
+                  setEmail("test@example.com")
+                  setPassword("test123")
+                }}
+                style={{
+                  fontSize: "0.75rem",
+                  padding: "0.25rem 0.5rem",
+                  backgroundColor: "#e5e7eb",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Use test account
+              </button>
+              <button
+                onClick={() => {
+                  setEmail("demo@fertiterra.com")
+                  setPassword("demo123")
+                }}
+                style={{
+                  fontSize: "0.75rem",
+                  padding: "0.25rem 0.5rem",
+                  backgroundColor: "#e5e7eb",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Use demo account
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

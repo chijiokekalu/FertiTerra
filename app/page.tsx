@@ -60,8 +60,8 @@ export default function HomePage() {
               <div className="relative mx-auto max-w-lg md:max-w-none">
                 <div className="relative">
                   <Image
-                    src="/placeholder.svg?height=600&width=600&text=Doctor+Patient+Care"
-                    alt="Compassionate healthcare - doctor consulting with patient in a warm, supportive environment"
+                    src="/images/woman-with-test-kit.png"
+                    alt="Happy woman holding FertiTerra test kit at home - comfortable and easy fertility testing"
                     width={600}
                     height={600}
                     className="rounded-2xl shadow-2xl"

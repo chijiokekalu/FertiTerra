@@ -31,9 +31,9 @@ export function Header() {
           <Image
             src="/images/fertiterra-logo.png"
             alt="FertiTerra Logo"
-            width={180}
-            height={50}
-            className="h-auto w-auto"
+            width={140}
+            height={40}
+            className="h-10 w-auto"
             priority
           />
         </Link>

@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { userStorage } from "@/lib/user-storage"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -12,22 +13,27 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [messageType, setMessageType] = useState<"success" | "error" | "">("")
-  const [debugInfo, setDebugInfo] = useState<any>(null)
+  const [availableUsers, setAvailableUsers] = useState<string[]>([])
 
-  // Check for auto-login from signup
+  const useTestAccount = (testEmail: string, testPassword: string) => {
+    setEmail(testEmail)
+    setPassword(testPassword)
+  }
+
+  // Load available users and auto-fill from signup
   useEffect(() => {
-    const prefillEmail = localStorage.getItem("prefillEmail")
-    if (prefillEmail) {
-      setEmail(prefillEmail)
-      localStorage.removeItem("prefillEmail")
-    }
+    const users = userStorage.listUsers()
+    setAvailableUsers(users)
 
-    // For testing: auto-login with last signup credentials
+    // Auto-fill from recent signup
     const lastEmail = localStorage.getItem("lastSignupEmail")
     const lastPassword = localStorage.getItem("lastSignupPassword")
     if (lastEmail && lastPassword) {
       setEmail(lastEmail)
       setPassword(lastPassword)
+      // Clear the stored credentials after using them
+      localStorage.removeItem("lastSignupEmail")
+      localStorage.removeItem("lastSignupPassword")
     }
   }, [])
 
@@ -36,7 +42,6 @@ export default function LoginPage() {
     setIsLoading(true)
     setMessage("")
     setMessageType("")
-    setDebugInfo(null)
 
     // Basic validation
     if (!email || !password) {
@@ -47,10 +52,9 @@ export default function LoginPage() {
     }
 
     try {
-      // Check users first (for debugging)
-      const usersResponse = await fetch("/api/debug-users")
-      const usersData = await usersResponse.json()
-      setDebugInfo(usersData)
+      // Get all users from client-side storage
+      const allUsers = userStorage.getAllUsers()
+      const usersObject = Object.fromEntries(allUsers)
 
       // Try to login
       const response = await fetch("/api/direct-login", {
@@ -58,7 +62,11 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+          users: usersObject,
+        }),
       })
 
       const result = await response.json()
@@ -67,7 +75,7 @@ export default function LoginPage() {
         setMessage("Login successful! Redirecting to dashboard...")
         setMessageType("success")
 
-        // Store login state in localStorage for demo
+        // Store login state
         localStorage.setItem("isLoggedIn", "true")
         localStorage.setItem("userEmail", email)
 
@@ -79,17 +87,9 @@ export default function LoginPage() {
         setMessage(result.error || "Login failed")
         setMessageType("error")
 
-        // Add debug info if available
-        if (result.debug) {
-          setDebugInfo(result.debug)
-        }
-
-        // Special case: if account not found but we have signup credentials, try to create it
-        if (result.error === "Account not found. Please sign up first.") {
-          // Try to use test account as fallback
-          setMessage("Trying test account as fallback...")
-          setEmail("test@example.com")
-          setPassword("test123")
+        // Show available accounts for debugging
+        if (result.availableAccounts) {
+          console.log("Available accounts:", result.availableAccounts)
         }
       }
     } catch (error) {
@@ -99,17 +99,6 @@ export default function LoginPage() {
     }
 
     setIsLoading(false)
-  }
-
-  // Function to check current users in the database
-  const checkUsers = async () => {
-    try {
-      const response = await fetch("/api/debug-users")
-      const data = await response.json()
-      setDebugInfo(data)
-    } catch (err) {
-      console.error("Error checking users:", err)
-    }
   }
 
   return (
@@ -147,6 +136,22 @@ export default function LoginPage() {
           </h1>
           <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>Sign in to your FertiTerra account</p>
         </div>
+
+        {/* Available Users Info */}
+        {availableUsers.length > 0 && (
+          <div
+            style={{
+              backgroundColor: "#f0f9ff",
+              padding: "0.75rem",
+              borderRadius: "8px",
+              marginBottom: "1rem",
+              fontSize: "0.875rem",
+              color: "#0369a1",
+            }}
+          >
+            ✅ {availableUsers.length} registered user{availableUsers.length !== 1 ? "s" : ""} found
+          </div>
+        )}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -250,77 +255,42 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Debug section */}
-        {process.env.NODE_ENV !== "production" && (
-          <div style={{ marginTop: "2rem", borderTop: "1px solid #e5e7eb", paddingTop: "1rem" }}>
+        {/* Quick Login Options */}
+        <div style={{ marginTop: "1.5rem", borderTop: "1px solid #e5e7eb", paddingTop: "1rem" }}>
+          <p style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: "0.5rem", textAlign: "center" }}>
+            Quick login options:
+          </p>
+          <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
             <button
-              onClick={checkUsers}
+              onClick={() => useTestAccount("demo@fertiterra.com", "demo123")}
               style={{
                 fontSize: "0.75rem",
-                color: "#6b7280",
-                background: "none",
-                border: "none",
+                padding: "0.25rem 0.5rem",
+                backgroundColor: "#f3f4f6",
+                border: "1px solid #d1d5db",
+                borderRadius: "4px",
                 cursor: "pointer",
-                padding: 0,
+                color: "#374151",
               }}
             >
-              Check registered users
+              Demo Account
             </button>
-
-            {debugInfo && (
-              <div
-                style={{
-                  marginTop: "0.5rem",
-                  padding: "0.5rem",
-                  backgroundColor: "#f3f4f6",
-                  borderRadius: "4px",
-                  fontSize: "0.75rem",
-                  fontFamily: "monospace",
-                  overflowX: "auto",
-                  maxHeight: "10rem",
-                }}
-              >
-                <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
-              </div>
-            )}
-
-            {/* Quick login buttons */}
-            <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
-              <button
-                onClick={() => {
-                  setEmail("test@example.com")
-                  setPassword("test123")
-                }}
-                style={{
-                  fontSize: "0.75rem",
-                  padding: "0.25rem 0.5rem",
-                  backgroundColor: "#e5e7eb",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
-                Use test account
-              </button>
-              <button
-                onClick={() => {
-                  setEmail("demo@fertiterra.com")
-                  setPassword("demo123")
-                }}
-                style={{
-                  fontSize: "0.75rem",
-                  padding: "0.25rem 0.5rem",
-                  backgroundColor: "#e5e7eb",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
-                Use demo account
-              </button>
-            </div>
+            <button
+              onClick={() => useTestAccount("test@example.com", "test123")}
+              style={{
+                fontSize: "0.75rem",
+                padding: "0.25rem 0.5rem",
+                backgroundColor: "#f3f4f6",
+                border: "1px solid #d1d5db",
+                borderRadius: "4px",
+                cursor: "pointer",
+                color: "#374151",
+              }}
+            >
+              Test Account
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

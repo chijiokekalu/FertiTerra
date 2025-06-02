@@ -1,288 +1,318 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { userStorage } from "@/lib/user-storage"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
-  const [debugInfo, setDebugInfo] = useState<any>(null)
+  const [message, setMessage] = useState("")
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("")
+  const [userCount, setUserCount] = useState(0)
+
+  useEffect(() => {
+    // Load current user count
+    setUserCount(userStorage.getUserCount())
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setError("")
-    setDebugInfo(null)
+    setMessage("")
+    setMessageType("")
 
-    // Basic validation
+    // Client-side validation
     if (!email || !password || !confirmPassword) {
-      setError("All fields are required")
+      setMessage("All fields are required")
+      setMessageType("error")
       setIsLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setMessage("Passwords do not match")
+      setMessageType("error")
       setIsLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters")
+      setMessage("Password must be at least 6 characters")
+      setMessageType("error")
+      setIsLoading(false)
+      return
+    }
+
+    // Check if user already exists
+    if (userStorage.hasUser(email)) {
+      setMessage("Account already exists. Please log in instead.")
+      setMessageType("error")
       setIsLoading(false)
       return
     }
 
     try {
-      // Simple fetch to avoid server-side errors
-      const response = await fetch("/api/direct-signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      })
+      // Add user to client-side storage
+      const userAdded = userStorage.addUser(email, password)
 
-      const data = await response.json()
+      if (userAdded) {
+        // Also call the API for any server-side processing
+        const response = await fetch("/api/direct-signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, confirmPassword }),
+        })
 
-      if (data.error) {
-        setError(data.error)
-        if (data.debug) {
-          setDebugInfo(data.debug)
+        const result = await response.json()
+
+        if (result.success) {
+          setMessage("Account created successfully! You can now log in.")
+          setMessageType("success")
+
+          // Store credentials for auto-login
+          localStorage.setItem("lastSignupEmail", email)
+          localStorage.setItem("lastSignupPassword", password)
+
+          // Update user count
+          setUserCount(userStorage.getUserCount())
+
+          // Clear form
+          setEmail("")
+          setPassword("")
+          setConfirmPassword("")
+        } else {
+          setMessage(result.error || "Signup failed")
+          setMessageType("error")
         }
       } else {
-        setSuccess(true)
-        setDebugInfo(data.debug)
-
-        // Store credentials in localStorage for auto-login
-        localStorage.setItem("lastSignupEmail", email)
-        localStorage.setItem("lastSignupPassword", password)
-
-        setEmail("")
-        setPassword("")
-        setConfirmPassword("")
+        setMessage("Failed to create account. User may already exist.")
+        setMessageType("error")
       }
-    } catch (err) {
-      setError("An error occurred. Please try again.")
-      console.error("Signup error:", err)
-    } finally {
-      setIsLoading(false)
+    } catch (error) {
+      setMessage("Connection error. Account saved locally, you can still log in.")
+      setMessageType("success")
+      console.error("Signup error:", error)
     }
+
+    setIsLoading(false)
   }
 
-  // Function to check current users in the database
-  const checkUsers = async () => {
-    try {
-      const response = await fetch("/api/debug-users")
-      const data = await response.json()
-      setDebugInfo(data)
-    } catch (err) {
-      console.error("Error checking users:", err)
-    }
+  const checkUsers = () => {
+    const users = userStorage.listUsers()
+    alert(`Registered users (${users.length}):\n${users.join("\n")}`)
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow">
-        <div className="flex justify-center">
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f9fafb",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1rem",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "2rem",
+          borderRadius: "12px",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          width: "100%",
+          maxWidth: "400px",
+        }}
+      >
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <Image
-            src="/placeholder.svg?height=40&width=140&text=FertiTerra"
+            src="/placeholder.svg?height=45&width=160&text=FertiTerra"
             alt="FertiTerra Logo"
-            width={140}
-            height={40}
-            className="h-10 w-auto"
+            width={160}
+            height={45}
+            style={{ height: "45px", width: "auto", marginBottom: "1rem" }}
           />
-        </div>
-
-        <div>
-          <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">Create your account</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <h1 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "0.5rem" }}>
+            Create your account
+          </h1>
+          <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
             Join FertiTerra to track your fertility journey and connect with specialists
           </p>
         </div>
 
-        {success ? (
-          <div className="rounded-md bg-green-50 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">Account created successfully!</h3>
-                <div className="mt-2 text-sm text-green-700">
-                  <p>Your account has been created. You can now log in.</p>
-                </div>
-                <div className="mt-4">
-                  <Link
-                    href="/login"
-                    className="text-sm font-medium text-green-600 hover:text-green-500"
-                    onClick={() => {
-                      // Pre-fill login form if possible
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("prefillEmail", localStorage.getItem("lastSignupEmail") || "")
-                      }
-                    }}
-                  >
+        {/* Signup Form */}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Message Display */}
+          {message && (
+            <div
+              style={{
+                padding: "0.75rem",
+                borderRadius: "8px",
+                backgroundColor: messageType === "success" ? "#dcfce7" : "#fef2f2",
+                border: `1px solid ${messageType === "success" ? "#bbf7d0" : "#fecaca"}`,
+                color: messageType === "success" ? "#166534" : "#dc2626",
+                fontSize: "0.875rem",
+              }}
+            >
+              {message}
+              {messageType === "success" && (
+                <div style={{ marginTop: "0.5rem" }}>
+                  <Link href="/login" style={{ color: "#166534", textDecoration: "underline" }}>
                     Go to login page →
                   </Link>
                 </div>
-              </div>
+              )}
             </div>
+          )}
+
+          {/* Email Field */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500", color: "#374151" }}>
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              required
+              disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "1rem",
+                backgroundColor: isLoading ? "#f9fafb" : "white",
+                boxSizing: "border-box",
+              }}
+            />
           </div>
-        ) : (
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">Error</h3>
-                    <div className="mt-2 text-sm text-red-700">
-                      <p>{error}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-rose-500 sm:text-sm"
-                    placeholder="name@example.com"
-                  />
-                </div>
-              </div>
+          {/* Password Field */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500", color: "#374151" }}>
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="At least 6 characters"
+              required
+              disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "1rem",
+                backgroundColor: isLoading ? "#f9fafb" : "white",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-rose-500 sm:text-sm"
-                    placeholder="At least 6 characters"
-                  />
-                </div>
-              </div>
+          {/* Confirm Password Field */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500", color: "#374151" }}>
+              Confirm password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your password"
+              required
+              disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "1rem",
+                backgroundColor: isLoading ? "#f9fafb" : "white",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
 
-              <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
-                  Confirm password
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="confirm-password"
-                    name="confirm-password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-rose-500 sm:text-sm"
-                    placeholder="Confirm your password"
-                  />
-                </div>
-              </div>
-            </div>
+          {/* Features Preview */}
+          <div
+            style={{
+              backgroundColor: "#fef7f7",
+              padding: "1rem",
+              borderRadius: "8px",
+              border: "1px solid #fecaca",
+              marginTop: "0.5rem",
+            }}
+          >
+            <p style={{ fontSize: "0.875rem", fontWeight: "500", color: "#be185d", marginBottom: "0.5rem" }}>
+              What you'll get access to:
+            </p>
+            <ul style={{ fontSize: "0.875rem", color: "#be185d", margin: 0, paddingLeft: "1rem" }}>
+              <li>🌸 Track menstrual cycles and ovulation</li>
+              <li>📚 Read expert fertility health content</li>
+              <li>👩‍⚕️ Book video consultations with doctors</li>
+              <li>📊 Get personalized health insights</li>
+            </ul>
+          </div>
 
-            <div className="rounded-md bg-rose-50 p-4">
-              <h3 className="text-sm font-medium text-rose-800">What you'll get access to:</h3>
-              <div className="mt-2 text-sm text-rose-700">
-                <ul className="list-inside space-y-1">
-                  <li className="flex items-center">
-                    <span className="mr-2">🩺</span>
-                    Track menstrual cycles and ovulation
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">📖</span>
-                    Read expert fertility health content
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">👩‍⚕️</span>
-                    Book video consultations with doctors
-                  </li>
-                  <li className="flex items-center">
-                    <span className="mr-2">📊</span>
-                    Get personalized health insights
-                  </li>
-                </ul>
-              </div>
-            </div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: "100%",
+              padding: "0.75rem",
+              backgroundColor: isLoading ? "#9ca3af" : "#111827",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              fontWeight: "500",
+              cursor: isLoading ? "not-allowed" : "pointer",
+              transition: "background-color 0.2s",
+            }}
+          >
+            {isLoading ? "Creating account..." : "Create account"}
+          </button>
+        </form>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 disabled:opacity-70"
-              >
-                {isLoading ? "Creating account..." : "Create account"}
-              </button>
-            </div>
+        {/* Footer Links */}
+        <div style={{ textAlign: "center", marginTop: "1.5rem", fontSize: "0.875rem" }}>
+          <div>
+            <span style={{ color: "#6b7280" }}>Already have an account? </span>
+            <Link href="/login" style={{ color: "#e11d48", textDecoration: "none" }}>
+              Log in
+            </Link>
+          </div>
+        </div>
 
-            <div className="text-center text-sm">
-              <p className="text-gray-600">
-                Already have an account?{" "}
-                <Link href="/login" className="font-medium text-rose-600 hover:text-rose-500">
-                  Log in
-                </Link>
-              </p>
-            </div>
-
-            {/* Debug button - only in development */}
-            {process.env.NODE_ENV !== "production" && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <button type="button" onClick={checkUsers} className="text-xs text-gray-500 hover:text-gray-700">
-                  Check registered users
-                </button>
-
-                {debugInfo && (
-                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs font-mono overflow-auto max-h-40">
-                    <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
-                  </div>
-                )}
-              </div>
-            )}
-          </form>
+        {/* Debug Info */}
+        {process.env.NODE_ENV !== "production" && (
+          <div style={{ marginTop: "1rem", textAlign: "center" }}>
+            <button
+              onClick={checkUsers}
+              style={{
+                fontSize: "0.75rem",
+                color: "#6b7280",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+            >
+              Check registered users ({userCount})
+            </button>
+          </div>
         )}
       </div>
     </div>

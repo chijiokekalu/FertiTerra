@@ -1,56 +1,54 @@
 import { NextResponse } from "next/server"
-import { mockDB } from "@/lib/mock-db"
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json()
+    const { email, password, users } = await request.json()
 
     // Basic validation
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password are required" }, { status: 400 })
     }
 
-    // Log the current users for debugging
-    console.log("Current users during login:", mockDB.listUsers())
-    console.log("Checking login for:", email)
-    console.log("User exists:", mockDB.hasUser(email))
+    console.log(`Login attempt for: ${email}`)
+    console.log(`Received users data:`, users ? Object.keys(users) : "No users data")
 
-    // Check if user exists
-    const user = mockDB.getUser(email)
-
-    if (!user) {
-      // For debugging, let's add a special case for test accounts
-      if (email === "test@example.com" && password === "test123") {
+    // Check against provided users data (from client-side storage)
+    if (users && users[email]) {
+      const user = users[email]
+      if (user.password === password) {
         return NextResponse.json({
           success: true,
-          message: "Login successful with test account",
-          user: { email: "test@example.com" },
+          message: "Login successful",
+          user: { email: user.email },
         })
+      } else {
+        return NextResponse.json({ error: "Invalid password" }, { status: 401 })
       }
-
-      return NextResponse.json(
-        {
-          error: "Account not found. Please sign up first.",
-          debug: {
-            userCount: mockDB.users.size,
-            availableUsers: mockDB.listUsers(),
-          },
-        },
-        { status: 401 },
-      )
     }
 
-    // In a real app, you'd hash and compare passwords properly
-    if (user.password !== password) {
-      return NextResponse.json({ error: "Invalid password" }, { status: 401 })
+    // Fallback to demo accounts
+    const demoAccounts = {
+      "demo@fertiterra.com": "demo123",
+      "test@example.com": "test123",
     }
 
-    // Successful login
-    return NextResponse.json({
-      success: true,
-      message: "Login successful",
-      user: { email: user.email },
-    })
+    if (demoAccounts[email as keyof typeof demoAccounts] === password) {
+      return NextResponse.json({
+        success: true,
+        message: "Login successful with demo account",
+        user: { email },
+      })
+    }
+
+    // Account not found
+    return NextResponse.json(
+      {
+        error: "Account not found. Please sign up first.",
+        availableAccounts: Object.keys(users || {}),
+        demoAccounts: Object.keys(demoAccounts),
+      },
+      { status: 401 },
+    )
   } catch (error) {
     console.error("Login error:", error)
     return NextResponse.json({ error: "An error occurred during login" }, { status: 500 })

@@ -16,6 +16,7 @@ import {
   TestTube,
 } from "lucide-react"
 import { Header } from "@/components/header"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function HomePage() {
   return (
@@ -406,8 +407,202 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FAQ Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Frequently Asked Questions</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Find answers to common questions about our fertility plans and services
+              </p>
+            </div>
+
+            <div className="max-w-3xl mx-auto">
+              <div className="grid gap-6 md:grid-cols-2 mb-8">
+                <div>
+                  <h3 className="text-xl font-semibold mb-4 text-rose-600">About Our Plans</h3>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                      <AccordionTrigger className="text-left">
+                        How do I know which plan is right for me?
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        The Basic Fertility Checkup is ideal if you're just starting to explore your fertility health or
+                        planning for the future. The TTC Plan is best if you're actively trying to conceive and want
+                        comprehensive support. Still unsure? Start with our free 15-minute consultation to get
+                        personalized guidance.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                      <AccordionTrigger className="text-left">
+                        What's included in the at-home fertility test kit?
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        Our TTC Plan includes a comprehensive test kit with 70 test strips for tracking ovulation and
+                        fertility hormones. For female partners, it includes an AMH test to assess ovarian reserve. For
+                        male partners, it includes a sperm quality analysis kit. All tests can be completed at home and
+                        include clear instructions.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                      <AccordionTrigger className="text-left">
+                        Can I upgrade from the Basic Plan to the TTC Plan?
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        Yes! You can easily upgrade from the Basic Fertility Checkup to the TTC Plan at any time. We'll
+                        apply the $5 you paid for the Basic Plan as a credit toward your TTC Plan purchase.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-4">
+                      <AccordionTrigger className="text-left">When will the other plans be available?</AccordionTrigger>
+                      <AccordionContent>
+                        We're working hard to launch our Perimenopausal/Menopausal Health Plan and General Wellness &
+                        Fertility Support Plan in the coming months. Join our waitlist to be notified as soon as they're
+                        available and receive special early access pricing.
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-4 text-rose-600">Testing & Results</h3>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-5">
+                      <AccordionTrigger className="text-left">How accurate are the at-home tests?</AccordionTrigger>
+                      <AccordionContent>
+                        Our at-home fertility tests are over 99% accurate when used correctly. They're the same
+                        laboratory-grade tests used by fertility clinics, but designed for convenient home use. Each kit
+                        includes detailed instructions to ensure accurate results.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-6">
+                      <AccordionTrigger className="text-left">How long does it take to get results?</AccordionTrigger>
+                      <AccordionContent>
+                        For the TTC Plan, ovulation test results are immediate. For hormone tests that require lab
+                        analysis (like AMH testing), you'll receive results within 7-10 days after your sample arrives
+                        at our lab. Your consultation will be scheduled after all results are available.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-7">
+                      <AccordionTrigger className="text-left">
+                        What happens after I receive my results?
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        After receiving your results, you'll have a consultation with one of our fertility specialists
+                        who will explain your results in detail and provide personalized recommendations. For TTC Plan
+                        members, you'll also receive a customized action plan with specific steps to optimize your
+                        fertility.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-8">
+                      <AccordionTrigger className="text-left">Can I order additional test strips?</AccordionTrigger>
+                      <AccordionContent>
+                        Yes! TTC Plan members can order additional test strips at a discounted rate. Simply log into
+                        your account and visit the "Order Supplies" section, or contact our customer support team for
+                        assistance.
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <h3 className="text-xl font-semibold mb-4 text-rose-600">Consultations & Support</h3>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-9">
+                      <AccordionTrigger className="text-left">Who are your fertility specialists?</AccordionTrigger>
+                      <AccordionContent>
+                        Our fertility specialists are board-certified reproductive endocrinologists, OB/GYNs, and
+                        fertility nurses with extensive experience in reproductive health. All specialists undergo
+                        rigorous vetting and training to ensure they provide compassionate, evidence-based care.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-10">
+                      <AccordionTrigger className="text-left">How do the consultations work?</AccordionTrigger>
+                      <AccordionContent>
+                        Consultations take place via secure video call at a time that's convenient for you. The Basic
+                        Plan includes a 15-minute consultation, while the TTC Plan includes a comprehensive 30-minute
+                        session. You'll receive a link to join your consultation via email, and you can connect from any
+                        device with internet access.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-11">
+                      <AccordionTrigger className="text-left">
+                        What kind of support is available after my consultation?
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        Both plans include access to our community support groups via WhatsApp or Telegram. TTC Plan
+                        members also receive ongoing customer support checks and can opt for additional services like
+                        private messaging with specialists and follow-up consultations at preferential rates.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-12">
+                      <AccordionTrigger className="text-left">
+                        How do the community support groups work?
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        Our community support groups are moderated spaces where you can connect with others on similar
+                        fertility journeys. Groups include monthly expert Q&A sessions where specialists answer
+                        questions. All groups follow strict privacy and respect guidelines to ensure a safe, supportive
+                        environment.
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-4 text-rose-600">Billing & Practical Matters</h3>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-13">
+                      <AccordionTrigger className="text-left">Do you accept insurance for your plans?</AccordionTrigger>
+                      <AccordionContent>
+                        While we don't directly bill insurance companies, many of our services may be eligible for
+                        reimbursement through your insurance provider or HSA/FSA accounts. We provide detailed receipts
+                        that you can submit to your insurance for potential reimbursement.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-14">
+                      <AccordionTrigger className="text-left">What payment methods do you accept?</AccordionTrigger>
+                      <AccordionContent>
+                        We accept all major credit cards, PayPal, and Apple Pay. For the TTC Plan, we also offer
+                        installment payment options through Affirm or Klarna to make fertility care more accessible.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-15">
+                      <AccordionTrigger className="text-left">What is your refund policy?</AccordionTrigger>
+                      <AccordionContent>
+                        If you're not satisfied with our services, we offer a 30-day money-back guarantee for unused
+                        test kits (unopened and in original packaging). Consultation fees are non-refundable once the
+                        consultation has taken place. Please contact our customer support team for assistance with
+                        returns or refunds.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-16">
+                      <AccordionTrigger className="text-left">How is my privacy protected?</AccordionTrigger>
+                      <AccordionContent>
+                        We take your privacy seriously. All your health information is protected under HIPAA
+                        regulations. Your test results and consultations are confidential and securely stored. We never
+                        share or sell your personal information. You can review our complete privacy policy for more
+                        details.
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </div>
+
+              <div className="mt-12 text-center">
+                <p className="text-gray-600 mb-6">Don't see your question answered here? Our team is ready to help.</p>
+                <Button asChild className="bg-rose-600 hover:bg-rose-700">
+                  <Link href="/contact">Contact Our Support Team</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Trust & Certification Section */}
-        <section className="py-12 bg-gray-50">
+        <section className="py-12 bg-white">
           <div className="container">
             <div className="flex flex-col items-center justify-center">
               <p className="text-sm text-gray-500 mb-4">Trusted and certified by</p>

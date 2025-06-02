@@ -4,7 +4,18 @@
 export interface User {
   email: string
   password: string
+  fullName: string
+  age: number
+  country: string
+  phoneNumber?: string
+  dateOfBirth?: string
+  medicalConditions?: string[]
+  currentMedications?: string
+  fertilityGoals?: string
+  howDidYouHear?: string
+  role: "patient" | "admin" | "doctor"
   createdAt: string
+  lastLogin?: string
 }
 
 export const userStorage = {
@@ -25,18 +36,30 @@ export const userStorage = {
     // Return default users if nothing stored
     return new Map([
       [
-        "demo@fertiterra.com",
+        "admin@fertiterra.com",
         {
-          email: "demo@fertiterra.com",
-          password: "demo123",
+          email: "admin@fertiterra.com",
+          password: "admin123",
+          fullName: "FertiTerra Admin",
+          age: 35,
+          country: "United States",
+          role: "admin" as const,
+          fertilityGoals: "Platform Management",
+          howDidYouHear: "Internal",
           createdAt: new Date().toISOString(),
         },
       ],
       [
-        "test@example.com",
+        "demo@fertiterra.com",
         {
-          email: "test@example.com",
-          password: "test123",
+          email: "demo@fertiterra.com",
+          password: "demo123",
+          fullName: "Demo User",
+          age: 28,
+          country: "United Kingdom",
+          role: "patient" as const,
+          fertilityGoals: "Trying to conceive",
+          howDidYouHear: "Google search",
           createdAt: new Date().toISOString(),
         },
       ],
@@ -57,24 +80,24 @@ export const userStorage = {
   },
 
   // Add a new user
-  addUser(email: string, password: string): boolean {
+  addUser(userData: Omit<User, "createdAt" | "role">): boolean {
     const users = this.getAllUsers()
 
-    if (users.has(email)) {
-      console.log("User already exists:", email)
+    if (users.has(userData.email)) {
+      console.log("User already exists:", userData.email)
       return false
     }
 
     const newUser: User = {
-      email,
-      password,
+      ...userData,
+      role: "patient", // Default role for new signups
       createdAt: new Date().toISOString(),
     }
 
-    users.set(email, newUser)
+    users.set(userData.email, newUser)
     this.saveAllUsers(users)
 
-    console.log("User added successfully:", email)
+    console.log("User added successfully:", userData.email)
     console.log("Total users:", users.size)
     return true
   },
@@ -91,6 +114,12 @@ export const userStorage = {
     return users.has(email)
   },
 
+  // Check if user is admin
+  isAdmin(email: string): boolean {
+    const user = this.getUser(email)
+    return user?.role === "admin"
+  },
+
   // List all user emails
   listUsers(): string[] {
     const users = this.getAllUsers()
@@ -101,5 +130,22 @@ export const userStorage = {
   getUserCount(): number {
     const users = this.getAllUsers()
     return users.size
+  },
+
+  // Get users by role
+  getUsersByRole(role: "patient" | "admin" | "doctor"): User[] {
+    const users = this.getAllUsers()
+    return Array.from(users.values()).filter((user) => user.role === role)
+  },
+
+  // Update last login
+  updateLastLogin(email: string): void {
+    const users = this.getAllUsers()
+    const user = users.get(email)
+    if (user) {
+      user.lastLogin = new Date().toISOString()
+      users.set(email, user)
+      this.saveAllUsers(users)
+    }
   },
 }

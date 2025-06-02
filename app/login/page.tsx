@@ -79,10 +79,17 @@ export default function LoginPage() {
         localStorage.setItem("isLoggedIn", "true")
         localStorage.setItem("userEmail", email)
 
-        // Force redirect to dashboard
-        setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1000)
+        // Check if user is admin and redirect accordingly
+        const user = userStorage.getUser(email)
+        if (user?.role === "admin") {
+          setTimeout(() => {
+            window.location.href = "/admin/dashboard"
+          }, 1000)
+        } else {
+          setTimeout(() => {
+            window.location.href = "/dashboard"
+          }, 1000)
+        }
       } else {
         setMessage(result.error || "Login failed")
         setMessageType("error")

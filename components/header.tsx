@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,18 @@ export function Header() {
   const { user, profile, isAdmin, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeDropdown && !(event.target as Element).closest(".dropdown-container")) {
+        setActiveDropdown(null)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [activeDropdown])
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -43,8 +55,11 @@ export function Header() {
         <div className="flex items-center gap-6">
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-6">
-            <div className="relative group">
-              <button className="text-sm font-medium hover:text-rose-500 flex items-center gap-1">
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "hormones" ? null : "hormones")}
+              >
                 Hormones & Fertility
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +77,9 @@ export function Header() {
                 </svg>
               </button>
 
-              <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 hidden group-hover:block z-50">
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "hormones" ? "block" : "hidden"}`}
+              >
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Buy an at-home test</h3>
@@ -155,8 +172,11 @@ export function Header() {
               </div>
             </div>
 
-            <div className="relative group">
-              <button className="text-sm font-medium hover:text-rose-500 flex items-center gap-1">
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "symptoms" ? null : "symptoms")}
+              >
                 Symptoms
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +194,9 @@ export function Header() {
                 </svg>
               </button>
 
-              <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 hidden group-hover:block z-50">
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "symptoms" ? "block" : "hidden"}`}
+              >
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Buy an at-home test</h3>
@@ -242,8 +264,11 @@ export function Header() {
               </div>
             </div>
 
-            <div className="relative group">
-              <button className="text-sm font-medium hover:text-rose-500 flex items-center gap-1">
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "clinical" ? null : "clinical")}
+              >
                 Clinical Care
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +286,9 @@ export function Header() {
                 </svg>
               </button>
 
-              <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 hidden group-hover:block z-50">
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "clinical" ? "block" : "hidden"}`}
+              >
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">At-home test</h3>
@@ -354,8 +381,11 @@ export function Header() {
               </div>
             </div>
 
-            <div className="relative group">
-              <button className="text-sm font-medium hover:text-rose-500 flex items-center gap-1">
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "learn" ? null : "learn")}
+              >
                 Learn
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -373,7 +403,9 @@ export function Header() {
                 </svg>
               </button>
 
-              <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 hidden group-hover:block z-50">
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "learn" ? "block" : "hidden"}`}
+              >
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Hertility</h3>
@@ -440,8 +472,11 @@ export function Header() {
               </div>
             </div>
 
-            <div className="relative group">
-              <button className="text-sm font-medium hover:text-rose-500 flex items-center gap-1">
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "shop" ? null : "shop")}
+              >
                 Shop
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -459,7 +494,9 @@ export function Header() {
                 </svg>
               </button>
 
-              <div className="absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 hidden group-hover:block z-50">
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "shop" ? "block" : "hidden"}`}
+              >
                 <div className="space-y-4">
                   <div>
                     <ul className="space-y-2">

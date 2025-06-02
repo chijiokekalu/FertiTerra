@@ -1,215 +1,243 @@
 "use client"
-import { useState, useActionState } from "react"
+
+import type React from "react"
+
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, AlertCircle, Mail, CheckCircle } from "lucide-react"
-import { signUpAction } from "@/actions/auth"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [clientError, setClientError] = useState<string | null>(null)
-  const [state, formAction, isPending] = useActionState(signUpAction, null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState(false)
 
-  const handleSubmit = async (formData: FormData) => {
-    setClientError(null)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError("")
 
-    // Client-side validation
-    const emailValue = formData.get("email") as string
-    const passwordValue = formData.get("password") as string
-    const confirmPasswordValue = confirmPassword
-
-    if (!emailValue || !passwordValue || !confirmPasswordValue) {
-      setClientError("All fields are required")
+    // Basic validation
+    if (!email || !password || !confirmPassword) {
+      setError("All fields are required")
+      setIsLoading(false)
       return
     }
 
-    if (passwordValue !== confirmPasswordValue) {
-      setClientError("Passwords do not match")
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setIsLoading(false)
       return
     }
 
-    if (passwordValue.length < 6) {
-      setClientError("Password must be at least 6 characters")
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
+      setIsLoading(false)
       return
     }
 
-    // If validation passes, submit to server action
-    formAction(formData)
-  }
+    try {
+      // Simple fetch to avoid server-side errors
+      const response = await fetch("/api/direct-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-  // Show success state if signup was successful
-  if (state?.success && state?.needsConfirmation) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-          <Link href="/" className="flex items-center mb-8">
-            <Image
-              src="/placeholder.svg?height=45&width=160&text=FertiTerra"
-              alt="FertiTerra Logo"
-              width={160}
-              height={45}
-              className="h-12 w-auto"
-            />
-          </Link>
+      const data = await response.json()
 
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <Mail className="mx-auto h-12 w-12 text-blue-500 mb-4" />
-              <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
-              <CardDescription>
-                We've sent a confirmation link to <strong>{state.email}</strong>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Alert className="bg-green-50 border-green-200">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  Account created successfully! Please check your email to confirm your account.
-                </AlertDescription>
-              </Alert>
-
-              <div className="text-sm text-gray-600 space-y-2">
-                <h4 className="font-medium">What's next?</h4>
-                <ul className="space-y-1">
-                  <li>• Check your email inbox for a confirmation link</li>
-                  <li>• Click the link to activate your account</li>
-                  <li>• Start tracking your fertility journey</li>
-                  <li>• Book consultations with our doctors</li>
-                </ul>
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">After confirmation, you'll have access to:</h4>
-                <ul className="text-sm text-blue-800 space-y-1">
-                  <li>📊 Menstrual cycle and ovulation tracking</li>
-                  <li>📚 Comprehensive fertility health resources</li>
-                  <li>👩‍⚕️ Video consultations with fertility specialists</li>
-                  <li>📈 Personalized health insights and reports</li>
-                </ul>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" asChild className="w-full">
-                <Link href="/login">Back to Login</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    )
+      if (data.error) {
+        setError(data.error)
+      } else {
+        setSuccess(true)
+        setEmail("")
+        setPassword("")
+        setConfirmPassword("")
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.")
+      console.error("Signup error:", err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <Link href="/" className="flex items-center mb-8">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow">
+        <div className="flex justify-center">
           <Image
-            src="/placeholder.svg?height=45&width=160&text=FertiTerra"
+            src="/placeholder.svg?height=40&width=140&text=FertiTerra"
             alt="FertiTerra Logo"
-            width={160}
-            height={45}
-            className="h-12 w-auto"
+            width={140}
+            height={40}
+            className="h-10 w-auto"
           />
-        </Link>
+        </div>
 
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
-            <CardDescription>
-              Join FertiTerra to track your fertility journey and connect with specialists
-            </CardDescription>
-          </CardHeader>
+        <div>
+          <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">Create your account</h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Join FertiTerra to track your fertility journey and connect with specialists
+          </p>
+        </div>
 
-          <form action={handleSubmit}>
-            <CardContent className="space-y-4">
-              {(clientError || state?.error) && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{clientError || state?.error}</AlertDescription>
-                </Alert>
-              )}
+        {success ? (
+          <div className="rounded-md bg-green-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-green-800">Account created successfully!</h3>
+                <div className="mt-2 text-sm text-green-700">
+                  <p>Please check your email to confirm your account.</p>
+                </div>
+                <div className="mt-4">
+                  <Link href="/login" className="text-sm font-medium text-green-600 hover:text-green-500">
+                    Go to login page →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="rounded-md bg-red-50 p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800">Error</h3>
+                    <div className="mt-2 text-sm text-red-700">
+                      <p>{error}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-rose-500 sm:text-sm"
+                    placeholder="name@example.com"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="At least 6 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-rose-500 sm:text-sm"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm password</Label>
-                <Input
-                  id="confirm-password"
-                  name="confirm-password"
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
+              <div>
+                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+                  Confirm password
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="confirm-password"
+                    name="confirm-password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-rose-500 sm:text-sm"
+                    placeholder="Confirm your password"
+                  />
+                </div>
               </div>
+            </div>
 
-              <div className="bg-rose-50 p-4 rounded-lg">
-                <h4 className="font-medium text-rose-900 mb-2">What you'll get access to:</h4>
-                <ul className="text-sm text-rose-800 space-y-1">
-                  <li>🩺 Track menstrual cycles and ovulation</li>
-                  <li>📖 Read expert fertility health content</li>
-                  <li>👩‍⚕️ Book video consultations with doctors</li>
-                  <li>📊 Get personalized health insights</li>
+            <div className="rounded-md bg-rose-50 p-4">
+              <h3 className="text-sm font-medium text-rose-800">What you'll get access to:</h3>
+              <div className="mt-2 text-sm text-rose-700">
+                <ul className="list-inside space-y-1">
+                  <li className="flex items-center">
+                    <span className="mr-2">🩺</span>
+                    Track menstrual cycles and ovulation
+                  </li>
+                  <li className="flex items-center">
+                    <span className="mr-2">📖</span>
+                    Read expert fertility health content
+                  </li>
+                  <li className="flex items-center">
+                    <span className="mr-2">👩‍⚕️</span>
+                    Book video consultations with doctors
+                  </li>
+                  <li className="flex items-center">
+                    <span className="mr-2">📊</span>
+                    Get personalized health insights
+                  </li>
                 </ul>
               </div>
-            </CardContent>
+            </div>
 
-            <CardFooter className="flex flex-col space-y-4">
-              <Button className="w-full" type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  "Create account"
-                )}
-              </Button>
+            <div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 disabled:opacity-70"
+              >
+                {isLoading ? "Creating account..." : "Create account"}
+              </button>
+            </div>
 
-              <div className="text-center text-sm">
+            <div className="text-center text-sm">
+              <p className="text-gray-600">
                 Already have an account?{" "}
-                <Link href="/login" className="text-rose-500 hover:underline">
+                <Link href="/login" className="font-medium text-rose-600 hover:text-rose-500">
                   Log in
                 </Link>
-              </div>
-            </CardFooter>
+              </p>
+            </div>
           </form>
-        </Card>
+        )}
       </div>
     </div>
   )

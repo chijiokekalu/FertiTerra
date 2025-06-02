@@ -1,122 +1,204 @@
 "use client"
-import { useState, useActionState } from "react"
+
+import type React from "react"
+
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, AlertCircle } from "lucide-react"
-import { signInAction } from "@/actions/auth"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [clientError, setClientError] = useState<string | null>(null)
-  const [state, formAction, isPending] = useActionState(signInAction, null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState("")
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("")
 
-  const handleSubmit = async (formData: FormData) => {
-    setClientError(null)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setMessage("")
+    setMessageType("")
 
-    // Client-side validation
-    const emailValue = formData.get("email") as string
-    const passwordValue = formData.get("password") as string
-
-    if (!emailValue || !passwordValue) {
-      setClientError("Email and password are required")
+    // Basic validation
+    if (!email || !password) {
+      setMessage("Email and password are required")
+      setMessageType("error")
+      setIsLoading(false)
       return
     }
 
-    // If validation passes, submit to server action
-    formAction(formData)
+    try {
+      const response = await fetch("/api/direct-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setMessage("Login successful! Redirecting to dashboard...")
+        setMessageType("success")
+
+        // Store login state in localStorage for demo
+        localStorage.setItem("isLoggedIn", "true")
+        localStorage.setItem("userEmail", email)
+
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = "/dashboard"
+        }, 1500)
+      } else {
+        setMessage(result.error || "Login failed")
+        setMessageType("error")
+      }
+    } catch (error) {
+      setMessage("Connection error. Please try again.")
+      setMessageType("error")
+    }
+
+    setIsLoading(false)
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <Link href="/" className="flex items-center mb-8">
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f9fafb",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1rem",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "2rem",
+          borderRadius: "12px",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          width: "100%",
+          maxWidth: "400px",
+        }}
+      >
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <Image
             src="/placeholder.svg?height=45&width=160&text=FertiTerra"
             alt="FertiTerra Logo"
             width={160}
             height={45}
-            className="h-12 w-auto"
+            style={{ height: "45px", width: "auto", marginBottom: "1rem" }}
           />
-        </Link>
+          <h1 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "0.5rem" }}>
+            Welcome back
+          </h1>
+          <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>Sign in to your FertiTerra account</p>
+        </div>
 
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-            <CardDescription>Sign in to your FertiTerra account</CardDescription>
-          </CardHeader>
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {/* Message Display */}
+          {message && (
+            <div
+              style={{
+                padding: "0.75rem",
+                borderRadius: "8px",
+                backgroundColor: messageType === "success" ? "#dcfce7" : "#fef2f2",
+                border: `1px solid ${messageType === "success" ? "#bbf7d0" : "#fecaca"}`,
+                color: messageType === "success" ? "#166534" : "#dc2626",
+                fontSize: "0.875rem",
+              }}
+            >
+              {message}
+            </div>
+          )}
 
-          <form action={handleSubmit}>
-            <CardContent className="space-y-4">
-              {(clientError || state?.error) && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{clientError || state?.error}</AlertDescription>
-                </Alert>
-              )}
+          {/* Email Field */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500", color: "#374151" }}>
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              required
+              disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "1rem",
+                backgroundColor: isLoading ? "#f9fafb" : "white",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
-              </div>
+          {/* Password Field */}
+          <div>
+            <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500", color: "#374151" }}>
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "1rem",
+                backgroundColor: isLoading ? "#f9fafb" : "white",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
-              </div>
-            </CardContent>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: "100%",
+              padding: "0.75rem",
+              backgroundColor: isLoading ? "#9ca3af" : "#e11d48",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              fontWeight: "500",
+              cursor: isLoading ? "not-allowed" : "pointer",
+              transition: "background-color 0.2s",
+            }}
+          >
+            {isLoading ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
 
-            <CardFooter className="flex flex-col space-y-4">
-              <Button className="w-full" type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  "Sign in"
-                )}
-              </Button>
-
-              <div className="text-center text-sm space-y-2">
-                <div>
-                  Don't have an account?{" "}
-                  <Link href="/signup" className="text-rose-500 hover:underline">
-                    Sign up
-                  </Link>
-                </div>
-                <div>
-                  <Link href="/auth/resend-confirmation" className="text-rose-500 hover:underline">
-                    Resend confirmation email
-                  </Link>
-                </div>
-              </div>
-            </CardFooter>
-          </form>
-        </Card>
+        {/* Footer Links */}
+        <div style={{ textAlign: "center", marginTop: "1.5rem", fontSize: "0.875rem" }}>
+          <div style={{ marginBottom: "0.5rem" }}>
+            <span style={{ color: "#6b7280" }}>Don't have an account? </span>
+            <Link href="/signup" style={{ color: "#e11d48", textDecoration: "none" }}>
+              Sign up
+            </Link>
+          </div>
+          <div>
+            <Link href="/" style={{ color: "#9ca3af", textDecoration: "none" }}>
+              ← Back to Home
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

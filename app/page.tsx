@@ -3,7 +3,18 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Video, Package, Calendar, ArrowRight, CheckCircle, Heart, Users, Shield } from "lucide-react"
+import {
+  Clock,
+  Video,
+  Package,
+  ArrowRight,
+  CheckCircle,
+  Heart,
+  Users,
+  Shield,
+  MessageSquare,
+  TestTube,
+} from "lucide-react"
 import { Header } from "@/components/header"
 
 export default function HomePage() {
@@ -148,42 +159,79 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Main Options Section */}
+        {/* FertiTerra Plans Section */}
         <section className="py-16 bg-gray-50">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Start Getting Better Care Today</h2>
-              <p className="text-lg text-gray-600">Choose how you want to begin your fertility journey</p>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">FertiTerra Plans</h2>
+              <p className="text-lg text-gray-600">Choose the plan that best fits your fertility journey</p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2">
-              {/* Test Kit Card */}
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {/* Basic Fertility Checkup Plan */}
+              <Card className="overflow-hidden border-0 shadow-lg">
+                <CardHeader className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Video className="h-5 w-5 text-teal-500" />
+                    <CardTitle className="text-lg">Basic Fertility Checkup</CardTitle>
+                  </div>
+                  <CardDescription>For those curious about their fertility health</CardDescription>
+                  <div className="text-3xl font-bold text-teal-600 mt-2">$5</div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ul className="space-y-2">
+                    {[
+                      "Free 15-minute consultation",
+                      "Personalized fertility report",
+                      "Medical professional guidance",
+                      "Future family planning insights",
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                        <span className="text-sm">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    asChild
+                    className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700"
+                  >
+                    <Link href="/plans/basic">
+                      Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              {/* TTC Plan */}
               <Card className="overflow-hidden border-0 shadow-lg">
                 <div className="bg-rose-50 p-2">
                   <Badge className="bg-rose-500 hover:bg-rose-600">Most Popular</Badge>
                 </div>
                 <CardHeader className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <Package className="h-5 w-5 text-rose-500" />
-                    <CardTitle>Advanced Hormone and Fertility Test</CardTitle>
+                    <TestTube className="h-5 w-5 text-rose-500" />
+                    <CardTitle className="text-lg">Trying to Conceive (TTC)</CardTitle>
                   </div>
-                  <CardDescription>Comprehensive insights into your reproductive health</CardDescription>
+                  <CardDescription>For couples actively trying to conceive</CardDescription>
+                  <div className="text-3xl font-bold text-rose-600 mt-2">$200</div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-rose-500" />
-                    <span>Results in 10 days</span>
-                  </div>
                   <ul className="space-y-2">
                     {[
-                      "Tests 10 key reproductive hormones",
-                      "Personalized report with actionable insights",
-                      "Includes AMH, FSH, LH, Estradiol, and more",
-                      "Free doctor consultation to discuss results",
+                      "At-home fertility test kit (70 test strips)",
+                      "AMH test & sperm quality analysis",
+                      "30-minute expert consultation",
+                      "Personalized TTC action plan",
+                      "Customer support check",
+                      "Monthly subscription options",
+                      "Optional community support",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                        <span>{item}</span>
+                        <span className="text-sm">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -193,52 +241,121 @@ export default function HomePage() {
                     asChild
                     className="w-full bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700"
                   >
-                    <Link href="/test-kits/hormone-fertility">
-                      Get Your Test <ArrowRight className="ml-2 h-4 w-4" />
+                    <Link href="/plans/ttc">
+                      Get Started <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardFooter>
               </Card>
 
-              {/* Telemedicine Card */}
-              <Card className="overflow-hidden border-0 shadow-lg">
+              {/* Perimenopausal/Menopausal Health Plan */}
+              <Card className="overflow-hidden border-0 shadow-lg opacity-75">
                 <CardHeader className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <Video className="h-5 w-5 text-rose-500" />
-                    <CardTitle>Expert Fertility Consultation</CardTitle>
+                    <Package className="h-5 w-5 text-purple-500" />
+                    <CardTitle className="text-lg">Perimenopausal/Menopausal</CardTitle>
                   </div>
-                  <CardDescription>Connect directly with fertility specialists who listen</CardDescription>
+                  <CardDescription>For managing hormonal transitions</CardDescription>
+                  <div className="text-3xl font-bold text-purple-600 mt-2">$170</div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="relative h-48 w-full overflow-hidden rounded-md">
-                    <Image
-                      src="/placeholder.svg?height=192&width=384&text=Video+Consultation"
-                      alt="Video consultation with fertility specialist"
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="text-center py-8">
+                    <div className="text-lg font-semibold text-purple-600 mb-2">Coming Soon</div>
+                    <p className="text-sm text-gray-600">
+                      At-home hormone test kit, personalized menopause management plan, and expert consultation
+                    </p>
                   </div>
-                  <ul className="space-y-2">
-                    {[
-                      "30-minute personalized consultations",
-                      "Board-certified fertility specialists",
-                      "Same-day or next-day appointments",
-                      "Comprehensive treatment planning",
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button asChild className="w-full">
-                    <Link href="/consultation">
-                      Book Consultation <Calendar className="ml-2 h-4 w-4" />
-                    </Link>
+                  <Button disabled className="w-full opacity-50 cursor-not-allowed">
+                    Coming Soon
                   </Button>
                 </CardFooter>
+              </Card>
+
+              {/* General Wellness Plan */}
+              <Card className="overflow-hidden border-0 shadow-lg opacity-75">
+                <CardHeader className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-green-500" />
+                    <CardTitle className="text-lg">General Wellness & Fertility</CardTitle>
+                  </div>
+                  <CardDescription>For improving reproductive health</CardDescription>
+                  <div className="text-3xl font-bold text-green-600 mt-2">$60</div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center py-8">
+                    <div className="text-lg font-semibold text-green-600 mb-2">Coming Soon</div>
+                    <p className="text-sm text-gray-600">
+                      Lifestyle & nutrition plan, reproductive health insights, and expert consultation
+                    </p>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button disabled className="w-full opacity-50 cursor-not-allowed">
+                    Coming Soon
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+
+            {/* Additional Features for Available Plans */}
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              <Card className="border-rose-100 bg-rose-50/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-rose-500" />
+                    TTC Plan Extras
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Optional private messaging with fertility specialist</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Monthly Q&A webinars</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Additional doctor consultations available</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Extra test strips can be ordered</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-teal-100 bg-teal-50/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-teal-500" />
+                    Community Support
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Both available plans include access to our supportive community features:
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">WhatsApp/Telegram support groups</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Peer support network</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm">Expert Q&A sessions</span>
+                    </li>
+                  </ul>
+                </CardContent>
               </Card>
             </div>
           </div>
@@ -257,8 +374,8 @@ export default function HomePage() {
             <div className="grid gap-8 md:grid-cols-4">
               {[
                 {
-                  title: "Choose Your Path",
-                  description: "Start with testing, consultation, or both—whatever feels right for you.",
+                  title: "Choose Your Plan",
+                  description: "Start with our Basic Checkup or comprehensive TTC plan—whatever feels right for you.",
                   icon: Package,
                 },
                 {
@@ -326,7 +443,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="bg-white text-rose-600 hover:bg-gray-100 text-lg px-8 py-4">
-                  <Link href="/signup">Start Your Journey</Link>
+                  <Link href="/plans/basic">Start with Basic Plan</Link>
                 </Button>
                 <Button
                   asChild
@@ -334,7 +451,7 @@ export default function HomePage() {
                   variant="outline"
                   className="border-white text-white hover:bg-white hover:text-rose-600 text-lg px-8 py-4"
                 >
-                  <Link href="/consultation">Book Consultation</Link>
+                  <Link href="/plans/ttc">Choose TTC Plan</Link>
                 </Button>
               </div>
             </div>
@@ -360,22 +477,23 @@ export default function HomePage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Products</h3>
+              <h3 className="font-semibold mb-4">Plans</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/test-kits/hormone-fertility" className="text-sm text-gray-500 hover:text-rose-500">
-                    Hormone & Fertility Test
+                  <Link href="/plans/basic" className="text-sm text-gray-500 hover:text-rose-500">
+                    Basic Fertility Checkup
                   </Link>
                 </li>
                 <li>
-                  <Link href="/test-kits/ovulation" className="text-sm text-gray-500 hover:text-rose-500">
-                    Ovulation Test
+                  <Link href="/plans/ttc" className="text-sm text-gray-500 hover:text-rose-500">
+                    TTC Plan
                   </Link>
                 </li>
                 <li>
-                  <Link href="/test-kits/pregnancy" className="text-sm text-gray-500 hover:text-rose-500">
-                    Pregnancy Test
-                  </Link>
+                  <span className="text-sm text-gray-400">Perimenopausal Plan (Coming Soon)</span>
+                </li>
+                <li>
+                  <span className="text-sm text-gray-400">General Wellness (Coming Soon)</span>
                 </li>
               </ul>
             </div>
@@ -388,8 +506,8 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/treatments" className="text-sm text-gray-500 hover:text-rose-500">
-                    Treatment Plans
+                  <Link href="/test-kits" className="text-sm text-gray-500 hover:text-rose-500">
+                    At-Home Test Kits
                   </Link>
                 </li>
                 <li>

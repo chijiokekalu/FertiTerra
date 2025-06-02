@@ -79,10 +79,10 @@ export default function LoginPage() {
         localStorage.setItem("isLoggedIn", "true")
         localStorage.setItem("userEmail", email)
 
-        // Redirect to dashboard
+        // Force redirect to dashboard
         setTimeout(() => {
           window.location.href = "/dashboard"
-        }, 1500)
+        }, 1000)
       } else {
         setMessage(result.error || "Login failed")
         setMessageType("error")
@@ -262,7 +262,7 @@ export default function LoginPage() {
           </p>
           <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
             <button
-              onClick={() => useTestAccount("demo@fertiterra.com", "demo123")}
+              onClick={() => setEmail("demo@fertiterra.com")}
               style={{
                 fontSize: "0.75rem",
                 padding: "0.25rem 0.5rem",
@@ -276,7 +276,7 @@ export default function LoginPage() {
               Demo Account
             </button>
             <button
-              onClick={() => useTestAccount("test@example.com", "test123")}
+              onClick={() => setEmail("test@example.com")}
               style={{
                 fontSize: "0.75rem",
                 padding: "0.25rem 0.5rem",

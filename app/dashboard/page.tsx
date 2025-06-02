@@ -1,47 +1,60 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/context/auth-context"
-import { Loader2, Bell } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function DashboardPage() {
-  const { user, isLoading } = useAuth()
+  const [user, setUser] = useState<{ email: string } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn")
+    const userEmail = localStorage.getItem("userEmail")
+
+    if (!isLoggedIn || !userEmail) {
       router.push("/login")
+      return
     }
-  }, [user, isLoading, router])
+
+    setUser({ email: userEmail })
+    setIsLoading(false)
+  }, [router])
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn")
+    localStorage.removeItem("userEmail")
+    router.push("/")
+  }
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-16 items-center">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/images/fertiterra-logo.png"
-                alt="FertiTerra Logo"
-                width={140}
-                height={40}
-                className="h-10 w-auto"
-              />
-            </Link>
-          </div>
-        </header>
-        <main className="flex-1 container py-8">
-          <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <p className="ml-2">Loading dashboard...</p>
-          </div>
-        </main>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#f9fafb",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <div
+            style={{
+              width: "40px",
+              height: "40px",
+              border: "4px solid #e5e7eb",
+              borderTop: "4px solid #e11d48",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+              margin: "0 auto 1rem",
+            }}
+          ></div>
+          <p style={{ color: "#6b7280" }}>Loading your dashboard...</p>
+        </div>
       </div>
     )
   }
@@ -51,154 +64,301 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
-          <Link href="/" className="flex items-center">
+    <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
+      {/* Header */}
+      <header
+        style={{
+          backgroundColor: "white",
+          borderBottom: "1px solid #e5e7eb",
+          padding: "1rem 0",
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
             <Image
-              src="/images/fertiterra-logo.png"
+              src="/placeholder.svg?height=40&width=140&text=FertiTerra"
               alt="FertiTerra Logo"
               width={140}
               height={40}
-              className="h-10 w-auto"
+              style={{ height: "40px", width: "auto" }}
             />
           </Link>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link href="/dashboard" className="text-sm font-medium">
+
+          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+            <Link
+              href="/dashboard"
+              style={{ color: "#e11d48", textDecoration: "none", fontWeight: "500", fontSize: "0.875rem" }}
+            >
               Dashboard
             </Link>
-            <Link href="/appointments" className="text-sm font-medium">
-              Appointments
+            <Link href="/cycle-tracking" style={{ color: "#6b7280", textDecoration: "none", fontSize: "0.875rem" }}>
+              Track Cycle
             </Link>
-            <Link href="/community" className="text-sm font-medium">
-              Community
+            <Link href="/consultation" style={{ color: "#6b7280", textDecoration: "none", fontSize: "0.875rem" }}>
+              Consultations
             </Link>
-            <Link href="/resources" className="text-sm font-medium">
-              Resources
+            <Link href="/blog" style={{ color: "#6b7280", textDecoration: "none", fontSize: "0.875rem" }}>
+              Learn
             </Link>
-            <Link href="/blog" className="text-sm font-medium">
-              Blog
-            </Link>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  backgroundColor: "#e11d48",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                }}
+              >
+                {user.email.charAt(0).toUpperCase()}
+              </div>
+              <button
+                onClick={handleLogout}
+                style={{
+                  background: "none",
+                  border: "1px solid #d1d5db",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  cursor: "pointer",
+                  color: "#6b7280",
+                }}
+              >
+                Logout
+              </button>
+            </div>
           </nav>
-          <div className="ml-4 flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Avatar>
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-              <AvatarFallback>{user.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
-            </Avatar>
-          </div>
         </div>
       </header>
-      <main className="flex-1 container py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user.email?.split("@")[0] || "User"}</h1>
-            <p className="text-muted-foreground">Track your progress and manage your fertility journey.</p>
-          </div>
-          <Button>
-            <Link href="/profile">View Profile</Link>
-          </Button>
+
+      {/* Main Content */}
+      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem 1rem" }}>
+        {/* Welcome Section */}
+        <div style={{ marginBottom: "2rem" }}>
+          <h1 style={{ fontSize: "2rem", fontWeight: "700", color: "#111827", marginBottom: "0.5rem" }}>
+            Welcome back, {user.email.split("@")[0]}! 🌸
+          </h1>
+          <p style={{ color: "#6b7280", fontSize: "1.125rem" }}>
+            Track your fertility journey and connect with healthcare professionals.
+          </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Your Plan</CardTitle>
-              <CardDescription>TTC 60-Day Plan</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div>Progress</div>
-                    <div className="font-medium">Day 23 of 60</div>
-                  </div>
-                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="bg-rose-500 h-full rounded-full" style={{ width: "38%" }}></div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="w-full">
-                    View Plan
-                  </Button>
-                  <Button className="w-full">Schedule</Button>
-                </div>
+        {/* Quick Actions */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "1.5rem",
+            marginBottom: "2rem",
+          }}
+        >
+          {/* Cycle Tracking Card */}
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: "#fef2f2",
+                  borderRadius: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "1rem",
+                }}
+              >
+                <span style={{ fontSize: "1.5rem" }}>📅</span>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", margin: 0 }}>
+                  Track Your Cycle
+                </h3>
+                <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>Log periods and symptoms</p>
+              </div>
+            </div>
+            <Link
+              href="/cycle-tracking"
+              style={{
+                display: "inline-block",
+                backgroundColor: "#e11d48",
+                color: "white",
+                padding: "0.75rem 1.5rem",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+              }}
+            >
+              Start Tracking
+            </Link>
+          </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Next Appointment</CardTitle>
-              <CardDescription>Upcoming consultation</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-rose-100 p-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-rose-700"
-                    >
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-medium">Follow-up Consultation</div>
-                    <div className="text-sm text-muted-foreground">May 15, 2025 • 10:00 AM</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="w-full">
-                    Reschedule
-                  </Button>
-                  <Button className="w-full">Join Call</Button>
-                </div>
+          {/* Consultation Card */}
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: "#f0f9ff",
+                  borderRadius: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "1rem",
+                }}
+              >
+                <span style={{ fontSize: "1.5rem" }}>👩‍⚕️</span>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", margin: 0 }}>
+                  Book Consultation
+                </h3>
+                <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>Talk to fertility experts</p>
+              </div>
+            </div>
+            <Link
+              href="/consultation"
+              style={{
+                display: "inline-block",
+                backgroundColor: "#0369a1",
+                color: "white",
+                padding: "0.75rem 1.5rem",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+              }}
+            >
+              Book Now
+            </Link>
+          </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Your Doctor</CardTitle>
-              <CardDescription>Fertility specialist</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="/placeholder.svg?height=48&width=48" alt="Doctor" />
-                    <AvatarFallback>DR</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">Dr. Sarah Johnson</div>
-                    <div className="text-sm text-muted-foreground">OB/GYN, Fertility Specialist</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="w-full">
-                    Profile
-                  </Button>
-                  <Button className="w-full">Message</Button>
-                </div>
+          {/* Learning Card */}
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  backgroundColor: "#f0fdf4",
+                  borderRadius: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "1rem",
+                }}
+              >
+                <span style={{ fontSize: "1.5rem" }}>📚</span>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", margin: 0 }}>
+                  Learn About Fertility
+                </h3>
+                <p style={{ color: "#6b7280", fontSize: "0.875rem", margin: 0 }}>Expert articles and guides</p>
+              </div>
+            </div>
+            <Link
+              href="/blog"
+              style={{
+                display: "inline-block",
+                backgroundColor: "#16a34a",
+                color: "white",
+                padding: "0.75rem 1.5rem",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+              }}
+            >
+              Start Learning
+            </Link>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "1.5rem",
+            borderRadius: "12px",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            border: "1px solid #e5e7eb",
+          }}
+        >
+          <h2 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#111827", marginBottom: "1rem" }}>
+            Your Fertility Journey
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+            <div style={{ textAlign: "center", padding: "1rem" }}>
+              <div style={{ fontSize: "2rem", fontWeight: "700", color: "#e11d48", marginBottom: "0.5rem" }}>0</div>
+              <div style={{ color: "#6b7280", fontSize: "0.875rem" }}>Cycles Tracked</div>
+            </div>
+            <div style={{ textAlign: "center", padding: "1rem" }}>
+              <div style={{ fontSize: "2rem", fontWeight: "700", color: "#0369a1", marginBottom: "0.5rem" }}>0</div>
+              <div style={{ color: "#6b7280", fontSize: "0.875rem" }}>Consultations</div>
+            </div>
+            <div style={{ textAlign: "center", padding: "1rem" }}>
+              <div style={{ fontSize: "2rem", fontWeight: "700", color: "#16a34a", marginBottom: "0.5rem" }}>0</div>
+              <div style={{ color: "#6b7280", fontSize: "0.875rem" }}>Articles Read</div>
+            </div>
+          </div>
         </div>
       </main>
+
+      {/* CSS for spinner animation */}
+      <style jsx>{`
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   )
 }

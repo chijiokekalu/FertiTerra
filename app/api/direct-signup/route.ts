@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { emailService } from "@/lib/email-service"
 
 export async function POST(request: Request) {
   try {
@@ -17,17 +18,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Password must be at least 6 characters" }, { status: 400 })
     }
 
-    // For this demo, we'll just return success and let the client handle storage
-    // In a real app, you would save to a database here
-
     console.log(`Signup attempt for: ${email}`)
 
-    // Simulate successful signup
+    // Send welcome email
+    try {
+      await emailService.sendWelcomeEmail(email)
+      console.log(`✅ Welcome email sent to: ${email}`)
+    } catch (emailError) {
+      console.error("Failed to send welcome email:", emailError)
+      // Don't fail signup if email fails
+    }
+
+    // Send confirmation email
+    try {
+      await emailService.sendConfirmationEmail(email)
+      console.log(`✅ Confirmation email sent to: ${email}`)
+    } catch (emailError) {
+      console.error("Failed to send confirmation email:", emailError)
+    }
+
     return NextResponse.json({
       success: true,
-      message: "Account created successfully! You can now log in.",
+      message: "Account created successfully! Please check your email for confirmation and welcome messages.",
       user: { email },
       timestamp: new Date().toISOString(),
+      emailsSent: true,
     })
   } catch (error) {
     console.error("Signup error:", error)

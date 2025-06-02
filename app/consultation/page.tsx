@@ -4,14 +4,6 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar } from "@/components/ui/calendar"
-import { Badge } from "@/components/ui/badge"
-import { Header } from "@/components/header"
-import { useAuth } from "@/context/auth-context"
-import { CalendarIcon, Clock, Video, Star, MapPin, ArrowRight } from "lucide-react"
 
 // Mock data for doctors
 const doctors = [
@@ -19,73 +11,44 @@ const doctors = [
     id: "dr-sarah-johnson",
     name: "Dr. Sarah Johnson",
     title: "Reproductive Endocrinologist",
-    image: "/images/doctor-1.jpg",
+    image: "/placeholder.svg?height=200&width=200&text=Dr.+Sarah",
     specialties: ["Fertility", "PCOS", "IVF"],
     experience: "12 years",
     rating: 4.9,
     reviewCount: 124,
-    bio: "Dr. Sarah Johnson is a board-certified reproductive endocrinologist with over 12 years of experience helping women navigate their fertility journey. She specializes in PCOS, recurrent pregnancy loss, and fertility preservation.",
-    education: [
-      "Fellowship in Reproductive Endocrinology and Infertility, Yale University",
-      "Residency in Obstetrics and Gynecology, Johns Hopkins Hospital",
-      "MD, Harvard Medical School",
-    ],
+    bio: "Dr. Sarah Johnson is a board-certified reproductive endocrinologist with over 12 years of experience helping women navigate their fertility journey.",
     nextAvailable: "Tomorrow",
+    price: "$150",
   },
   {
     id: "dr-michael-chen",
     name: "Dr. Michael Chen",
     title: "OB/GYN, Fertility Specialist",
-    image: "/images/doctor-2.jpg",
+    image: "/placeholder.svg?height=200&width=200&text=Dr.+Michael",
     specialties: ["Hormonal Health", "Endometriosis", "Fertility Preservation"],
     experience: "8 years",
     rating: 4.8,
     reviewCount: 98,
-    bio: "Dr. Michael Chen is an OB/GYN with specialized training in reproductive medicine. He focuses on hormonal health, endometriosis management, and fertility preservation options for women of all ages.",
-    education: [
-      "Fellowship in Reproductive Medicine, UCSF Medical Center",
-      "Residency in Obstetrics and Gynecology, Mayo Clinic",
-      "MD, Stanford University School of Medicine",
-    ],
+    bio: "Dr. Michael Chen is an OB/GYN with specialized training in reproductive medicine. He focuses on hormonal health and endometriosis management.",
     nextAvailable: "Today",
+    price: "$130",
   },
   {
     id: "dr-amara-patel",
     name: "Dr. Amara Patel",
     title: "Reproductive Immunologist",
-    image: "/images/doctor-3.jpg",
+    image: "/placeholder.svg?height=200&width=200&text=Dr.+Amara",
     specialties: ["Recurrent Pregnancy Loss", "Immunology", "Unexplained Infertility"],
     experience: "15 years",
     rating: 4.9,
     reviewCount: 156,
-    bio: "Dr. Amara Patel specializes in reproductive immunology, focusing on recurrent pregnancy loss and unexplained infertility. Her integrative approach combines conventional medicine with evidence-based complementary therapies.",
-    education: [
-      "Fellowship in Reproductive Immunology, Baylor College of Medicine",
-      "Residency in Obstetrics and Gynecology, Mount Sinai Hospital",
-      "MD, University of Pennsylvania School of Medicine",
-    ],
+    bio: "Dr. Amara Patel specializes in reproductive immunology, focusing on recurrent pregnancy loss and unexplained infertility.",
     nextAvailable: "In 2 days",
-  },
-  {
-    id: "dr-james-wilson",
-    name: "Dr. James Wilson",
-    title: "Reproductive Urologist",
-    image: "/images/doctor-4.jpg",
-    specialties: ["Male Fertility", "Sperm Health", "Reproductive Surgery"],
-    experience: "10 years",
-    rating: 4.7,
-    reviewCount: 87,
-    bio: "Dr. James Wilson is a reproductive urologist specializing in male fertility issues. He works with couples to address sperm health concerns and provides surgical interventions when necessary.",
-    education: [
-      "Fellowship in Male Reproductive Medicine, Cleveland Clinic",
-      "Residency in Urology, UCLA Medical Center",
-      "MD, Columbia University College of Physicians and Surgeons",
-    ],
-    nextAvailable: "Tomorrow",
+    price: "$180",
   },
 ]
 
-// Mock data for available time slots
+// Available time slots
 const timeSlots = [
   { time: "9:00 AM", available: true },
   { time: "10:00 AM", available: false },
@@ -97,561 +60,416 @@ const timeSlots = [
 ]
 
 export default function ConsultationPage() {
-  const { user } = useAuth()
-  const router = useRouter()
   const [selectedDoctor, setSelectedDoctor] = useState(doctors[0])
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  const [selectedTime, setSelectedTime] = useState<string | null>(null)
+  const [selectedDate, setSelectedDate] = useState("")
+  const [selectedTime, setSelectedTime] = useState("")
   const [consultationType, setConsultationType] = useState("video")
+  const [isBooking, setIsBooking] = useState(false)
+  const [bookingSuccess, setBookingSuccess] = useState(false)
+  const router = useRouter()
 
-  const handleBookAppointment = () => {
-    if (!user) {
-      router.push("/login?redirect=/consultation")
-      return
-    }
-
+  const handleBookAppointment = async () => {
     if (!selectedDate || !selectedTime) {
       alert("Please select a date and time for your appointment")
       return
     }
 
-    // In a real app, this would call an API to book the appointment
-    router.push(
-      `/consultation/confirmation?doctor=${selectedDoctor.id}&date=${selectedDate.toISOString()}&time=${selectedTime}&type=${consultationType}`,
+    setIsBooking(true)
+
+    // Simulate booking process
+    setTimeout(() => {
+      setIsBooking(false)
+      setBookingSuccess(true)
+
+      // Redirect to confirmation after 2 seconds
+      setTimeout(() => {
+        router.push(
+          `/consultation/confirmation?doctor=${selectedDoctor.id}&date=${selectedDate}&time=${selectedTime}&type=${consultationType}`,
+        )
+      }, 2000)
+    }, 1500)
+  }
+
+  if (bookingSuccess) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "#f9fafb",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "3rem",
+            borderRadius: "12px",
+            textAlign: "center",
+            maxWidth: "500px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>✅</div>
+          <h1 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#16a34a", marginBottom: "1rem" }}>
+            Appointment Booked Successfully!
+          </h1>
+          <p style={{ color: "#6b7280", marginBottom: "2rem" }}>
+            Your consultation with {selectedDoctor.name} has been confirmed for {selectedDate} at {selectedTime}.
+          </p>
+          <div style={{ fontSize: "0.875rem", color: "#6b7280" }}>Redirecting to confirmation page...</div>
+        </div>
+      </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1">
-        <section className="bg-gradient-to-r from-rose-50 to-purple-50 py-12">
-          <div className="container">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl font-bold tracking-tight mb-4">Connect with Fertility Specialists</h1>
-              <p className="text-lg text-gray-600 mb-6">
-                Schedule a secure video consultation with our experienced fertility doctors from the comfort of your
-                home.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2">
-                  <Video className="h-5 w-5 text-rose-500" />
-                  <span>Secure video consultations</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-rose-500" />
-                  <span>30-minute appointments</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5 text-rose-500" />
-                  <span>Same-day appointments available</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+    <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
+      {/* Header */}
+      <header style={{ backgroundColor: "white", borderBottom: "1px solid #e5e7eb", padding: "1rem 0" }}>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+            <Image
+              src="/placeholder.svg?height=40&width=140&text=FertiTerra"
+              alt="FertiTerra Logo"
+              width={140}
+              height={40}
+              style={{ height: "40px", width: "auto" }}
+            />
+          </Link>
+          <Link href="/dashboard" style={{ color: "#e11d48", textDecoration: "none", fontSize: "0.875rem" }}>
+            ← Back to Dashboard
+          </Link>
+        </div>
+      </header>
 
-        <section className="py-12">
-          <div className="container">
-            <Tabs defaultValue="doctors" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="doctors">Our Doctors</TabsTrigger>
-                <TabsTrigger value="book">Book Appointment</TabsTrigger>
-              </TabsList>
-              <TabsContent value="doctors" className="space-y-8">
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                  {doctors.map((doctor) => (
-                    <Card
-                      key={doctor.id}
-                      className={`overflow-hidden cursor-pointer transition-all ${
-                        selectedDoctor.id === doctor.id ? "ring-2 ring-rose-500" : ""
-                      }`}
-                      onClick={() => setSelectedDoctor(doctor)}
-                    >
-                      <div className="relative h-48 w-full">
-                        <Image
-                          src={doctor.image || "/placeholder.svg"}
-                          alt={doctor.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <CardHeader className="pb-2">
-                        <CardTitle>{doctor.name}</CardTitle>
-                        <CardDescription>{doctor.title}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{doctor.rating}</span>
-                          <span className="text-sm text-gray-500">({doctor.reviewCount} reviews)</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {doctor.specialties.map((specialty) => (
-                            <Badge key={specialty} variant="outline" className="bg-rose-50">
-                              {specialty}
-                            </Badge>
-                          ))}
-                        </div>
-                        <p className="text-sm text-gray-500">Next available: {doctor.nextAvailable}</p>
-                      </CardContent>
-                      <CardFooter>
-                        <Button
-                          variant="outline"
-                          className="w-full"
-                          onClick={() => document.querySelector('[data-value="book"]')?.click()}
+      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem 1rem" }}>
+        {/* Hero Section */}
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <h1 style={{ fontSize: "2.5rem", fontWeight: "700", color: "#111827", marginBottom: "1rem" }}>
+            Book a Consultation
+          </h1>
+          <p style={{ fontSize: "1.125rem", color: "#6b7280", maxWidth: "600px", margin: "0 auto" }}>
+            Connect with our fertility specialists for personalized guidance on your reproductive health journey.
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "2rem", alignItems: "start" }}>
+          {/* Main Content */}
+          <div>
+            {/* Doctor Selection */}
+            <div style={{ marginBottom: "2rem" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "1rem" }}>
+                Choose Your Doctor
+              </h2>
+              <div style={{ display: "grid", gap: "1rem" }}>
+                {doctors.map((doctor) => (
+                  <div
+                    key={doctor.id}
+                    onClick={() => setSelectedDoctor(doctor)}
+                    style={{
+                      backgroundColor: "white",
+                      padding: "1.5rem",
+                      borderRadius: "12px",
+                      border: selectedDoctor.id === doctor.id ? "2px solid #e11d48" : "1px solid #e5e7eb",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      boxShadow:
+                        selectedDoctor.id === doctor.id
+                          ? "0 4px 12px rgba(225, 29, 72, 0.15)"
+                          : "0 1px 3px rgba(0, 0, 0, 0.1)",
+                    }}
+                  >
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                      <Image
+                        src={doctor.image || "/placeholder.svg"}
+                        alt={doctor.name}
+                        width={80}
+                        height={80}
+                        style={{ borderRadius: "8px", objectFit: "cover" }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <h3
+                          style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", marginBottom: "0.25rem" }}
                         >
-                          Book Appointment
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-
-                <div className="mt-12">
-                  <h2 className="text-2xl font-bold mb-6">About {selectedDoctor.name}</h2>
-                  <div className="grid gap-8 md:grid-cols-3">
-                    <div className="md:col-span-2 space-y-6">
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Biography</h3>
-                        <p className="text-gray-600">{selectedDoctor.bio}</p>
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Education & Training</h3>
-                        <ul className="space-y-1">
-                          {selectedDoctor.education.map((edu, i) => (
-                            <li key={i} className="text-gray-600">
-                              • {edu}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Specialties</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedDoctor.specialties.map((specialty) => (
-                            <Badge key={specialty} className="bg-rose-100 text-rose-800 hover:bg-rose-200">
+                          {doctor.name}
+                        </h3>
+                        <p style={{ color: "#6b7280", fontSize: "0.875rem", marginBottom: "0.5rem" }}>{doctor.title}</p>
+                        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                          {doctor.specialties.map((specialty) => (
+                            <span
+                              key={specialty}
+                              style={{
+                                backgroundColor: "#fef2f2",
+                                color: "#e11d48",
+                                padding: "0.25rem 0.5rem",
+                                borderRadius: "4px",
+                                fontSize: "0.75rem",
+                              }}
+                            >
                               {specialty}
-                            </Badge>
+                            </span>
                           ))}
                         </div>
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Experience</h3>
-                        <p className="text-gray-600">{selectedDoctor.experience}</p>
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Patient Reviews</h3>
-                        <div className="flex items-center gap-1 mb-2">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-5 w-5 ${
-                                  i < Math.floor(selectedDoctor.rating)
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-gray-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm font-medium">{selectedDoctor.rating}</span>
-                          <span className="text-sm text-gray-500">({selectedDoctor.reviewCount} reviews)</span>
-                        </div>
-                      </div>
-                      <Button
-                        className="w-full bg-rose-500 hover:bg-rose-600"
-                        onClick={() => document.querySelector('[data-value="book"]')?.click()}
-                      >
-                        Book Appointment
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-              <TabsContent value="book">
-                <div className="grid gap-8 md:grid-cols-3">
-                  <div className="md:col-span-2 space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-bold mb-6">Book an Appointment</h2>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Select Appointment Type</CardTitle>
-                          <CardDescription>Choose how you'd like to meet with your doctor</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid gap-4 md:grid-cols-2">
-                            <div
-                              className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer transition-all ${
-                                consultationType === "video"
-                                  ? "border-rose-500 bg-rose-50"
-                                  : "border-gray-200 hover:border-rose-200 hover:bg-rose-50/50"
-                              }`}
-                              onClick={() => setConsultationType("video")}
-                            >
-                              <Video
-                                className={`h-8 w-8 mb-2 ${
-                                  consultationType === "video" ? "text-rose-500" : "text-gray-400"
-                                }`}
-                              />
-                              <h3 className="font-medium">Video Consultation</h3>
-                              <p className="text-sm text-center text-gray-500 mt-1">
-                                Meet with your doctor via secure video call
-                              </p>
-                            </div>
-                            <div
-                              className={`flex flex-col items-center p-4 border rounded-lg cursor-pointer transition-all ${
-                                consultationType === "in-person"
-                                  ? "border-rose-500 bg-rose-50"
-                                  : "border-gray-200 hover:border-rose-200 hover:bg-rose-50/50"
-                              }`}
-                              onClick={() => setConsultationType("in-person")}
-                            >
-                              <MapPin
-                                className={`h-8 w-8 mb-2 ${
-                                  consultationType === "in-person" ? "text-rose-500" : "text-gray-400"
-                                }`}
-                              />
-                              <h3 className="font-medium">In-Person Visit</h3>
-                              <p className="text-sm text-center text-gray-500 mt-1">
-                                Visit our clinic for a face-to-face appointment
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <div>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Select Date & Time</CardTitle>
-                          <CardDescription>Choose when you'd like to meet with {selectedDoctor.name}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid gap-6 md:grid-cols-2">
-                            <div>
-                              <p className="text-sm font-medium mb-2">Date</p>
-                              <Calendar
-                                mode="single"
-                                selected={selectedDate}
-                                onSelect={setSelectedDate}
-                                className="border rounded-md p-3"
-                                disabled={(date) => {
-                                  // Disable dates in the past
-                                  return date < new Date(new Date().setHours(0, 0, 0, 0))
-                                }}
-                              />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium mb-2">Available Times</p>
-                              <div className="grid grid-cols-2 gap-2">
-                                {timeSlots.map((slot) => (
-                                  <Button
-                                    key={slot.time}
-                                    variant={selectedTime === slot.time ? "default" : "outline"}
-                                    className={
-                                      !slot.available
-                                        ? "opacity-50 cursor-not-allowed"
-                                        : selectedTime === slot.time
-                                          ? "bg-rose-500 hover:bg-rose-600"
-                                          : ""
-                                    }
-                                    disabled={!slot.available}
-                                    onClick={() => setSelectedTime(slot.time)}
-                                  >
-                                    {slot.time}
-                                  </Button>
-                                ))}
-                              </div>
-                              <p className="text-sm text-gray-500 mt-4">
-                                All appointments are 30 minutes. Times shown are in your local timezone.
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                        <CardFooter>
-                          <Button
-                            className="w-full bg-rose-500 hover:bg-rose-600"
-                            onClick={handleBookAppointment}
-                            disabled={!selectedDate || !selectedTime}
-                          >
-                            Book Appointment
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">Your Selection</h3>
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center gap-4">
-                          <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                            <Image
-                              src={selectedDoctor.image || "/placeholder.svg"}
-                              alt={selectedDoctor.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div>
-                            <CardTitle className="text-base">{selectedDoctor.name}</CardTitle>
-                            <CardDescription>{selectedDoctor.title}</CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="pt-2 border-t">
-                          <p className="text-sm font-medium">Appointment Type</p>
-                          <p className="text-sm text-gray-500">
-                            {consultationType === "video" ? "Video Consultation" : "In-Person Visit"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">Date & Time</p>
-                          <p className="text-sm text-gray-500">
-                            {selectedDate
-                              ? `${selectedDate.toLocaleDateString("en-US", {
-                                  weekday: "long",
-                                  month: "long",
-                                  day: "numeric",
-                                })}`
-                              : "Select a date"}
-                            {selectedTime ? ` at ${selectedTime}` : ""}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">Consultation Fee</p>
-                          <p className="text-sm text-gray-500">$150 (30 minutes)</p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            May be covered by insurance. We'll verify your benefits before the appointment.
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <div className="mt-6 space-y-4">
-                      <h3 className="text-lg font-semibold">What to Expect</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-start gap-2">
-                          <div className="bg-rose-100 text-rose-600 rounded-full h-6 w-6 flex items-center justify-center shrink-0 mt-0.5">
-                            1
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            Complete a brief health questionnaire before your appointment to help your doctor prepare.
-                          </p>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <div className="bg-rose-100 text-rose-600 rounded-full h-6 w-6 flex items-center justify-center shrink-0 mt-0.5">
-                            2
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            {consultationType === "video"
-                              ? "Join your secure video call at the scheduled time. No downloads required."
-                              : "Arrive 15 minutes before your appointment time for check-in."}
-                          </p>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <div className="bg-rose-100 text-rose-600 rounded-full h-6 w-6 flex items-center justify-center shrink-0 mt-0.5">
-                            3
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            Discuss your concerns, get expert advice, and receive a personalized care plan.
-                          </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "1rem",
+                            fontSize: "0.875rem",
+                            color: "#6b7280",
+                          }}
+                        >
+                          <span>
+                            ⭐ {doctor.rating} ({doctor.reviewCount} reviews)
+                          </span>
+                          <span>📅 Available {doctor.nextAvailable}</span>
+                          <span>💰 {doctor.price}</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
-
-        <section className="py-12 bg-gray-50">
-          <div className="container">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight">Why Choose FertiTerra Telemedicine</h2>
-              <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                Our telemedicine platform connects you with top fertility specialists from the comfort of your home.
-              </p>
+                ))}
+              </div>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-3">
-              <Card className="bg-white">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center mb-4">
-                    <Video className="h-6 w-6 text-rose-600" />
-                  </div>
-                  <CardTitle>Convenient Access</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Connect with fertility specialists from anywhere, eliminating travel time and reducing stress.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center mb-4">
-                    <Star className="h-6 w-6 text-rose-600" />
-                  </div>
-                  <CardTitle>Expert Specialists</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Our doctors are board-certified reproductive endocrinologists and fertility specialists with years
-                    of experience.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center mb-4">
-                    <Clock className="h-6 w-6 text-rose-600" />
-                  </div>
-                  <CardTitle>Flexible Scheduling</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Book appointments that fit your schedule, including evenings and weekends, with same-day options
-                    available.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-12 bg-gradient-to-r from-rose-50 to-purple-50">
-          <div className="container">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="max-w-lg">
-                <h2 className="text-3xl font-bold tracking-tight mb-4">Ready to take the first step?</h2>
-                <p className="text-lg text-gray-600 mb-6">
-                  Book a consultation with one of our fertility specialists today and start your journey towards better
-                  reproductive health.
-                </p>
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700"
+            {/* Consultation Type */}
+            <div style={{ marginBottom: "2rem" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "1rem" }}>
+                Consultation Type
+              </h2>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div
+                  onClick={() => setConsultationType("video")}
+                  style={{
+                    backgroundColor: "white",
+                    padding: "1.5rem",
+                    borderRadius: "12px",
+                    border: consultationType === "video" ? "2px solid #e11d48" : "1px solid #e5e7eb",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
                 >
-                  <Link href="#book-appointment">
-                    Book Appointment <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              <div className="relative w-full max-w-md h-64 md:h-80">
-                <Image
-                  src="/images/telemedicine-consultation.jpg"
-                  alt="Telemedicine consultation"
-                  fill
-                  className="object-cover rounded-lg"
-                />
+                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>📹</div>
+                  <h3 style={{ fontSize: "1rem", fontWeight: "600", color: "#111827", marginBottom: "0.5rem" }}>
+                    Video Consultation
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>Secure video call from home</p>
+                </div>
+                <div
+                  onClick={() => setConsultationType("in-person")}
+                  style={{
+                    backgroundColor: "white",
+                    padding: "1.5rem",
+                    borderRadius: "12px",
+                    border: consultationType === "in-person" ? "2px solid #e11d48" : "1px solid #e5e7eb",
+                    cursor: "pointer",
+                    textAlign: "center",
+                  }}
+                >
+                  <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🏥</div>
+                  <h3 style={{ fontSize: "1rem", fontWeight: "600", color: "#111827", marginBottom: "0.5rem" }}>
+                    In-Person Visit
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>Visit our clinic</p>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
 
-      <footer className="border-t py-8 bg-white">
-        <div className="container">
-          <div className="grid gap-8 md:grid-cols-4">
+            {/* Date & Time Selection */}
             <div>
-              <Link href="/" className="flex items-center mb-4">
-                <Image
-                  src="/images/fertiterra-logo.png"
-                  alt="FertiTerra Logo"
-                  width={140}
-                  height={40}
-                  className="h-10 w-auto"
-                />
-              </Link>
-              <p className="text-sm text-gray-500">
-                Empowering women with knowledge and support for their reproductive health journey.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Products</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/test-kits/hormone-fertility" className="text-sm text-gray-500 hover:text-rose-500">
-                    Hormone & Fertility Test
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/test-kits/ovulation" className="text-sm text-gray-500 hover:text-rose-500">
-                    Ovulation Test
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/test-kits/pregnancy" className="text-sm text-gray-500 hover:text-rose-500">
-                    Pregnancy Test
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Services</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/consultation" className="text-sm text-gray-500 hover:text-rose-500">
-                    Doctor Consultations
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/treatments" className="text-sm text-gray-500 hover:text-rose-500">
-                    Treatment Plans
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/support" className="text-sm text-gray-500 hover:text-rose-500">
-                    Support Groups
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/about" className="text-sm text-gray-500 hover:text-rose-500">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="text-sm text-gray-500 hover:text-rose-500">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="text-sm text-gray-500 hover:text-rose-500">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "1rem" }}>
+                Select Date & Time
+              </h2>
+              <div
+                style={{
+                  backgroundColor: "white",
+                  padding: "1.5rem",
+                  borderRadius: "12px",
+                  border: "1px solid #e5e7eb",
+                }}
+              >
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        color: "#374151",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "6px",
+                        fontSize: "0.875rem",
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        color: "#374151",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Time
+                    </label>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.5rem" }}>
+                      {timeSlots.map((slot) => (
+                        <button
+                          key={slot.time}
+                          onClick={() => slot.available && setSelectedTime(slot.time)}
+                          disabled={!slot.available}
+                          style={{
+                            padding: "0.5rem",
+                            border: selectedTime === slot.time ? "2px solid #e11d48" : "1px solid #d1d5db",
+                            borderRadius: "6px",
+                            backgroundColor: !slot.available
+                              ? "#f3f4f6"
+                              : selectedTime === slot.time
+                                ? "#fef2f2"
+                                : "white",
+                            color: !slot.available ? "#9ca3af" : selectedTime === slot.time ? "#e11d48" : "#374151",
+                            cursor: slot.available ? "pointer" : "not-allowed",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {slot.time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-500">© {new Date().getFullYear()} FertiTerra. All rights reserved.</p>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-sm text-gray-500 hover:text-rose-500">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-sm text-gray-500 hover:text-rose-500">
-                Terms of Service
-              </Link>
+
+          {/* Booking Summary */}
+          <div style={{ position: "sticky", top: "2rem" }}>
+            <div
+              style={{ backgroundColor: "white", padding: "1.5rem", borderRadius: "12px", border: "1px solid #e5e7eb" }}
+            >
+              <h3 style={{ fontSize: "1.125rem", fontWeight: "600", color: "#111827", marginBottom: "1rem" }}>
+                Booking Summary
+              </h3>
+
+              <div style={{ marginBottom: "1rem" }}>
+                <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.75rem" }}>
+                  <Image
+                    src={selectedDoctor.image || "/placeholder.svg"}
+                    alt={selectedDoctor.name}
+                    width={48}
+                    height={48}
+                    style={{ borderRadius: "6px", objectFit: "cover" }}
+                  />
+                  <div>
+                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#111827" }}>
+                      {selectedDoctor.name}
+                    </div>
+                    <div style={{ fontSize: "0.75rem", color: "#6b7280" }}>{selectedDoctor.title}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "1rem", marginBottom: "1rem" }}>
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "0.875rem", color: "#6b7280" }}>Type: </span>
+                  <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#111827" }}>
+                    {consultationType === "video" ? "Video Call" : "In-Person"}
+                  </span>
+                </div>
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "0.875rem", color: "#6b7280" }}>Date: </span>
+                  <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#111827" }}>
+                    {selectedDate || "Not selected"}
+                  </span>
+                </div>
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "0.875rem", color: "#6b7280" }}>Time: </span>
+                  <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#111827" }}>
+                    {selectedTime || "Not selected"}
+                  </span>
+                </div>
+                <div>
+                  <span style={{ fontSize: "0.875rem", color: "#6b7280" }}>Fee: </span>
+                  <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#111827" }}>
+                    {selectedDoctor.price}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleBookAppointment}
+                disabled={!selectedDate || !selectedTime || isBooking}
+                style={{
+                  width: "100%",
+                  backgroundColor: !selectedDate || !selectedTime || isBooking ? "#d1d5db" : "#e11d48",
+                  color: "white",
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "none",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: !selectedDate || !selectedTime || isBooking ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                {isBooking ? (
+                  <>
+                    <div
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        border: "2px solid white",
+                        borderTop: "2px solid transparent",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite",
+                      }}
+                    ></div>
+                    Booking...
+                  </>
+                ) : (
+                  "Book Appointment"
+                )}
+              </button>
             </div>
           </div>
         </div>
-      </footer>
+      </main>
+
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }

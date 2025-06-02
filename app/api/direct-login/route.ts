@@ -19,7 +19,11 @@ export async function POST(request: Request) {
         return NextResponse.json({
           success: true,
           message: "Login successful",
-          user: { email: user.email },
+          user: {
+            email: user.email,
+            role: user.role,
+            fullName: user.fullName,
+          },
         })
       } else {
         return NextResponse.json({ error: "Invalid password" }, { status: 401 })
@@ -28,15 +32,21 @@ export async function POST(request: Request) {
 
     // Fallback to demo accounts
     const demoAccounts = {
-      "demo@fertiterra.com": "demo123",
-      "test@example.com": "test123",
+      "admin@fertiterra.com": { password: "admin123", role: "admin", fullName: "FertiTerra Admin" },
+      "demo@fertiterra.com": { password: "demo123", role: "patient", fullName: "Demo User" },
+      "test@example.com": { password: "test123", role: "patient", fullName: "Test User" },
     }
 
-    if (demoAccounts[email as keyof typeof demoAccounts] === password) {
+    const demoAccount = demoAccounts[email as keyof typeof demoAccounts]
+    if (demoAccount && demoAccount.password === password) {
       return NextResponse.json({
         success: true,
         message: "Login successful with demo account",
-        user: { email },
+        user: {
+          email,
+          role: demoAccount.role,
+          fullName: demoAccount.fullName,
+        },
       })
     }
 

@@ -4,7 +4,7 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import type { User, Session } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase"
+import { createClientInstance as createClient } from "@/lib/supabase"
 
 type UserRole = "admin" | "doctor" | "patient" | "support"
 

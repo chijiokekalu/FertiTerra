@@ -199,7 +199,7 @@ export default function HomePage() {
                     asChild
                     className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700"
                   >
-                    <Link href="/plans/basic">
+                    <Link href="/plans/basic-fertility-checkup">
                       Get Started <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -638,7 +638,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="bg-white text-rose-600 hover:bg-gray-100 text-lg px-8 py-4">
-                  <Link href="/plans/basic">Start with Basic Plan</Link>
+                  <Link href="/plans/basic-fertility-checkup">Start with Basic Plan</Link>
                 </Button>
                 <Button
                   asChild
@@ -675,7 +675,7 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4">Plans</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/plans/basic" className="text-sm text-gray-500 hover:text-rose-500">
+                  <Link href="/plans/basic-fertility-checkup" className="text-sm text-gray-500 hover:text-rose-500">
                     Basic Fertility Checkup
                   </Link>
                 </li>

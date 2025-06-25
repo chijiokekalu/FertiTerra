@@ -1,50 +1,139 @@
 import { NextResponse } from "next/server"
 
+interface NotificationRequest {
+  email: string
+  type: string
+  subject?: string
+  message: string
+  customerEmail?: string
+}
+
 export async function POST(request: Request) {
   try {
-    const { email, type, message } = await request.json()
+    const { email, type, subject, message, customerEmail }: NotificationRequest = await request.json()
 
-    // Mock email notification system
-    const notifications = {
-      welcome: {
-        subject: "Welcome to FertiTerra! 🌸",
-        body: `Hi there!\n\nWelcome to FertiTerra! We're excited to help you on your fertility journey.\n\nWhat you can do now:\n• Track your menstrual cycles\n• Read expert fertility content\n• Book video consultations with doctors\n• Get personalized health insights\n\nGet started: https://v0-fertility-telemedicine-platform.vercel.app/dashboard\n\nBest regards,\nThe FertiTerra Team`,
-      },
-      confirmation: {
-        subject: "Please confirm your FertiTerra account",
-        body: `Hi!\n\nPlease confirm your account by clicking the link below:\n\nhttps://v0-fertility-telemedicine-platform.vercel.app/auth/confirm?email=${email}\n\nIf you didn't create this account, please ignore this email.\n\nBest regards,\nThe FertiTerra Team`,
-      },
-      appointment: {
-        subject: "Appointment Confirmation - FertiTerra",
-        body: `Your appointment has been confirmed!\n\nWe'll send you a reminder 24 hours before your consultation.\n\nBest regards,\nThe FertiTerra Team`,
-      },
+    // Log the notification for development
+    console.log(`📧 Sending ${type} notification to: ${email}`)
+    console.log(`📝 Subject: ${subject || `FertiTerra ${type} Notification`}`)
+    console.log(`📄 Message: ${message}`)
+
+    // In production, integrate with email service (SendGrid, Mailgun, etc.)
+    // For now, we'll simulate email sending
+
+    const emailData = {
+      to: email,
+      subject: subject || `FertiTerra ${type} Notification`,
+      html: generateEmailHTML(type, message, customerEmail),
+      text: message,
+      timestamp: new Date().toISOString(),
     }
-
-    const notification = notifications[type as keyof typeof notifications] || {
-      subject: "FertiTerra Notification",
-      body: message || "You have a new notification from FertiTerra.",
-    }
-
-    // Log the email (in a real app, send actual email)
-    console.log(`📧 Email Notification:`)
-    console.log(`To: ${email}`)
-    console.log(`Subject: ${notification.subject}`)
-    console.log(`Body: ${notification.body}`)
 
     // Simulate email sending delay
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
+    // Log successful send
+    console.log(`✅ ${type} notification sent successfully to: ${email}`)
+
+    // If there's a customer email, send them a copy too
+    if (customerEmail && type === "consultation_scheduled") {
+      await sendCustomerConfirmation(customerEmail, message)
+    }
+
     return NextResponse.json({
       success: true,
       message: "Notification sent successfully",
-      details: {
-        to: email,
-        subject: notification.subject,
-        sentAt: new Date().toISOString(),
-      },
+      type,
+      recipient: email,
     })
   } catch (error) {
-    console.error("Notification error:", error)
-    return NextResponse.json({ error: "Failed to send notification" }, { status: 500 })
+    console.error("❌ Failed to send notification:", error)
+    return NextResponse.json(
+      {
+        error: "Failed to send notification",
+        message: "Email service temporarily unavailable",
+      },
+      { status: 500 },
+    )
+  }
+}
+
+function generateEmailHTML(type: string, message: string, customerEmail?: string): string {
+  const baseStyle = `
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  `
+
+  const headerStyle = `
+    background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+  `
+
+  const contentStyle = `
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 0 0 10px 10px;
+    white-space: pre-line;
+  `
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>FertiTerra ${type} Notification</title>
+    </head>
+    <body style="${baseStyle}">
+      <div style="${headerStyle}">
+        <h1>🌸 FertiTerra Notification</h1>
+        <p>${type.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}</p>
+      </div>
+      <div style="${contentStyle}">
+        ${message}
+        
+        ${customerEmail ? `<p><strong>Customer Email:</strong> ${customerEmail}</p>` : ""}
+        
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+        <p style="color: #666; font-size: 14px;">
+          This is an automated notification from FertiTerra Technologies.<br>
+          Time: ${new Date().toLocaleString()}
+        </p>
+      </div>
+    </body>
+    </html>
+  `
+}
+
+async function sendCustomerConfirmation(customerEmail: string, originalMessage: string) {
+  try {
+    console.log(`📧 Sending customer confirmation to: ${customerEmail}`)
+
+    // Extract appointment details from the original message
+    const customerMessage = `Your consultation has been scheduled successfully!
+
+We'll send you:
+• A confirmation email with all details
+• A calendar invite 24 hours before your appointment  
+• Video call link 30 minutes before your consultation
+• Written summary after your consultation
+
+If you need to reschedule, please contact us at least 24 hours in advance.
+
+Thank you for choosing FertiTerra!
+
+Best regards,
+The FertiTerra Team`
+
+    // In production, send actual email to customer
+    console.log(`✅ Customer confirmation prepared for: ${customerEmail}`)
+  } catch (error) {
+    console.error("Failed to send customer confirmation:", error)
   }
 }

@@ -43,14 +43,15 @@ export default function PaymentPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: 15000, // $150.00 in cents
+          amount: 500, // $5.00 in cents
           paymentMethod: paymentMethod,
           ...formData,
         }),
       })
 
       if (paymentResponse.ok) {
-        router.push("/plans/basic-fertility-checkup/schedule")
+        const result = await paymentResponse.json()
+        router.push(`/plans/basic-fertility-checkup/payment-success?paymentId=${result.paymentId}`)
       } else {
         throw new Error("Payment failed")
       }
@@ -210,18 +211,18 @@ export default function PaymentPage() {
                   <CardContent className="space-y-4">
                     <div className="flex justify-between">
                       <span>Basic Fertility Checkup</span>
-                      <span>$150.00</span>
+                      <span>$5.00</span>
                     </div>
 
                     <div className="border-t pt-4 flex justify-between font-medium text-lg">
                       <span>Total</span>
-                      <span>$150.00</span>
+                      <span>$5.00</span>
                     </div>
 
                     <div className="space-y-2 text-sm text-gray-500">
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span>30-minute consultation included</span>
+                        <span>15-minute consultation included</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
@@ -248,7 +249,7 @@ export default function PaymentPage() {
                         !formData.cvv
                       }
                     >
-                      {isProcessing ? "Processing Payment..." : "Complete Payment - $150.00"}
+                      {isProcessing ? "Processing Payment..." : "Complete Payment - $5.00"}
                     </Button>
                   </CardContent>
                 </Card>

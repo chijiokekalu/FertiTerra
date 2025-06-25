@@ -49,17 +49,19 @@ export default function ConfirmationPage() {
                   <div>
                     <p className="font-medium">Video Consultation</p>
                     <p className="text-sm text-gray-600">
-                      Join your secure video call at the scheduled time. Our fertility specialist will review your
-                      information and provide personalized recommendations.
+                      Join your secure video call at the scheduled time for a quick 15-minute consultation focused on
+                      your fertility health assessment. Our fertility specialist will review your information and
+                      provide personalized recommendations.
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-5 w-5 text-rose-500 mt-0.5" />
                   <div>
-                    <p className="font-medium">Follow-up Summary</p>
+                    <p className="font-medium">Personalized Plan</p>
                     <p className="text-sm text-gray-600">
-                      After your consultation, you'll receive a written summary with recommendations and next steps.
+                      Following the consultation, we'll craft a personalized plan tailored to your unique needs and
+                      goals.
                     </p>
                   </div>
                 </div>

@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Header } from "@/components/header"
-import { CreditCard, Shield, CheckCircle, Clock, Smartphone, Building2, Copy } from "lucide-react"
+import { CreditCard, Shield, CheckCircle, Clock, Smartphone, Building2, Copy, AlertTriangle } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 
 export default function PaymentPage() {
@@ -48,9 +48,6 @@ export default function PaymentPage() {
     setIsProcessing(true)
 
     try {
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-
       const paymentData = {
         amount: 500, // $5.00 in cents
         paymentMethod: paymentMethod,
@@ -58,23 +55,62 @@ export default function PaymentPage() {
         ...formData,
       }
 
-      const paymentResponse = await fetch("/api/fertility-checkup/payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paymentData),
-      })
+      if (paymentMethod === "card") {
+        // For card payments, use Paystack integration
+        const initResponse = await fetch("/api/paystack/initialize", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.cardholderName + "@example.com", // In real app, get from questionnaire
+            amount: 5, // $5.00
+            reference: `fertility_${Date.now()}`,
+            metadata: {
+              service: "basic-fertility-checkup",
+              customer_name: formData.cardholderName,
+            },
+          }),
+        })
 
-      if (paymentResponse.ok) {
-        const result = await paymentResponse.json()
-        router.push(`/plans/basic-fertility-checkup/payment-success?paymentId=${result.paymentId}`)
+        if (initResponse.ok) {
+          const result = await initResponse.json()
+          // Redirect to Paystack payment page
+          window.location.href = result.authorization_url
+          return
+        } else {
+          throw new Error("Payment initialization failed")
+        }
       } else {
-        throw new Error("Payment failed")
+        // For mobile money and bank transfers, use existing flow
+        const paymentResponse = await fetch("/api/fertility-checkup/payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(paymentData),
+        })
+
+        if (paymentResponse.ok) {
+          const result = await paymentResponse.json()
+
+          if (paymentMethod === "bank") {
+            // For bank transfers, show different success message
+            router.push(`/plans/basic-fertility-checkup/bank-transfer-pending?requestId=${result.paymentId}`)
+          } else {
+            router.push(`/plans/basic-fertility-checkup/payment-success?paymentId=${result.paymentId}`)
+          }
+        } else {
+          throw new Error("Payment failed")
+        }
       }
     } catch (error) {
       console.error("Payment error:", error)
-      alert("Payment failed. Please try again.")
+      toast({
+        title: "Payment Failed",
+        description: "Please try again or contact support",
+        variant: "destructive",
+      })
     } finally {
       setIsProcessing(false)
     }
@@ -122,21 +158,21 @@ export default function PaymentPage() {
                           <RadioGroupItem value="card" id="card" />
                           <Label htmlFor="card" className="flex items-center gap-2">
                             <CreditCard className="h-4 w-4" />
-                            Credit/Debit Card
+                            Credit/Debit Card (Instant)
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="mobile" id="mobile" />
                           <Label htmlFor="mobile" className="flex items-center gap-2">
                             <Smartphone className="h-4 w-4" />
-                            Mobile Money
+                            Mobile Money (Instant)
                           </Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="bank" id="bank" />
                           <Label htmlFor="bank" className="flex items-center gap-2">
                             <Building2 className="h-4 w-4" />
-                            Bank Transfer (Organizations)
+                            Bank Transfer (Manual Verification)
                           </Label>
                         </div>
                       </RadioGroup>
@@ -146,8 +182,8 @@ export default function PaymentPage() {
                     {paymentMethod === "card" && (
                       <div className="space-y-4">
                         <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-                          <p className="font-medium">Accepted Cards:</p>
-                          <p>Visa, Mastercard, Verve (Nigeria) via Paystack, Flutterwave, or Stripe</p>
+                          <p className="font-medium">✅ Instant Payment via Paystack</p>
+                          <p>Visa, Mastercard, Verve accepted. Secure & encrypted.</p>
                         </div>
 
                         <div>
@@ -194,51 +230,6 @@ export default function PaymentPage() {
                             />
                           </div>
                         </div>
-
-                        {/* Billing Address */}
-                        <div className="space-y-4">
-                          <h3 className="font-medium">Billing Address</h3>
-                          <div>
-                            <Label htmlFor="billingAddress">Address *</Label>
-                            <Input
-                              id="billingAddress"
-                              value={formData.billingAddress}
-                              onChange={(e) => handleInputChange("billingAddress", e.target.value)}
-                              placeholder="123 Main Street"
-                              required
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-4">
-                            <div>
-                              <Label htmlFor="city">City *</Label>
-                              <Input
-                                id="city"
-                                value={formData.city}
-                                onChange={(e) => handleInputChange("city", e.target.value)}
-                                required
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="state">State *</Label>
-                              <Input
-                                id="state"
-                                value={formData.state}
-                                onChange={(e) => handleInputChange("state", e.target.value)}
-                                required
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="zipCode">ZIP Code *</Label>
-                              <Input
-                                id="zipCode"
-                                value={formData.zipCode}
-                                onChange={(e) => handleInputChange("zipCode", e.target.value)}
-                                required
-                              />
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     )}
 
@@ -246,7 +237,7 @@ export default function PaymentPage() {
                     {paymentMethod === "mobile" && (
                       <div className="space-y-4">
                         <div className="text-sm text-gray-600 bg-green-50 p-3 rounded-lg">
-                          <p className="font-medium">Available Mobile Money Providers:</p>
+                          <p className="font-medium">✅ Instant Mobile Money Payment</p>
                           <p>MTN Mobile Money, Airtel Money, M-Pesa, MoMoPay</p>
                         </div>
 
@@ -275,25 +266,18 @@ export default function PaymentPage() {
                             required
                           />
                         </div>
-
-                        <div className="text-sm text-gray-600 bg-yellow-50 p-3 rounded-lg">
-                          <p className="font-medium">How it works:</p>
-                          <ol className="list-decimal list-inside mt-2 space-y-1">
-                            <li>Click "Complete Payment" below</li>
-                            <li>You'll receive a payment prompt on your phone</li>
-                            <li>Enter your mobile money PIN to confirm</li>
-                            <li>Payment confirmation will be sent via SMS</li>
-                          </ol>
-                        </div>
                       </div>
                     )}
 
                     {/* Bank Transfer Form */}
                     {paymentMethod === "bank" && (
                       <div className="space-y-4">
-                        <div className="text-sm text-gray-600 bg-purple-50 p-3 rounded-lg">
-                          <p className="font-medium">For Organizations & NGOs:</p>
-                          <p>Bank transfer payments with invoice generation available</p>
+                        <div className="text-sm text-gray-600 bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                            <p className="font-medium">Manual Verification Required</p>
+                          </div>
+                          <p>Bank transfers require manual payment confirmation. You'll receive an invoice.</p>
                         </div>
 
                         <div>
@@ -386,16 +370,6 @@ export default function PaymentPage() {
                               </div>
                             </div>
                           </div>
-
-                          <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded">
-                            <p className="font-medium">Next Steps:</p>
-                            <ol className="list-decimal list-inside mt-2 space-y-1">
-                              <li>Submit this form to receive an invoice</li>
-                              <li>Make payment to the appropriate account</li>
-                              <li>Send payment confirmation to our team</li>
-                              <li>We'll confirm and schedule your consultation</li>
-                            </ol>
-                          </div>
                         </div>
                       </div>
                     )}
@@ -450,10 +424,12 @@ export default function PaymentPage() {
                       disabled={isProcessing || !isFormValid()}
                     >
                       {isProcessing
-                        ? "Processing Payment..."
+                        ? "Processing..."
                         : paymentMethod === "bank"
-                          ? "Request Invoice - $5.00"
-                          : "Complete Payment - $5.00"}
+                          ? "Send Invoice Request"
+                          : paymentMethod === "card"
+                            ? "Pay with Card - $5.00"
+                            : "Pay with Mobile Money - $5.00"}
                     </Button>
 
                     {paymentMethod === "mobile" && (

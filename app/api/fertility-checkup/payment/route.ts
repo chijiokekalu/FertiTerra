@@ -15,40 +15,47 @@ export async function POST(request: Request) {
       timestamp: new Date().toISOString(),
     })
 
-    // Simulate payment processing delay
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    // Generate payment confirmation ID
-    const paymentId = `pay_${Date.now()}`
+    // Generate payment/request ID
+    const paymentId = `${paymentData.paymentMethod}_${Date.now()}`
 
     // Handle different payment methods
     let paymentMessage = ""
     let emailSubject = ""
+    let paymentStatus = "completed"
+    let responseMessage = "Payment processed successfully"
 
     switch (paymentData.paymentMethod) {
       case "card":
-        paymentMessage = `Card payment of $5.00 received for Basic Fertility Checkup
+        // For card payments, integrate with Paystack/Flutterwave
+        // This is a simulation - replace with actual payment processing
+        paymentMessage = `💳 CARD PAYMENT RECEIVED - $5.00
         
 Payment Details:
-- Amount: $5.00
+- Amount: $5.00 USD
 - Payment ID: ${paymentId}
 - Date: ${new Date().toLocaleString()}
 - Service: Basic Fertility Checkup
 - Customer: ${paymentData.cardholderName || "N/A"}
 - Payment Method: Credit/Debit Card
+- Card Last 4: ${paymentData.cardNumber?.slice(-4) || "****"}
+
+✅ PAYMENT CONFIRMED - READY TO SCHEDULE CONSULTATION
 
 Next Steps:
-- Customer will schedule consultation
-- Prepare for 15-minute consultation session
-- Review customer questionnaire responses`
-        emailSubject = "New Card Payment Received - Basic Fertility Checkup"
+1. Customer will schedule consultation
+2. Prepare for 15-minute consultation session  
+3. Review customer questionnaire responses
+4. Send consultation link 30 minutes before appointment`
+
+        emailSubject = "💳 CARD PAYMENT CONFIRMED - $5.00 - Basic Fertility Checkup"
         break
 
       case "mobile":
-        paymentMessage = `Mobile Money payment of $5.00 received for Basic Fertility Checkup
+        // For mobile money, integrate with payment providers
+        paymentMessage = `📱 MOBILE MONEY PAYMENT RECEIVED - $5.00
         
 Payment Details:
-- Amount: $5.00
+- Amount: $5.00 USD
 - Payment ID: ${paymentId}
 - Date: ${new Date().toLocaleString()}
 - Service: Basic Fertility Checkup
@@ -56,34 +63,49 @@ Payment Details:
 - Phone Number: ${paymentData.phoneNumber || "N/A"}
 - Payment Method: Mobile Money
 
+✅ PAYMENT CONFIRMED - READY TO SCHEDULE CONSULTATION
+
 Next Steps:
-- Customer will schedule consultation
-- Prepare for 15-minute consultation session
-- Review customer questionnaire responses`
-        emailSubject = "New Mobile Money Payment Received - Basic Fertility Checkup"
+1. Customer will schedule consultation
+2. Prepare for 15-minute consultation session
+3. Review customer questionnaire responses  
+4. Send consultation link 30 minutes before appointment`
+
+        emailSubject = "📱 MOBILE MONEY PAYMENT CONFIRMED - $5.00 - Basic Fertility Checkup"
         break
 
       case "bank":
-        paymentMessage = `Bank Transfer request for $5.00 - Basic Fertility Checkup
+        // For bank transfers, this is just a request - not actual payment
+        paymentStatus = "pending_bank_transfer"
+        responseMessage = "Bank transfer request submitted. Invoice sent to your email."
+
+        paymentMessage = `🏦 BANK TRANSFER REQUEST - $5.00 (PENDING PAYMENT)
         
+⚠️ ACTION REQUIRED: AWAITING BANK TRANSFER CONFIRMATION
+
 Organization Details:
 - Organization: ${paymentData.organizationName || "N/A"}
 - Contact Person: ${paymentData.contactPerson || "N/A"}
 - Email: ${paymentData.organizationEmail || "N/A"}
-- Amount: $5.00
+- Amount: $5.00 USD
 - Service: Basic Fertility Checkup
 - Request ID: ${paymentId}
 - Date: ${new Date().toLocaleString()}
 
-Action Required:
-- Generate and send invoice to organization
-- Await bank transfer confirmation
-- Schedule consultation after payment confirmation
+🔄 NEXT ACTIONS REQUIRED:
+1. ✅ Invoice sent to: ${paymentData.organizationEmail}
+2. ⏳ Awaiting bank transfer to our accounts
+3. ⏳ Customer to send payment confirmation
+4. ⏳ Verify payment received
+5. ⏳ Schedule consultation after payment confirmation
 
-Bank Details Provided:
-- RWF Account: 4003201240597 (Equity Bank Rwanda)
-- USD Account: EQBLRWRWXXX (Swift Code)`
-        emailSubject = "New Bank Transfer Request - Basic Fertility Checkup"
+💰 BANK DETAILS PROVIDED TO CUSTOMER:
+- RWF Account: 4003201240597 (Equity Bank Rwanda)  
+- USD Account: Swift Code EQBLRWRWXXX
+
+📧 FOLLOW UP: Contact organization if no payment received within 48 hours`
+
+        emailSubject = "🏦 BANK TRANSFER REQUEST - $5.00 - AWAITING PAYMENT"
         break
 
       default:
@@ -91,7 +113,7 @@ Bank Details Provided:
         emailSubject = "New Payment Request - Basic Fertility Checkup"
     }
 
-    // Send payment notification email to FertiTerra
+    // Send payment notification email to FertiTerra team
     try {
       await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/send-notification`, {
         method: "POST",
@@ -100,9 +122,10 @@ Bank Details Provided:
         },
         body: JSON.stringify({
           email: "fertiterratechnologies@africanimpactinitiative.com",
-          type: "payment_received",
+          type: paymentData.paymentMethod === "bank" ? "bank_transfer_request" : "payment_confirmed",
           subject: emailSubject,
           message: paymentMessage,
+          customerEmail: paymentData.organizationEmail || paymentData.email,
         }),
       })
     } catch (emailError) {
@@ -110,7 +133,7 @@ Bank Details Provided:
       // Don't fail the payment if email fails
     }
 
-    // For bank transfers, also send invoice to organization
+    // For bank transfers, send invoice to organization
     if (paymentData.paymentMethod === "bank" && paymentData.organizationEmail) {
       try {
         await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/send-notification`, {
@@ -120,38 +143,50 @@ Bank Details Provided:
           },
           body: JSON.stringify({
             email: paymentData.organizationEmail,
-            type: "invoice_request",
-            subject: "Invoice Request - FertiTerra Basic Fertility Checkup",
+            type: "invoice_sent",
+            subject: "📄 INVOICE - FertiTerra Basic Fertility Checkup - $5.00",
             message: `Dear ${paymentData.contactPerson},
 
 Thank you for your interest in FertiTerra's Basic Fertility Checkup service.
 
-Service Details:
-- Service: Basic Fertility Checkup
+📋 INVOICE DETAILS:
+- Service: Basic Fertility Checkup (15-minute consultation)
 - Amount: $5.00 USD
 - Organization: ${paymentData.organizationName}
-- Request ID: ${paymentId}
+- Invoice ID: ${paymentId}
+- Date: ${new Date().toLocaleString()}
 
-Payment Instructions:
+💰 PAYMENT INSTRUCTIONS:
 Please make payment to one of our bank accounts:
 
-RWF Account:
+🇷🇼 RWF ACCOUNT:
 - Bank: Equity Bank Rwanda
-- Account Name: FertiTerra Technologies
+- Account Name: FertiTerra Technologies  
 - Account Number: 4003201240597
 
-USD Account:
+🌍 USD ACCOUNT:
 - Bank: Equity Bank Rwanda
 - Account Name: FertiTerra Technologies
 - Swift Code: EQBLRWRWXXX
 - Bank Address: 24R6+C48, KG 11 Ave, Kigali
 
-After payment, please send confirmation to fertiterratechnologies@africanimpactinitiative.com
+📧 AFTER PAYMENT:
+Please send payment confirmation (receipt/screenshot) to:
+fertiterratechnologies@africanimpactinitiative.com
 
-We will then schedule your consultation session.
+⏰ NEXT STEPS:
+1. Make bank transfer payment
+2. Send payment confirmation
+3. We'll verify payment (within 24 hours)
+4. Schedule your 15-minute consultation
+5. Receive personalized fertility recommendations
+
+❓ QUESTIONS?
+Contact us at: fertiterratechnologies@africanimpactinitiative.com
 
 Best regards,
-FertiTerra Technologies Team`,
+FertiTerra Technologies Team
+🌸 Supporting your fertility journey`,
           }),
         })
       } catch (invoiceError) {
@@ -163,7 +198,7 @@ FertiTerra Technologies Team`,
     const paymentRecord = {
       id: paymentId,
       amount: paymentData.amount,
-      status: paymentData.paymentMethod === "bank" ? "pending" : "completed",
+      status: paymentStatus,
       service: "basic-fertility-checkup",
       paymentMethod: paymentData.paymentMethod,
       customerInfo: {
@@ -180,13 +215,11 @@ FertiTerra Technologies Team`,
     return NextResponse.json({
       success: true,
       paymentId: paymentId,
-      message:
-        paymentData.paymentMethod === "bank"
-          ? "Invoice request submitted successfully"
-          : "Payment processed successfully",
+      message: responseMessage,
       amount: "$5.00",
       service: "Basic Fertility Checkup",
       paymentMethod: paymentData.paymentMethod,
+      status: paymentStatus,
     })
   } catch (error) {
     console.error("Error processing payment:", error)

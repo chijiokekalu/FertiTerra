@@ -41,12 +41,12 @@ export default function ForEmployersPage() {
   const resources = [
     {
       title: "Welcome To The Inequality Report",
-      author: "Hertility Team",
+      author: "FertiTerra Team",
       image: "/placeholder.svg?height=200&width=300",
     },
     {
       title: "Menopause in the workplace",
-      author: "Hertility Team",
+      author: "FertiTerra Team",
       image: "/placeholder.svg?height=200&width=300",
     },
     {
@@ -356,7 +356,7 @@ export default function ForEmployersPage() {
                   </div>
                 </div>
                 <p className="text-gray-600 italic">
-                  "Dr Helen and the Hertility team did a phenomenal job in educating our workforce on all things
+                  "Dr Helen and the FertiTerra team did a phenomenal job in educating our workforce on all things
                   menopause related. It was done in such an approachable and engaging way."
                 </p>
               </CardContent>
@@ -371,7 +371,7 @@ export default function ForEmployersPage() {
                   </div>
                 </div>
                 <p className="text-gray-600 italic">
-                  "We are incredibly proud of this innovative new partnership with Hertility, [...] This latest
+                  "We are incredibly proud of this innovative new partnership with FertiTerra, [...] This latest
                   initiative aligns with our commitment to support women's health and the wellbeing of all our people."
                 </p>
               </CardContent>
@@ -385,7 +385,7 @@ export default function ForEmployersPage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-6">See a Return on Investment</h2>
           <p className="text-xl mb-12 opacity-90">
-            For every £1 spent on Hertility Reproductive Health benefits, you'll receive £6 in reduced absenteeism,
+            For every £1 spent on FertiTerra Reproductive Health benefits, you'll receive £6 in reduced absenteeism,
             presenteeism and turnover.
           </p>
           <div className="flex justify-center items-center space-x-8">
@@ -470,14 +470,14 @@ export default function ForEmployersPage() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="diversity">
-                <AccordionTrigger>How does Hertility help workplace diversity?</AccordionTrigger>
+                <AccordionTrigger>How does FertiTerra help workplace diversity?</AccordionTrigger>
                 <AccordionContent>
                   Our services support women and LGBTQ+ employees throughout their reproductive health journey, creating
                   more inclusive workplaces and improving diversity metrics.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="males">
-                <AccordionTrigger>How does Hertility support males in the workplace?</AccordionTrigger>
+                <AccordionTrigger>How does FertiTerra support males in the workplace?</AccordionTrigger>
                 <AccordionContent>
                   We provide male fertility testing and support services, recognizing that reproductive health affects
                   all employees regardless of gender.

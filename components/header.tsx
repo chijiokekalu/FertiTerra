@@ -408,7 +408,7 @@ export function Header() {
               >
                 <div className="space-y-4">
                   <div>
-                    <h3 className="font-medium text-gray-900 mb-2">Hertility</h3>
+                    <h3 className="font-medium text-gray-900 mb-2">FertiTerra</h3>
                     <ul className="space-y-2">
                       <li>
                         <Link href="/about/founders-story" className="text-sm hover:text-rose-500 block">
@@ -1056,7 +1056,7 @@ export function Header() {
                 {expandedSection === "learn" && (
                   <div className="mt-2 pl-4 space-y-4">
                     <div>
-                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Hertility</h3>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">FertiTerra</h3>
                       <ul className="space-y-2">
                         <li>
                           <Link href="/about/founders-story" className="text-sm block py-1" onClick={toggleMobileMenu}>

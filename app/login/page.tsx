@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [messageType, setMessageType] = useState<"success" | "error" | "">("")
-  const [availableUsers, setAvailableUsers] = useState<string[]>([])
 
   const useTestAccount = (testEmail: string, testPassword: string) => {
     setEmail(testEmail)
@@ -22,9 +21,6 @@ export default function LoginPage() {
 
   // Load available users and auto-fill from signup
   useEffect(() => {
-    const users = userStorage.listUsers()
-    setAvailableUsers(users)
-
     // Auto-fill from recent signup
     const lastEmail = localStorage.getItem("lastSignupEmail")
     const lastPassword = localStorage.getItem("lastSignupPassword")
@@ -132,33 +128,17 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <Image
-            src="/placeholder.svg?height=45&width=160&text=FertiTerra"
+            src="/images/fertiterra-logo-main.png"
             alt="FertiTerra Logo"
-            width={160}
-            height={45}
-            style={{ height: "45px", width: "auto", marginBottom: "1rem" }}
+            width={200}
+            height={60}
+            style={{ height: "auto", width: "200px", marginBottom: "1rem" }}
           />
           <h1 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "0.5rem" }}>
             Welcome back
           </h1>
           <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>Sign in to your FertiTerra account</p>
         </div>
-
-        {/* Available Users Info */}
-        {availableUsers.length > 0 && (
-          <div
-            style={{
-              backgroundColor: "#f0f9ff",
-              padding: "0.75rem",
-              borderRadius: "8px",
-              marginBottom: "1rem",
-              fontSize: "0.875rem",
-              color: "#0369a1",
-            }}
-          >
-            ✅ {availableUsers.length} registered user{availableUsers.length !== 1 ? "s" : ""} found
-          </div>
-        )}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -259,43 +239,6 @@ export default function LoginPage() {
             <Link href="/" style={{ color: "#9ca3af", textDecoration: "none" }}>
               ← Back to Home
             </Link>
-          </div>
-        </div>
-
-        {/* Quick Login Options */}
-        <div style={{ marginTop: "1.5rem", borderTop: "1px solid #e5e7eb", paddingTop: "1rem" }}>
-          <p style={{ fontSize: "0.75rem", color: "#6b7280", marginBottom: "0.5rem", textAlign: "center" }}>
-            Quick login options:
-          </p>
-          <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
-            <button
-              onClick={() => setEmail("demo@fertiterra.com")}
-              style={{
-                fontSize: "0.75rem",
-                padding: "0.25rem 0.5rem",
-                backgroundColor: "#f3f4f6",
-                border: "1px solid #d1d5db",
-                borderRadius: "4px",
-                cursor: "pointer",
-                color: "#374151",
-              }}
-            >
-              Demo Account
-            </button>
-            <button
-              onClick={() => setEmail("test@example.com")}
-              style={{
-                fontSize: "0.75rem",
-                padding: "0.25rem 0.5rem",
-                backgroundColor: "#f3f4f6",
-                border: "1px solid #d1d5db",
-                borderRadius: "4px",
-                cursor: "pointer",
-                color: "#374151",
-              }}
-            >
-              Test Account
-            </button>
           </div>
         </div>
       </div>

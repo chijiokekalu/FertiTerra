@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/auth-context"
-import { Menu, X, ShoppingBag } from "lucide-react"
+import { Menu, X, ShoppingBag, Linkedin, Instagram } from "lucide-react"
 
 export function Header() {
   const { user, profile, isAdmin, signOut } = useAuth()
@@ -32,10 +32,32 @@ export function Header() {
     <header className="w-full bg-white">
       {/* Banner */}
       <div className="w-full bg-[#e5d6c9] py-2 px-4 text-center text-sm">
-        Download a sample Advanced Hormone and Fertility Test report.{" "}
-        <Link href="/sample-report" className="font-medium">
-          Download it here
-        </Link>
+        <div className="flex items-center justify-center gap-4">
+          <span>Download a sample Advanced Hormone and Fertility Test report.</span>
+          <Link href="/sample-report" className="font-medium">
+            Download it here
+          </Link>
+          <div className="hidden sm:flex items-center gap-3 ml-4">
+            <a
+              href="https://www.linkedin.com/company/fertiterra-technologies/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 transition-colors"
+              aria-label="Follow us on LinkedIn"
+            >
+              <Linkedin className="h-4 w-4" />
+            </a>
+            <a
+              href="https://www.instagram.com/fertiterra_technologies?igsh=MXMyZmN3cGRraTJzcg=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pink-600 hover:text-pink-800 transition-colors"
+              aria-label="Follow us on Instagram"
+            >
+              <Instagram className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Main header */}
@@ -1213,7 +1235,7 @@ export function Header() {
 
             <div className="border-t pt-4 flex flex-col space-y-2">
               <Link href="/cart" onClick={toggleMobileMenu}>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start bg-transparent">
                   <ShoppingBag className="h-4 w-4 mr-2" />
                   Cart
                 </Button>
@@ -1229,7 +1251,7 @@ export function Header() {
                     </Link>
                   )}
                   <Link href="/dashboard" onClick={toggleMobileMenu}>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full bg-transparent">
                       Dashboard
                     </Button>
                   </Link>
@@ -1247,7 +1269,7 @@ export function Header() {
               ) : (
                 <>
                   <Link href="/login" onClick={toggleMobileMenu}>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full bg-transparent">
                       Login
                     </Button>
                   </Link>
@@ -1256,6 +1278,28 @@ export function Header() {
                   </Link>
                 </>
               )}
+
+              {/* Mobile Social Media Links */}
+              <div className="flex justify-center gap-4 pt-2">
+                <a
+                  href="https://www.linkedin.com/company/fertiterra-technologies/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                  aria-label="Follow us on LinkedIn"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://www.instagram.com/fertiterra_technologies?igsh=MXMyZmN3cGRraTJzcg=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-600 hover:text-pink-800 transition-colors"
+                  aria-label="Follow us on Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

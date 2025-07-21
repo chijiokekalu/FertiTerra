@@ -14,6 +14,8 @@ import {
   Shield,
   MessageSquare,
   TestTube,
+  Linkedin,
+  Instagram,
 } from "lucide-react"
 import { Header } from "@/components/header"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -32,10 +34,6 @@ export default function HomePage() {
                   <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl leading-tight">
                     You deserve better fertility care. <span className="text-rose-500 block">Full stop.</span>
                   </h1>
-                  <p className="text-xl text-gray-600 md:text-2xl leading-relaxed">
-                    Comprehensive hormone testing, personalized care plans, and direct access to fertility
-                    specialists—all designed around you, not outdated systems.
-                  </p>
                 </div>
 
                 {/* Care Promise */}
@@ -54,16 +52,80 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-                  <Button
-                    asChild
-                    size="lg"
-                    className="bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-lg px-8 py-4"
-                  >
-                    <Link href="/signup">Start Your Journey</Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
-                    <Link href="/consultation">Speak to a Doctor</Link>
+                {/* Choose where to start section */}
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-semibold text-gray-900">Choose where to start</h3>
+
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Personalise my test option */}
+                    <div className="bg-rose-100/50 backdrop-blur-sm rounded-2xl p-6 border border-rose-200">
+                      <div className="flex gap-2 mb-4">
+                        <Badge className="bg-black text-white hover:bg-gray-800">Most popular</Badge>
+                        <Badge variant="outline" className="bg-gray-200 text-gray-700">
+                          <Clock className="h-3 w-3 mr-1" />5 min
+                        </Badge>
+                      </div>
+
+                      <div className="mb-6">
+                        <h4 className="text-xl font-bold text-gray-900 mb-4">Advanced Hormone and Fertility Test</h4>
+                        <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
+                          <Image
+                            src="/images/couple-fertility-struggle-1.png"
+                            alt="Concerned couple sitting on couch discussing fertility challenges - woman looking at pregnancy test while man supports her with head in hands showing emotional stress of fertility journey"
+                            width={280}
+                            height={160}
+                            className="object-cover w-full h-full"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            loading="eager"
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        asChild
+                        className="w-full bg-black hover:bg-gray-800 text-white py-3 text-lg font-semibold"
+                      >
+                        <Link href="/plans/basic-fertility-checkup">Personalise my test</Link>
+                      </Button>
+                    </div>
+
+                    {/* Speak to an expert option */}
+                    <div className="bg-purple-100/50 backdrop-blur-sm rounded-2xl p-6 border border-purple-200">
+                      <div className="mb-6">
+                        <h4 className="text-xl font-bold text-gray-900 mb-2">Need some advice?</h4>
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="text-lg font-semibold text-gray-900">Speak to an expert</span>
+                          <ArrowRight className="h-5 w-5 text-gray-600" />
+                        </div>
+
+                        <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
+                          <Image
+                            src="/images/couple-fertility-struggle-2.png"
+                            alt="Couple on bed dealing with fertility disappointment - woman covering face in distress while holding pregnancy test, man providing emotional support and comfort during difficult fertility journey"
+                            width={280}
+                            height={160}
+                            className="object-cover w-full h-full"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            loading="eager"
+                          />
+                        </div>
+                      </div>
+
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full border-purple-300 text-purple-700 hover:bg-purple-50 py-3 text-lg font-semibold bg-transparent"
+                      >
+                        <Link href="/consultation">Speak to an expert</Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Remove the old button section and replace with a smaller secondary CTA */}
+                <div className="flex justify-center">
+                  <Button asChild size="sm" variant="ghost" className="text-gray-600 hover:text-rose-600">
+                    <Link href="/learn">Learn more about fertility testing</Link>
                   </Button>
                 </div>
               </div>
@@ -667,9 +729,29 @@ export default function HomePage() {
                   className="h-10 w-auto"
                 />
               </Link>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 mb-4">
                 Empowering women with the fertility care they deserve—personalized, accessible, and compassionate.
               </p>
+              <div className="flex gap-4">
+                <a
+                  href="https://www.linkedin.com/company/fertiterra-technologies/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-blue-600 transition-colors"
+                  aria-label="Follow us on LinkedIn"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://www.instagram.com/fertiterra_technologies?igsh=MXMyZmN3cGRraTJzcg=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-pink-600 transition-colors"
+                  aria-label="Follow us on Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              </div>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Plans</h3>

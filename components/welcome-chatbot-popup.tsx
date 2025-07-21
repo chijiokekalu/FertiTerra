@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { X, Send } from "lucide-react"
+import { X, Send, Linkedin, Instagram } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type Message = {
@@ -12,7 +12,7 @@ type Message = {
   text: string
 }
 
-const initialBotMessage = "Hi, I’m Makoko 🤖 — welcome to FertiTerra! How can I help you today?"
+const initialBotMessage = "Hi, I'm Makoko 🤖 — welcome to FertiTerra! How can I help you today?"
 
 const OPTION_MAP: Record<string, { reply: string; link?: string }> = {
   tests: {
@@ -112,7 +112,7 @@ export function WelcomeChatbotPopup() {
           id: prev.length + 2,
           sender: "bot",
           text: success
-            ? "You’re on the list! 🎉  Expect helpful fertility insights soon."
+            ? "You're on the list! 🎉  Expect helpful fertility insights soon."
             : `Oops: ${message ?? "something went wrong"}`,
         },
       ])
@@ -197,6 +197,33 @@ export function WelcomeChatbotPopup() {
           )}
 
           <div ref={chatEndRef} />
+        </div>
+
+        {/* Social Media Footer */}
+        <div className="border-t bg-gray-50 p-4">
+          <div className="text-center space-y-2">
+            <p className="text-xs text-gray-600">Follow us for more fertility insights</p>
+            <div className="flex justify-center gap-4">
+              <a
+                href="https://www.linkedin.com/company/fertiterra-technologies/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <Linkedin className="h-4 w-4" />
+                LinkedIn
+              </a>
+              <a
+                href="https://www.instagram.com/fertiterra_technologies?igsh=MXMyZmN3cGRraTJzcg=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-pink-600 hover:text-pink-800 transition-colors"
+              >
+                <Instagram className="h-4 w-4" />
+                Instagram
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

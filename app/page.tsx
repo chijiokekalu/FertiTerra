@@ -122,11 +122,72 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Remove the old button section and replace with a smaller secondary CTA */}
-                <div className="flex justify-center">
-                  <Button asChild size="sm" variant="ghost" className="text-gray-600 hover:text-rose-600">
-                    <Link href="/learn">Learn more about fertility testing</Link>
-                  </Button>
+                {/* Certification Section */}
+                <div className="flex flex-col items-center justify-center space-y-4 pt-4">
+                  <div className="w-full max-w-4xl bg-gray-50 rounded-lg p-6">
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+                      <div className="text-lg font-medium text-gray-800 whitespace-nowrap">
+                        Regulated and certified by
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
+                        {/* Rwanda Development Board */}
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src="/images/rdb-logo.png"
+                            alt="Rwanda Development Board (RDB)"
+                            width={120}
+                            height={40}
+                            className="h-10 w-auto"
+                          />
+                        </div>
+
+                        {/* Care Quality Commission */}
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src="/placeholder.svg?height=40&width=120&text=CQC"
+                            alt="Care Quality Commission"
+                            width={120}
+                            height={40}
+                            className="h-10 w-auto"
+                          />
+                        </div>
+
+                        {/* BSI ISO 13485 */}
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src="/placeholder.svg?height=40&width=80&text=BSI+ISO+13485"
+                            alt="BSI ISO 13485 Medical devices quality management systems"
+                            width={80}
+                            height={40}
+                            className="h-10 w-auto"
+                          />
+                        </div>
+
+                        {/* BSI ISO 9001 */}
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src="/placeholder.svg?height=40&width=80&text=BSI+ISO+9001"
+                            alt="BSI ISO 9001 Quality management systems"
+                            width={80}
+                            height={40}
+                            className="h-10 w-auto"
+                          />
+                        </div>
+
+                        {/* CE Marking */}
+                        <div className="flex items-center justify-center">
+                          <Image
+                            src="/placeholder.svg?height=40&width=60&text=CE"
+                            alt="CE marking - European Conformity"
+                            width={60}
+                            height={40}
+                            className="h-10 w-auto"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -169,6 +230,96 @@ export default function HomePage() {
             </div>
           </div>
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(#f9a8d4_1px,transparent_1px)] opacity-20 [background-size:24px_24px]"></div>
+        </section>
+
+        {/* Journey Cards Section */}
+        <section className="py-16 bg-white">
+          <div className="container">
+            <div className="grid gap-12 lg:grid-cols-2 items-center">
+              {/* Left side - Text content */}
+              <div className="space-y-6">
+                <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+                  We're all at different stages of our <em className="italic text-rose-500">journey</em>
+                </h2>
+                <p className="text-xl text-gray-600">What's most important to you?</p>
+              </div>
+
+              {/* Right side - Journey cards */}
+              <div className="space-y-4">
+                {/* Managing symptoms card */}
+                <div className="relative overflow-hidden rounded-2xl h-48 group cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-800/60 z-10"></div>
+                  <Image
+                    src="/images/couple-fertility-journey-2.png"
+                    alt="Happy couple at home - woman in red headwrap and man in gray cardigan smiling together"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 z-20 p-6 flex flex-col justify-between text-white">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl font-bold mb-2">Managing symptoms</h3>
+                        <p className="text-blue-100">Fatigue, irritability, anxiety, feeling cold, low mood, acne...</p>
+                      </div>
+                      <button className="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fertility card */}
+                <div className="relative overflow-hidden rounded-2xl h-48 group cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-green-800/60 z-10"></div>
+                  <Image
+                    src="/images/couple-fertility-journey-1.png"
+                    alt="Loving couple in kitchen - man embracing woman from behind, both smiling warmly"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 z-20 p-6 flex flex-col justify-between text-white">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl font-bold mb-2">Fertility</h3>
+                        <p className="text-green-100">Planning for the future or actively trying to conceive</p>
+                      </div>
+                      <button className="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Perimenopause or Menopause card */}
+                <div className="relative overflow-hidden rounded-2xl h-48 group cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-purple-800/60 z-10"></div>
+                  <Image
+                    src="/images/couple-fertility-journey-3.png"
+                    alt="Joyful couple outdoors at sunset - man giving woman piggyback ride, both laughing"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 z-20 p-6 flex flex-col justify-between text-white">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl font-bold mb-2">Perimenopause or Menopause</h3>
+                        <p className="text-purple-100">Menopausal or experiencing symptoms and looking for support</p>
+                      </div>
+                      <button className="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Why You Deserve Better Section */}

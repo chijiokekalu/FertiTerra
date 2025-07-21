@@ -5,6 +5,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/context/auth-context"
 import { CartProvider } from "@/context/cart-context"
+import { WelcomeChatbotPopup } from "@/components/welcome-chatbot-popup"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,9 +19,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -29,6 +30,9 @@ export default function RootLayout({
             <CartProvider>{children}</CartProvider>
           </AuthProvider>
         </ThemeProvider>
+
+        {/* Welcome popup (client-side) */}
+        <WelcomeChatbotPopup />
       </body>
     </html>
   )

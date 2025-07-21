@@ -62,7 +62,7 @@ export default function HomePage() {
                   >
                     <Link href="/signup">Start Your Journey</Link>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="text-lg px-8 py-4">
+                  <Button asChild size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
                     <Link href="/consultation">Speak to a Doctor</Link>
                   </Button>
                 </div>
@@ -594,7 +594,7 @@ export default function HomePage() {
               <div className="mt-12 text-center">
                 <p className="text-gray-600 mb-6">Don't see your question answered here? Our team is ready to help.</p>
                 <Button asChild className="bg-rose-600 hover:bg-rose-700">
-                  <Link href="/contact">Contact Our Support Team</Link>
+                  <Link href="/support">Contact Our Support Team</Link>
                 </Button>
               </div>
             </div>
@@ -644,7 +644,7 @@ export default function HomePage() {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-rose-600 text-lg px-8 py-4"
+                  className="border-white text-white hover:bg-white hover:text-rose-600 text-lg px-8 py-4 bg-transparent"
                 >
                   <Link href="/plans/ttc">Choose TTC Plan</Link>
                 </Button>
@@ -726,7 +726,7 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="text-sm text-gray-500 hover:text-rose-500">
+                  <Link href="/support" className="text-sm text-gray-500 hover:text-rose-500">
                     Contact
                   </Link>
                 </li>

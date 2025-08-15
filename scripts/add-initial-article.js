@@ -1,5 +1,7 @@
-// Script to add the initial infertility stigma article
-const articleData = {
+// This script adds the initial article about infertility stigma to the knowledge centre
+// In a production environment, this would interact with your actual database
+
+const initialArticle = {
   title: "Why Talking About Infertility Matters: Breaking the Stigma in Africa",
   slug: "why-talking-about-infertility-matters",
   author: "FertiTerra Editorial Team",
@@ -58,17 +60,20 @@ async function addInitialArticle() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(articleData),
+      body: JSON.stringify(initialArticle),
     })
 
-    if (response.ok) {
-      const result = await response.json()
-      console.log("Article added successfully:", result)
+    const result = await response.json()
+
+    if (result.success) {
+      console.log("✅ Initial article added successfully!")
+      console.log("Article ID:", result.article.id)
+      console.log("Article URL:", `/knowledge-centre/${result.article.slug}`)
     } else {
-      console.error("Failed to add article:", response.statusText)
+      console.error("❌ Failed to add article:", result.error)
     }
   } catch (error) {
-    console.error("Error adding article:", error)
+    console.error("❌ Error adding article:", error)
   }
 }
 

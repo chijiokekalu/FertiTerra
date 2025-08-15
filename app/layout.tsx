@@ -1,39 +1,81 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { GeistSans } from "geist/font/sans"
+import { GeistMono } from "geist/font/mono"
 import "./globals.css"
-import { Inter } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
-import { AuthProvider } from "@/context/auth-context"
-import { CartProvider } from "@/context/cart-context"
-import { WelcomeChatbotPopup } from "@/components/welcome-chatbot-popup"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - AI-Powered Fertility Care",
+  title: "FertiTerra - Fertility Testing & Healthcare Solutions",
   description:
-    "Africa's first AI-powered fertility platform. Comprehensive hormone testing, personalized care plans, and direct access to fertility specialists.",
-  generator: "v0.dev",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fertiterra.com"),
+    "Comprehensive fertility testing and healthcare solutions for African families. Get personalized fertility insights with our at-home test kits and expert consultations.",
+  keywords:
+    "fertility testing, fertility healthcare, Africa, hormone testing, fertility consultation, reproductive health",
+  authors: [{ name: "FertiTerra Technologies" }],
+  creator: "FertiTerra Technologies",
+  publisher: "FertiTerra Technologies",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/site.webmanifest",
+  themeColor: "#FF4444",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://fertiterra.com",
+    title: "FertiTerra - Fertility Testing & Healthcare Solutions",
+    description: "Comprehensive fertility testing and healthcare solutions for African families.",
+    siteName: "FertiTerra",
+    images: [
+      {
+        url: "/images/fertiterra-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "FertiTerra Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FertiTerra - Fertility Testing & Healthcare Solutions",
+    description: "Comprehensive fertility testing and healthcare solutions for African families.",
+    images: ["/images/fertiterra-logo.png"],
+  },
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            <CartProvider>{children}</CartProvider>
-          </AuthProvider>
-        </ThemeProvider>
-
-        {/* Welcome popup (client-side) */}
-        <WelcomeChatbotPopup />
-      </body>
+      <head>
+        <style>{`
+html {
+  font-family: ${GeistSans.style.fontFamily};
+  --font-sans: ${GeistSans.variable};
+  --font-mono: ${GeistMono.variable};
+}
+        `}</style>
+      </head>
+      <body>{children}</body>
     </html>
   )
 }
+</merged_code>

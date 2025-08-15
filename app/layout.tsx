@@ -1,23 +1,20 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
 import "./globals.css"
+import { Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from "@/context/auth-context"
+import { CartProvider } from "@/context/cart-context"
+import { WelcomeChatbotPopup } from "@/components/welcome-chatbot-popup"
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra - Fertility Testing & Healthcare Solutions",
+  title: "FertiTerra Technologies - AI-Powered Fertility Care",
   description:
-    "Comprehensive fertility testing and healthcare solutions for African families. Get personalized fertility insights with our at-home test kits and expert consultations.",
-  keywords:
-    "fertility testing, fertility healthcare, Africa, hormone testing, fertility consultation, reproductive health",
-  authors: [{ name: "FertiTerra Technologies" }],
-  creator: "FertiTerra Technologies",
-  publisher: "FertiTerra Technologies",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+    "Africa's first AI-powered fertility platform. Comprehensive hormone testing, personalized care plans, and direct access to fertility specialists.",
+  generator: "v0.dev",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fertiterra.com"),
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -28,17 +25,13 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   themeColor: "#FF4444",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://fertiterra.com",
-    title: "FertiTerra - Fertility Testing & Healthcare Solutions",
-    description: "Comprehensive fertility testing and healthcare solutions for African families.",
+    title: "FertiTerra Technologies - AI-Powered Fertility Care",
+    description:
+      "Africa's first AI-powered fertility platform. Comprehensive hormone testing, personalized care plans, and direct access to fertility specialists.",
     siteName: "FertiTerra",
     images: [
       {
@@ -51,31 +44,38 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FertiTerra - Fertility Testing & Healthcare Solutions",
-    description: "Comprehensive fertility testing and healthcare solutions for African families.",
+    title: "FertiTerra Technologies - AI-Powered Fertility Care",
+    description:
+      "Africa's first AI-powered fertility platform. Comprehensive hormone testing, personalized care plans, and direct access to fertility specialists.",
     images: ["/images/fertiterra-logo.png"],
   },
-    generator: 'v0.app'
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-}
-        `}</style>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#FF4444" />
       </head>
-      <body>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <CartProvider>{children}</CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
+
+        {/* Welcome popup (client-side) */}
+        <WelcomeChatbotPopup />
+      </body>
     </html>
   )
 }
-</merged_code>

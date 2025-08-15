@@ -1,4 +1,4 @@
-// Script to add the initial article about infertility stigma
+// Script to add the initial infertility stigma article
 const articleData = {
   title: "Why Talking About Infertility Matters: Breaking the Stigma in Africa",
   slug: "why-talking-about-infertility-matters",
@@ -61,12 +61,16 @@ async function addInitialArticle() {
       body: JSON.stringify(articleData),
     })
 
-    const result = await response.json()
-    console.log("Article added successfully:", result)
+    if (response.ok) {
+      const result = await response.json()
+      console.log("Article added successfully:", result)
+    } else {
+      console.error("Failed to add article:", response.statusText)
+    }
   } catch (error) {
     console.error("Error adding article:", error)
   }
 }
 
-// Run this script to add the initial article
+// Run the script
 addInitialArticle()

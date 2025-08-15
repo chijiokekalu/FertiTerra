@@ -1,7 +1,11 @@
 {
-  "name": "FertiTerra - Fertility Healthcare Solutions",
+  "name": "FertiTerra Technologies",
   "short_name": "FertiTerra",
-  "description": "Comprehensive fertility testing and healthcare solutions for African families",
+  "description": "Africa's first AI-powered fertility platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF4444",
   "icons": [
     {
       "src": "/favicon-16x16.png",
@@ -18,11 +22,5 @@
       "sizes": "180x180",
       "type": "image/png"
     }
-  ],
-  "theme_color": "#FF4444",
-  "background_color": "#ffffff",
-  "display": "standalone",
-  "orientation": "portrait",
-  "start_url": "/",
-  "scope": "/"
+  ]
 }

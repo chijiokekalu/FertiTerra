@@ -1,61 +1,60 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-// Mock database for articles (in production, this would be a real database)
-const articles = new Map()
+// Mock database - in production, this would be a real database
+const articles: any[] = []
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const category = searchParams.get("category")
+    const search = searchParams.get("search")
+
+    let filteredArticles = articles
+
+    if (category && category !== "all") {
+      filteredArticles = filteredArticles.filter((article) => article.category.toLowerCase() === category.toLowerCase())
+    }
+
+    if (search) {
+      filteredArticles = filteredArticles.filter(
+        (article) =>
+          article.title.toLowerCase().includes(search.toLowerCase()) ||
+          article.content.toLowerCase().includes(search.toLowerCase()) ||
+          article.tags.some((tag: string) => tag.toLowerCase().includes(search.toLowerCase())),
+      )
+    }
+
+    return NextResponse.json({ articles: filteredArticles })
+  } catch (error) {
+    console.error("Error fetching articles:", error)
+    return NextResponse.json({ error: "Failed to fetch articles" }, { status: 500 })
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
     const articleData = await request.json()
 
-    // Generate an ID for the article
-    const id = Date.now().toString()
-
-    // Store the article
-    articles.set(id, {
-      id,
+    const newArticle = {
+      id: Date.now().toString(),
       ...articleData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    })
-
-    return NextResponse.json({
-      success: true,
-      message: "Article created successfully",
-      id,
-      article: articles.get(id),
-    })
-  } catch (error) {
-    console.error("Error creating article:", error)
-    return NextResponse.json({ success: false, message: "Failed to create article" }, { status: 500 })
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const slug = searchParams.get("slug")
-
-    if (slug) {
-      // Find article by slug
-      const article = Array.from(articles.values()).find((a) => a.slug === slug)
-      if (!article) {
-        return NextResponse.json({ success: false, message: "Article not found" }, { status: 404 })
-      }
-      return NextResponse.json({ success: true, article })
+      views: 0,
+      likes: 0,
     }
 
-    // Return all articles
-    const allArticles = Array.from(articles.values()).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    )
+    articles.push(newArticle)
 
-    return NextResponse.json({
-      success: true,
-      articles: allArticles,
-      total: allArticles.length,
-    })
+    return NextResponse.json(
+      {
+        message: "Article created successfully",
+        article: newArticle,
+      },
+      { status: 201 },
+    )
   } catch (error) {
-    console.error("Error fetching articles:", error)
-    return NextResponse.json({ success: false, message: "Failed to fetch articles" }, { status: 500 })
+    console.error("Error creating article:", error)
+    return NextResponse.json({ error: "Failed to create article" }, { status: 500 })
   }
 }

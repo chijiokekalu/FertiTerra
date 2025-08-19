@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -8,9 +8,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Header } from "@/components/header"
 import { useCart } from "@/context/cart-context"
-import { Star, ShoppingCart, Gift, TestTube, Package } from "lucide-react"
+import { Star, ShoppingCart } from "lucide-react"
 
-const defaultProducts = [
+const products = [
   {
     id: "hormone-test",
     name: "Advanced Hormone Test",
@@ -59,51 +59,18 @@ const defaultProducts = [
 
 export default function ShopPage() {
   const [activeTab, setActiveTab] = useState("all")
-  const [shopConfig, setShopConfig] = useState(null)
-  const [loading, setLoading] = useState(true)
   const { addToCart } = useCart()
 
-  useEffect(() => {
-    fetchShopConfig()
-  }, [])
-
-  const fetchShopConfig = async () => {
-    try {
-      const response = await fetch("/api/shop")
-      const data = await response.json()
-      setShopConfig(data)
-    } catch (error) {
-      console.error("Failed to fetch shop config:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const filteredProducts = activeTab === "all" ? products : products.filter((product) => product.category === activeTab)
 
   const handleAddToCart = (product: any) => {
     addToCart({
       id: product.id,
-      name: product.name || product.title,
+      name: product.name,
       price: product.price,
       quantity: 1,
       image: product.image,
     })
-  }
-
-  const filteredProducts =
-    activeTab === "all" ? defaultProducts : defaultProducts.filter((product) => product.category === activeTab)
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 mx-auto mb-4"></div>
-            <p>Loading shop...</p>
-          </div>
-        </main>
-      </div>
-    )
   }
 
   return (
@@ -115,8 +82,8 @@ export default function ShopPage() {
             <div className="max-w-3xl">
               <h1 className="text-4xl font-bold tracking-tight mb-4">Shop Fertility Products</h1>
               <p className="text-lg text-gray-600 mb-6">
-                Discover our curated selection of fertility tests, supplements, merchandise, and wellness products
-                designed to support your reproductive health journey.
+                Discover our curated selection of fertility tests, supplements, and wellness products designed to
+                support your reproductive health journey.
               </p>
             </div>
           </div>
@@ -124,34 +91,6 @@ export default function ShopPage() {
 
         <section className="py-12">
           <div className="container">
-            {shopConfig && (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
-                {shopConfig.shopTabs.map((tab, index) => (
-                  <Link key={index} href={tab.link}>
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                      <CardHeader className="text-center">
-                        <div className="mx-auto mb-4 p-3 bg-rose-100 rounded-full w-fit">
-                          {tab.name.includes("Test") && <TestTube className="h-6 w-6 text-rose-600" />}
-                          {tab.name.includes("merch") && <Package className="h-6 w-6 text-rose-600" />}
-                          {tab.name.includes("Gift") && <Gift className="h-6 w-6 text-rose-600" />}
-                          {tab.name.includes("kit") && <ShoppingCart className="h-6 w-6 text-rose-600" />}
-                        </div>
-                        <CardTitle className="text-lg">{tab.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-600 text-center">
-                          {tab.name.includes("Test") && "Professional fertility and hormone testing"}
-                          {tab.name.includes("merch") && "Support fertility awareness with our branded merchandise"}
-                          {tab.name.includes("Gift") && "Give the gift of fertility care and support"}
-                          {tab.name.includes("kit") && "Everything you need to begin your fertility journey"}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            )}
-
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-8">
                 <TabsTrigger value="all">All Products</TabsTrigger>
@@ -188,11 +127,7 @@ export default function ShopPage() {
                         </div>
                       </CardContent>
                       <CardFooter className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          className="flex-1 bg-transparent"
-                          onClick={() => handleAddToCart(product)}
-                        >
+                        <Button variant="outline" className="flex-1" onClick={() => handleAddToCart(product)}>
                           <ShoppingCart className="mr-2 h-4 w-4" />
                           Add to Cart
                         </Button>

@@ -532,7 +532,7 @@ export function Header() {
                       </li>
                       <li>
                         <Link href="/shop/merch" className="text-sm hover:text-rose-500 block font-medium">
-                          Hertility merch
+                          FertiTerra Merch
                         </Link>
                       </li>
                       <li>
@@ -1187,7 +1187,7 @@ export function Header() {
                             className="text-sm block py-1 font-medium"
                             onClick={toggleMobileMenu}
                           >
-                            Hertility merch
+                            FertiTerra Merch
                           </Link>
                         </li>
                         <li>

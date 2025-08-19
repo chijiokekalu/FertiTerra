@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Header } from "@/components/header"
 import { useAuth } from "@/context/auth-context"
-import { CheckCircle, ArrowRight, Package, Heart, Baby, Zap, Shield, Target, TrendingUp } from "lucide-react"
+import { CheckCircle, ArrowRight, Package, Heart, Baby, Zap, Shield, Target, TrendingUp, X } from "lucide-react"
 
 export default function HormoneFertilityTestPage() {
   const { user } = useAuth()
@@ -20,6 +20,7 @@ export default function HormoneFertilityTestPage() {
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null)
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([])
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
 
   const goals = [
     {
@@ -116,6 +117,17 @@ export default function HormoneFertilityTestPage() {
     },
   ]
 
+  const screeningOptions = [
+    { id: "curious", label: "I am just curious" },
+    { id: "planning", label: "I am planning for babies in the future" },
+    { id: "symptoms", label: "I am experiencing symptoms" },
+    { id: "trying", label: "I am actively trying to conceive" },
+    { id: "egg-freezing", label: "I am thinking about egg freezing or IVF" },
+    { id: "thinking-perimenopause", label: "I think I'm going through perimenopause" },
+    { id: "perimenopausal", label: "I am perimenopausal" },
+    { id: "menopausal", label: "I am menopausal" },
+  ]
+
   const handleSymptomToggle = (symptom: string) => {
     if (selectedSymptoms.includes(symptom)) {
       setSelectedSymptoms(selectedSymptoms.filter((s) => s !== symptom))
@@ -129,6 +141,14 @@ export default function HormoneFertilityTestPage() {
       setSelectedAddOns(selectedAddOns.filter((a) => a !== addOn))
     } else {
       setSelectedAddOns([...selectedAddOns, addOn])
+    }
+  }
+
+  const handleOptionToggle = (optionId: string) => {
+    if (selectedOptions.includes(optionId)) {
+      setSelectedOptions(selectedOptions.filter((id) => id !== optionId))
+    } else {
+      setSelectedOptions([...selectedOptions, optionId])
     }
   }
 
@@ -163,6 +183,16 @@ export default function HormoneFertilityTestPage() {
     }
   }
 
+  const handleNext = () => {
+    if (selectedOptions.length > 0) {
+      router.push("/checkout")
+    }
+  }
+
+  const handleClose = () => {
+    router.back()
+  }
+
   // Find the selected goal object
   const selectedGoalObject = goals.find((g) => g.id === selectedGoal)
 
@@ -172,6 +202,17 @@ export default function HormoneFertilityTestPage() {
       <main className="flex-1 py-12 bg-gray-50">
         <div className="container">
           <div className="max-w-4xl mx-auto">
+            {/* Close button */}
+            <div className="flex justify-end mb-8">
+              <button
+                onClick={handleClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+
             <div className="mb-8">
               <h1 className="text-3xl font-bold tracking-tight mb-2">Advanced Hormone and Fertility Test</h1>
               <p className="text-lg text-gray-600">
@@ -465,6 +506,52 @@ export default function HormoneFertilityTestPage() {
                 <div className="flex justify-between">
                   <Button variant="outline" onClick={handleBack}>
                     Back
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Screening Options */}
+            {currentStep === 1 && (
+              <div className="space-y-8">
+                <div className="text-center space-y-4">
+                  <h1 className="text-2xl font-bold text-gray-900">Screening</h1>
+                  <h2 className="text-3xl font-bold text-gray-900">So, what brings you here?</h2>
+                  <p className="text-gray-600 text-lg leading-relaxed max-w-xl mx-auto">
+                    This helps our doctors tailor which hormones to test you for as well as creating your care plan and
+                    report.
+                  </p>
+                  <p className="text-gray-900 font-medium">Please select one or more options</p>
+                </div>
+
+                <div className="space-y-4">
+                  {screeningOptions.map((option) => (
+                    <div key={option.id} className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        id={option.id}
+                        checked={selectedOptions.includes(option.id)}
+                        onChange={() => handleOptionToggle(option.id)}
+                        className="h-5 w-5 text-rose-500 border-gray-300 rounded focus:ring-rose-500 focus:ring-2"
+                      />
+                      <label
+                        htmlFor={option.id}
+                        className="text-lg text-gray-900 cursor-pointer flex-1 py-3 select-none"
+                      >
+                        {option.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-center pt-8">
+                  <Button
+                    onClick={handleNext}
+                    disabled={selectedOptions.length === 0}
+                    className="bg-rose-500 hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed px-12 py-3 text-lg font-semibold rounded-full transition-all duration-200"
+                    size="lg"
+                  >
+                    Next <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Header } from "@/components/header"
 import { useAuth } from "@/context/auth-context"
-import { CheckCircle, ArrowRight, Package, Beaker, FileText, Calendar } from "lucide-react"
+import { CheckCircle, ArrowRight, Package, Heart, Baby, Zap, Shield } from "lucide-react"
 
 export default function HormoneFertilityTestPage() {
   const { user } = useAuth()
@@ -23,28 +23,38 @@ export default function HormoneFertilityTestPage() {
 
   const goals = [
     {
-      id: "fertility",
-      title: "Understand My Fertility",
-      description: "Get insights into your reproductive health and fertility potential",
-      icon: Calendar,
+      id: "understand-fertility",
+      title: "Understand my fertility",
+      description:
+        "Get insights into your reproductive health and fertility potential with comprehensive hormone testing",
+      icon: Baby,
+      color: "bg-pink-50 border-pink-200 hover:bg-pink-100",
+      iconColor: "text-pink-600",
     },
     {
-      id: "hormones",
-      title: "Balance My Hormones",
-      description: "Identify hormonal imbalances that may be affecting your health",
-      icon: Beaker,
+      id: "improve-symptoms",
+      title: "Improve my symptoms",
+      description:
+        "Address hormonal imbalances that may be causing uncomfortable symptoms and affecting your daily life",
+      icon: Heart,
+      color: "bg-purple-50 border-purple-200 hover:bg-purple-100",
+      iconColor: "text-purple-600",
     },
     {
-      id: "pcos",
-      title: "Investigate PCOS",
-      description: "Check for signs of Polycystic Ovary Syndrome",
-      icon: FileText,
+      id: "optimize-health",
+      title: "Optimize my health",
+      description: "Take a proactive approach to your hormonal health and overall wellbeing with personalized insights",
+      icon: Zap,
+      color: "bg-blue-50 border-blue-200 hover:bg-blue-100",
+      iconColor: "text-blue-600",
     },
     {
-      id: "general",
-      title: "General Wellness",
-      description: "Comprehensive hormone check for overall health",
-      icon: CheckCircle,
+      id: "track-changes",
+      title: "Track changes over time",
+      description: "Monitor your hormonal health journey and see how lifestyle changes impact your biomarkers",
+      icon: Shield,
+      color: "bg-green-50 border-green-200 hover:bg-green-100",
+      iconColor: "text-green-600",
     },
   ]
 
@@ -147,9 +157,9 @@ export default function HormoneFertilityTestPage() {
         <div className="container">
           <div className="max-w-4xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold tracking-tight mb-2">Advanced Hormone and Fertility Test</h1>
+              <h1 className="text-3xl font-bold tracking-tight mb-2">Personalise My Test</h1>
               <p className="text-lg text-gray-600">
-                Personalize your test kit to get the most relevant insights for your health goals.
+                Tell us about your health goals so we can recommend the right test for you.
               </p>
             </div>
 
@@ -186,32 +196,36 @@ export default function HormoneFertilityTestPage() {
 
             {/* Step 1: Goals */}
             {currentStep === 1 && (
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold">What's your main health goal?</h2>
-                <p className="text-gray-600">
-                  Select the primary reason you're interested in hormone testing. This helps us personalize your
-                  results.
-                </p>
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold mb-4">What's your main health goal?</h2>
+                  <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                    Understanding your goals helps us recommend the most relevant biomarkers and provide personalized
+                    insights tailored to your needs.
+                  </p>
+                </div>
 
                 <RadioGroup
                   value={selectedGoal || ""}
                   onValueChange={setSelectedGoal}
-                  className="grid gap-4 md:grid-cols-2"
+                  className="grid gap-6 md:grid-cols-2"
                 >
                   {goals.map((goal) => (
                     <div key={goal.id}>
                       <RadioGroupItem value={goal.id} id={goal.id} className="peer sr-only" />
                       <Label
                         htmlFor={goal.id}
-                        className="flex flex-col h-full p-4 border rounded-lg cursor-pointer hover:border-rose-200 hover:bg-rose-50 peer-data-[state=checked]:border-rose-500 peer-data-[state=checked]:bg-rose-50"
+                        className={`flex flex-col h-full p-6 border-2 rounded-xl cursor-pointer transition-all duration-200 ${goal.color} peer-data-[state=checked]:border-rose-500 peer-data-[state=checked]:bg-rose-50`}
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="h-8 w-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
-                            {goal.icon && <goal.icon className="h-4 w-4" />}
+                        <div className="flex items-start gap-4">
+                          <div
+                            className={`h-12 w-12 rounded-full bg-white flex items-center justify-center ${goal.iconColor} shadow-sm`}
+                          >
+                            {goal.icon && <goal.icon className="h-6 w-6" />}
                           </div>
-                          <div>
-                            <p className="font-medium">{goal.title}</p>
-                            <p className="text-sm text-gray-500">{goal.description}</p>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg mb-2">{goal.title}</h3>
+                            <p className="text-gray-600 text-sm leading-relaxed">{goal.description}</p>
                           </div>
                         </div>
                       </Label>
@@ -219,9 +233,17 @@ export default function HormoneFertilityTestPage() {
                   ))}
                 </RadioGroup>
 
-                <div className="flex justify-end">
-                  <Button onClick={handleContinue} disabled={!selectedGoal} className="bg-rose-500 hover:bg-rose-600">
-                    Continue <ArrowRight className="ml-2 h-4 w-4" />
+                <div className="text-center">
+                  <p className="text-sm text-gray-500 mb-6">
+                    Don't worry if you're not sure - you can always change your mind later or select multiple goals.
+                  </p>
+                  <Button
+                    onClick={handleContinue}
+                    disabled={!selectedGoal}
+                    className="bg-rose-500 hover:bg-rose-600 px-8 py-3 text-lg"
+                    size="lg"
+                  >
+                    Continue <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
               </div>
@@ -279,7 +301,12 @@ export default function HormoneFertilityTestPage() {
                       <CardContent className="space-y-4">
                         <div className="flex items-start gap-4">
                           <div className="relative h-24 w-24 rounded-md overflow-hidden">
-                            <Image src="/images/test-kit.jpg" alt="Hormone Test Kit" fill className="object-cover" />
+                            <Image
+                              src="/placeholder.svg?height=96&width=96&text=Test+Kit"
+                              alt="Hormone Test Kit"
+                              fill
+                              className="object-cover"
+                            />
                           </div>
                           <div>
                             <h3 className="font-medium">What's included:</h3>
@@ -314,9 +341,13 @@ export default function HormoneFertilityTestPage() {
 
                         <div className="space-y-2">
                           <h3 className="font-medium">Your selected goal:</h3>
-                          <div className="flex items-center gap-2 p-3 bg-rose-50 rounded-md">
-                            <div className="h-8 w-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
-                              {selectedGoalObject?.icon && <selectedGoalObject.icon className="h-4 w-4" />}
+                          <div
+                            className={`flex items-center gap-3 p-4 rounded-lg ${selectedGoalObject?.color || "bg-rose-50"}`}
+                          >
+                            <div
+                              className={`h-10 w-10 rounded-full bg-white flex items-center justify-center ${selectedGoalObject?.iconColor || "text-rose-600"} shadow-sm`}
+                            >
+                              {selectedGoalObject?.icon && <selectedGoalObject.icon className="h-5 w-5" />}
                             </div>
                             <div>
                               <p className="font-medium">{selectedGoalObject?.title}</p>

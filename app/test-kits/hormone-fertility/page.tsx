@@ -512,50 +512,45 @@ export default function HormoneFertilityTestPage() {
             )}
 
             {/* Screening Options */}
-            {currentStep === 1 && (
-              <div className="space-y-8">
-                <div className="text-center space-y-4">
-                  <h1 className="text-2xl font-bold text-gray-900">Screening</h1>
-                  <h2 className="text-3xl font-bold text-gray-900">So, what brings you here?</h2>
-                  <p className="text-gray-600 text-lg leading-relaxed max-w-xl mx-auto">
-                    This helps our doctors tailor which hormones to test you for as well as creating your care plan and
-                    report.
-                  </p>
-                  <p className="text-gray-900 font-medium">Please select one or more options</p>
-                </div>
-
-                <div className="space-y-4">
-                  {screeningOptions.map((option) => (
-                    <div key={option.id} className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        id={option.id}
-                        checked={selectedOptions.includes(option.id)}
-                        onChange={() => handleOptionToggle(option.id)}
-                        className="h-5 w-5 text-rose-500 border-gray-300 rounded focus:ring-rose-500 focus:ring-2"
-                      />
-                      <label
-                        htmlFor={option.id}
-                        className="text-lg text-gray-900 cursor-pointer flex-1 py-3 select-none"
-                      >
-                        {option.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-center pt-8">
-                  <Button
-                    onClick={handleNext}
-                    disabled={selectedOptions.length === 0}
-                    className="bg-rose-500 hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed px-12 py-3 text-lg font-semibold rounded-full transition-all duration-200"
-                    size="lg"
-                  >
-                    Next <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
+            <div className="space-y-8">
+              <div className="text-center space-y-4">
+                <h1 className="text-2xl font-bold text-gray-900">Screening</h1>
+                <h2 className="text-3xl font-bold text-gray-900">So, what brings you here?</h2>
+                <p className="text-gray-600 text-lg leading-relaxed max-w-xl mx-auto">
+                  This helps our doctors tailor which hormones to test you for as well as creating your care plan and
+                  report.
+                </p>
+                <p className="text-gray-900 font-medium">Please select one or more options</p>
               </div>
-            )}
+
+              <div className="space-y-4">
+                {screeningOptions.map((option) => (
+                  <div key={option.id} className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id={option.id}
+                      checked={selectedOptions.includes(option.id)}
+                      onChange={() => handleOptionToggle(option.id)}
+                      className="h-5 w-5 text-rose-500 border-gray-300 rounded focus:ring-rose-500 focus:ring-2"
+                    />
+                    <label htmlFor={option.id} className="text-lg text-gray-900 cursor-pointer flex-1 py-3 select-none">
+                      {option.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-center pt-8">
+                <Button
+                  onClick={handleNext}
+                  disabled={selectedOptions.length === 0}
+                  className="bg-rose-500 hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed px-12 py-3 text-lg font-semibold rounded-full transition-all duration-200"
+                  size="lg"
+                >
+                  Next <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </main>

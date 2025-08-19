@@ -55,6 +55,17 @@ const products = [
     image: "/placeholder.svg?height=200&width=300&text=Ovulation+Strips",
     description: "Track your fertile window accurately",
   },
+  {
+    id: "fertiterra-tshirt",
+    name: "FertiTerra Logo T-Shirt",
+    category: "merch",
+    price: 25,
+    originalPrice: 25,
+    rating: 4.8,
+    reviews: 156,
+    image: "/images/fertiterra-tshirt.jpeg",
+    description: "Comfortable cotton t-shirt with FertiTerra branding and floral design",
+  },
 ]
 
 export default function ShopPage() {
@@ -92,10 +103,11 @@ export default function ShopPage() {
         <section className="py-12">
           <div className="container">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="all">All Products</TabsTrigger>
                 <TabsTrigger value="tests">Tests</TabsTrigger>
                 <TabsTrigger value="supplements">Supplements</TabsTrigger>
+                <TabsTrigger value="merch">FertiTerra Merch</TabsTrigger>
               </TabsList>
 
               <TabsContent value={activeTab}>
@@ -123,11 +135,17 @@ export default function ShopPage() {
 
                         <div className="flex items-center gap-2">
                           <span className="text-2xl font-bold">${product.price}</span>
-                          <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
+                          {product.originalPrice !== product.price && (
+                            <span className="text-sm text-gray-500 line-through">${product.originalPrice}</span>
+                          )}
                         </div>
                       </CardContent>
                       <CardFooter className="flex gap-2">
-                        <Button variant="outline" className="flex-1" onClick={() => handleAddToCart(product)}>
+                        <Button
+                          variant="outline"
+                          className="flex-1 bg-transparent"
+                          onClick={() => handleAddToCart(product)}
+                        >
                           <ShoppingCart className="mr-2 h-4 w-4" />
                           Add to Cart
                         </Button>

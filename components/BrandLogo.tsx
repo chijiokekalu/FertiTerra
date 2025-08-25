@@ -1,8 +1,12 @@
 import Image from "next/image"
 
-export default function BrandLogo() {
+interface BrandLogoProps {
+  className?: string
+}
+
+export default function BrandLogo({ className = "" }: BrandLogoProps) {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className={`flex flex-col items-center justify-center ${className}`}>
       <div className="mb-3">
         <Image
           src="/images/fertiterra-logo.png"
@@ -10,9 +14,10 @@ export default function BrandLogo() {
           width={200}
           height={80}
           className="object-contain"
+          priority
         />
       </div>
-      <h1 className="text-black font-bold text-xl font-serif" style={{ fontFamily: '"Playfair Display", serif' }}>
+      <h1 className="text-black font-bold text-xl font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>
         FertiTerra Technologies
       </h1>
     </div>

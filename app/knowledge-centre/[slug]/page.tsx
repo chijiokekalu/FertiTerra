@@ -52,7 +52,14 @@ export default function ArticlePage() {
         tags: ["Infertility Awareness", "Africa", "Fertility Support", "Breaking the Stigma"],
         date: "2025-08-15",
         featuredImage: "/infertility-awareness-africa.png",
-        videoEmbed: "https://drive.google.com/file/d/1cVlWf_jUwplYs_0keky7VuJ2rQvyhdL-/preview",
+        videoEmbed: `<iframe width="560" height="315" 
+    src="https://www.youtube.com/embed/ZBRYe9_0X0w?si=fOKeTvNbgG6CfYTI" 
+    title="YouTube video player" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    referrerpolicy="strict-origin-when-cross-origin" 
+    allowfullscreen>
+</iframe>`,
         summary:
           "Infertility affects 1 in 6 couples globally, but in Africa, stigma and silence make the journey even harder. Learn why open conversations matter — and how we can replace stigma with hope.",
         content: `Infertility affects 1 in 6 couples globally, according to the World Health Organization. But in many African communities, the topic is still whispered about, hidden behind closed doors, and sometimes not spoken about at all.
@@ -260,14 +267,8 @@ You can help break the stigma:
           {article.videoEmbed && (
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4">Watch the Video</h3>
-              <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
-                <iframe
-                  src={article.videoEmbed}
-                  title={article.title}
-                  className="absolute top-0 left-0 w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+              <div className="relative w-full flex justify-center">
+                <div dangerouslySetInnerHTML={{ __html: article.videoEmbed }} />
               </div>
             </div>
           )}

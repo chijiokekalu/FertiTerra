@@ -1322,40 +1322,6 @@ export function Header() {
           </div>
         )}
       </header>
-
-      {/* Footer */}
-      <footer className="bg-gray-50 border-t">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-wrap justify-between items-center">
-            <div className="flex items-center space-x-4 mb-4 md:mb-0">
-              <Image
-                src="/images/fertiterra-logo.png"
-                alt="FertiTerra Logo"
-                width={120}
-                height={32}
-                className="h-8 w-auto"
-              />
-            </div>
-            <div className="flex flex-wrap gap-6 text-sm">
-              <Link href="/contact" className="text-gray-600 hover:text-rose-600">
-                Contact
-              </Link>
-              <Link href="/privacy" className="text-gray-600 hover:text-rose-600">
-                Privacy
-              </Link>
-              <Link href="/terms" className="text-gray-600 hover:text-rose-600">
-                Terms
-              </Link>
-              <Link href="/about/founders-story" className="text-gray-600 hover:text-rose-600">
-                About Us
-              </Link>
-            </div>
-          </div>
-          <div className="mt-4 pt-4 border-t text-center text-sm text-gray-500">
-            <p>&copy; 2024 FertiTerra Technologies. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </>
   )
 }

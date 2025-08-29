@@ -1,230 +1,446 @@
-"use client"
-
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Heart, Users, Shield, Lightbulb } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Heart, Users, Shield, Target, ArrowRight, Quote, Linkedin, Mail } from "lucide-react"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 
 export default function FoundersStoryPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
-      {/* Hero Banner */}
-      <section className="relative bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-rose-100/20 to-pink-100/20"></div>
-        <div className="absolute top-10 left-10 w-32 h-32 bg-rose-200/30 rounded-full blur-xl"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-pink-200/30 rounded-full blur-xl"></div>
-
-        <div className="container mx-auto text-center relative z-10">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Putting fertility back into the hands of families
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We believe every family deserves access to comprehensive, compassionate fertility care. Our mission is to
-            democratize fertility health across Africa through innovative technology and personalized support.
-          </p>
-        </div>
-      </section>
-
-      {/* Why We Started */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">Why We Started</h2>
-          <div className="prose prose-lg mx-auto text-gray-700 leading-relaxed">
-            <p className="text-xl mb-6">
-              We began FertiTerra because we watched too many families struggle in silence, with few answers and less
-              support. The statistics were staggering—1 in 6 couples worldwide face fertility challenges, yet in Africa,
-              access to quality fertility care remains limited and often unaffordable.
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-purple-50 to-pink-50 py-20 md:py-32">
+        <div className="container relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-6 bg-rose-100 text-rose-800 hover:bg-rose-200">Our Story</Badge>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl mb-6">
+              Putting fertility back into the hands of <span className="text-rose-500">families</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Born from personal experience and driven by a mission to make fertility care accessible, compassionate,
+              and effective for every family across Africa.
             </p>
-            <p className="text-lg mb-6">
-              Our founder's personal journey began with watching her foster mother's decade-long struggle with
-              infertility, followed by her biological mother's own challenges conceiving. These experiences revealed the
-              emotional toll, financial burden, and lack of accessible resources that families face when trying to build
-              their dreams.
-            </p>
-            <p className="text-lg">
-              We realized that technology could bridge this gap—bringing world-class fertility testing, expert
-              consultations, and personalized care plans directly to families across Africa. FertiTerra was born from
-              the belief that geography should never determine your access to fertility health.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Who We Are */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Who We Are</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-10 h-10 text-rose-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Dr. Sarah Adebayo</h3>
-                <p className="text-rose-600 font-medium mb-3">CEO & Co-Founder</p>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Reproductive endocrinologist with 15+ years of experience. Former consultant at leading fertility
-                  clinics in London and Lagos. Passionate about making fertility care accessible across Africa.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-10 h-10 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Michael Chen</h3>
-                <p className="text-blue-600 font-medium mb-3">CMO & Co-Founder</p>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Healthcare marketing strategist with expertise in digital health platforms. Previously led growth at
-                  telehealth startups across emerging markets. Committed to patient-centered care.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-              <CardContent className="pt-6">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lightbulb className="w-10 h-10 text-green-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Amara Okafor</h3>
-                <p className="text-green-600 font-medium mb-3">CTO & Co-Founder</p>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Software engineer and AI specialist with background in healthcare technology. Former tech lead at
-                  major health platforms. Focused on building secure, scalable solutions for African healthcare.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* How We Work */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">How We Work</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-rose-600">1</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Science-Backed Testing</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Our comprehensive hormone and fertility tests are developed in partnership with leading laboratories,
-                ensuring accurate results that inform personalized care plans.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-blue-600">2</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Accessible Care Model</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Through telemedicine and at-home testing, we eliminate geographical barriers and make fertility care
-                accessible to families across urban and rural Africa.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-green-600">3</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Holistic Support</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Beyond testing, we provide ongoing support through fertility counseling, nutrition guidance, and
-                connections to trusted specialists when needed.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Core Values */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Our Core Values</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow border-l-4 border-rose-500">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-rose-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">For all families</h3>
-                <p className="text-gray-600 text-sm">
-                  Fertility care should be accessible regardless of location, income, or background.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow border-l-4 border-blue-500">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Transparency first</h3>
-                <p className="text-gray-600 text-sm">
-                  Clear communication about processes, costs, and outcomes builds trust and empowers decisions.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow border-l-4 border-green-500">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lightbulb className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Evidence-led care</h3>
-                <p className="text-gray-600 text-sm">
-                  Every recommendation is backed by scientific research and clinical best practices.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 hover:shadow-lg transition-shadow border-l-4 border-purple-500">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Compassionate support</h3>
-                <p className="text-gray-600 text-sm">
-                  We understand the emotional journey and provide empathetic care at every step.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Meet the Team CTA */}
-      <section className="py-16 px-4 bg-gradient-to-br from-rose-50 to-pink-50">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">Ready to Meet Our Full Team?</h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Learn more about the dedicated professionals working to make fertility care accessible across Africa.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/about/team">
-              <Button size="lg" className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-3">
-                Meet the Team
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700">
+                <Link href="/plans/basic-fertility-checkup">Start Your Journey</Link>
               </Button>
-            </Link>
-            <Link href="/test-kits">
               <Button
+                asChild
                 size="lg"
                 variant="outline"
-                className="border-rose-600 text-rose-600 hover:bg-rose-50 px-8 py-3 bg-transparent"
+                className="border-rose-600 text-rose-600 hover:bg-rose-50 bg-transparent"
               >
-                Start Your Journey
+                <Link href="/consultation">Meet Our Team</Link>
               </Button>
-            </Link>
+            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(#f9a8d4_1px,transparent_1px)] opacity-20 [background-size:24px_24px]"></div>
+      </section>
+
+      {/* Why We Started Section */}
+      <section className="py-20 bg-white">
+        <div className="container">
+          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">Why We Started FertiTerra</h2>
+                <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+                  <p>
+                    My story begins with two remarkable women who shaped my understanding of motherhood and fertility.
+                    My foster mother, who raised me with unconditional love, struggled for years to conceive. I watched
+                    her navigate a healthcare system that often left her feeling dismissed, frustrated, and alone.
+                  </p>
+                  <p>
+                    My biological mother, a dedicated midwife, spent her career helping other women bring life into the
+                    world. Through her, I learned that fertility challenges affect families from all walks of life, yet
+                    access to quality care remains limited, especially across Africa.
+                  </p>
+                  <p>
+                    These experiences taught me that fertility isn't just a medical issue—it's deeply personal,
+                    emotional, and deserves care that honors the whole person, not just the condition.
+                  </p>
+                </div>
+              </div>
+              <div className="bg-rose-50 p-6 rounded-2xl border border-rose-100">
+                <Quote className="h-8 w-8 text-rose-500 mb-4" />
+                <blockquote className="text-lg italic text-gray-700 mb-4">
+                  "Every family deserves access to compassionate, expert fertility care. No one should have to choose
+                  between quality healthcare and financial stability."
+                </blockquote>
+                <cite className="text-sm font-medium text-gray-900">— Chijioke Ugorji Kalu, Founder & CEO</cite>
+              </div>
+            </div>
+            <div className="relative">
+              <Image
+                src="/images/founder-story.png"
+                alt="Chijioke Ugorji Kalu, Founder of FertiTerra Technologies"
+                width={600}
+                height={700}
+                className="rounded-2xl shadow-2xl"
+                priority
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-lg border border-gray-100 max-w-xs">
+                <div className="flex items-center gap-3 mb-2">
+                  <Heart className="h-6 w-6 text-rose-500" />
+                  <span className="font-semibold text-gray-900">Our Mission</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Making fertility care accessible, affordable, and compassionate for every family across Africa.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Who We Are Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Leadership Team</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              A diverse team of healthcare professionals, technologists, and advocates united by our shared mission to
+              transform fertility care across Africa.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Founder & CEO */}
+            <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="aspect-[4/5] relative">
+                <Image src="/images/founder-story.png" alt="Chijioke Ugorji Kalu" fill className="object-cover" />
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl">Chijioke Ugorji Kalu</CardTitle>
+                <CardDescription className="text-rose-600 font-medium">Founder & CEO</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Healthcare entrepreneur with 8+ years in digital health innovation. Previously led health tech
+                  initiatives across West Africa, focusing on maternal and reproductive health accessibility.
+                </p>
+                <div className="flex gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    Healthcare Innovation
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Digital Health
+                  </Badge>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-rose-600 transition-colors">
+                    <Mail className="h-4 w-4" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Chief Medical Officer */}
+            <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="aspect-[4/5] relative bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                <div className="text-6xl font-bold text-green-600 opacity-20">SO</div>
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl">Dr. Sarah Okafor</CardTitle>
+                <CardDescription className="text-green-600 font-medium">Chief Medical Officer</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Board-certified reproductive endocrinologist with 12+ years of experience. Former fertility specialist
+                  at Lagos University Teaching Hospital, passionate about evidence-based care.
+                </p>
+                <div className="flex gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    Reproductive Medicine
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Research
+                  </Badge>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-green-600 transition-colors">
+                    <Mail className="h-4 w-4" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Chief Technology Officer */}
+            <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="aspect-[4/5] relative bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                <div className="text-6xl font-bold text-blue-600 opacity-20">MA</div>
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl">Michael Adebayo</CardTitle>
+                <CardDescription className="text-blue-600 font-medium">Chief Technology Officer</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Software architect with 10+ years building scalable healthcare platforms. Former lead engineer at
+                  Flutterwave, specializing in secure, HIPAA-compliant health technology solutions.
+                </p>
+                <div className="flex gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    Health Tech
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Security
+                  </Badge>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                  <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <Mail className="h-4 w-4" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* How We Work Section */}
+      <section className="py-20 bg-white">
+        <div className="container">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">How We Work</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Our approach combines cutting-edge technology with compassionate care to deliver personalized fertility
+              solutions that fit your life.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <Card className="text-center border-0 shadow-lg">
+              <CardHeader>
+                <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-rose-100 flex items-center justify-center">
+                  <Shield className="h-8 w-8 text-rose-600" />
+                </div>
+                <CardTitle className="text-xl">Science-Backed Approach</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 leading-relaxed">
+                  Every recommendation is based on the latest fertility research and clinical guidelines. Our medical
+                  team stays current with global best practices to ensure you receive evidence-based care.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center border-0 shadow-lg">
+              <CardHeader>
+                <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+                  <Heart className="h-8 w-8 text-green-600" />
+                </div>
+                <CardTitle className="text-xl">Accessible Care Model</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 leading-relaxed">
+                  We've designed our services to be affordable and accessible, with at-home testing, telemedicine
+                  consultations, and flexible payment options that work for families across Africa.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center border-0 shadow-lg">
+              <CardHeader>
+                <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Users className="h-8 w-8 text-blue-600" />
+                </div>
+                <CardTitle className="text-xl">Holistic Support</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 leading-relaxed">
+                  Beyond medical care, we provide emotional support, educational resources, and community connections to
+                  address every aspect of your fertility journey.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Values Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Core Values</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              These principles guide everything we do, from product development to patient care.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-rose-600" />
+                </div>
+                <CardTitle className="text-lg">Compassion</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                  We understand that fertility challenges are deeply personal. Every interaction is guided by empathy,
+                  respect, and genuine care for your wellbeing.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-green-600" />
+                </div>
+                <CardTitle className="text-lg">Excellence</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                  We maintain the highest standards in medical care, technology, and service delivery. Your health and
+                  trust deserve nothing less than our best.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <CardTitle className="text-lg">Accessibility</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                  Quality fertility care shouldn't be a privilege. We're committed to making our services accessible to
+                  families regardless of location or economic status.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+                  <Target className="h-6 w-6 text-purple-600" />
+                </div>
+                <CardTitle className="text-lg">Innovation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 text-center leading-relaxed">
+                  We continuously seek new ways to improve fertility care through technology, research, and creative
+                  solutions that address real patient needs.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Section */}
+      <section className="py-20 bg-white">
+        <div className="container">
+          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Impact So Far</h2>
+                <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                  Since launching FertiTerra, we've been privileged to support thousands of families across Africa on
+                  their fertility journeys. Here's what we've accomplished together:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="text-center p-6 bg-rose-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-rose-600 mb-2">5,000+</div>
+                  <div className="text-sm text-gray-600">Families Supported</div>
+                </div>
+                <div className="text-center p-6 bg-green-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-green-600 mb-2">15</div>
+                  <div className="text-sm text-gray-600">Countries Served</div>
+                </div>
+                <div className="text-center p-6 bg-blue-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-blue-600 mb-2">98%</div>
+                  <div className="text-sm text-gray-600">Satisfaction Rate</div>
+                </div>
+                <div className="text-center p-6 bg-purple-50 rounded-2xl">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">24/7</div>
+                  <div className="text-sm text-gray-600">Support Available</div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-6 rounded-2xl">
+                <Quote className="h-8 w-8 text-gray-400 mb-4" />
+                <blockquote className="text-lg italic text-gray-700 mb-4">
+                  "Our success isn't measured just in numbers, but in the joy of families who've found hope, answers,
+                  and support when they needed it most. Every positive pregnancy test, every successful treatment, every
+                  moment of relief—that's why we do this work."
+                </blockquote>
+                <cite className="text-sm font-medium text-gray-900">— Chijioke Ugorji Kalu, Founder & CEO</cite>
+              </div>
+            </div>
+
+            <div className="relative">
+              <Image
+                src="/images/woman-with-test-kit.png"
+                alt="Happy family celebrating successful fertility journey"
+                width={600}
+                height={500}
+                className="rounded-2xl shadow-2xl"
+              />
+              <div className="absolute -top-6 -right-6 bg-white rounded-2xl p-6 shadow-lg border border-gray-100 max-w-xs">
+                <div className="flex items-center gap-3 mb-2">
+                  <Users className="h-6 w-6 text-green-500" />
+                  <span className="font-semibold text-gray-900">Growing Community</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Join thousands of families who've found support, answers, and hope through FertiTerra.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-rose-500 to-purple-600">
+        <div className="container">
+          <div className="text-center max-w-4xl mx-auto text-white">
+            <h2 className="text-3xl font-bold mb-6">Ready to Start Your Journey?</h2>
+            <p className="text-xl mb-8 opacity-90">
+              Join the thousands of families who've trusted FertiTerra with their fertility care. Let us help you take
+              the next step toward building your family.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-white text-rose-600 hover:bg-gray-100">
+                <Link href="/plans/basic-fertility-checkup">
+                  Start Your Journey
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-rose-600 bg-transparent"
+              >
+                <Link href="/consultation">Speak with Our Team</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }

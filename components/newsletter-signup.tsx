@@ -5,19 +5,19 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Mail, CheckCircle } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
-export default function NewsletterSignup() {
+export function NewsletterSignup() {
   const [email, setEmail] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) return
 
     setIsLoading(true)
+    setMessage("")
 
     try {
       const response = await fetch("/api/newsletter/subscribe", {
@@ -25,60 +25,66 @@ export default function NewsletterSignup() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          firstName: "",
+          lastName: "",
+          source: "footer_newsletter",
+        }),
       })
 
-      if (response.ok) {
-        setIsSubmitted(true)
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage("Successfully subscribed to our newsletter!")
         setEmail("")
+      } else {
+        setMessage("Something went wrong. Please try again.")
       }
     } catch (error) {
-      console.error("Newsletter signup error:", error)
+      setMessage("Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <section className="py-16 bg-gradient-to-r from-rose-500 to-purple-600">
-      <div className="container">
-        <Card className="max-w-2xl mx-auto border-0 shadow-xl">
-          <CardContent className="p-8 text-center">
-            <div className="mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-100 rounded-full mb-4">
-                <Mail className="h-8 w-8 text-rose-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Stay Connected</h2>
-              <p className="text-gray-600">
-                Get the latest fertility insights, tips, and updates delivered to your inbox
-              </p>
-            </div>
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-800 via-amber-700 to-amber-900 p-8 md:p-12">
+      {/* Background pattern/texture overlay */}
+      <div className="absolute inset-0 bg-black/10"></div>
 
-            {isSubmitted ? (
-              <div className="flex items-center justify-center gap-2 text-green-600">
-                <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">Thank you for subscribing!</span>
-              </div>
+      <div className="relative z-10 max-w-md mx-auto text-center">
+        <p className="text-white text-lg mb-6 font-medium mt-4">Sign up to our newsletter</p>
+
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <Input
+            type="email"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="flex-1 bg-white border-0 text-gray-900 placeholder:text-gray-500 h-12 rounded-lg text-base"
+            disabled={isLoading}
+          />
+          <Button
+            type="submit"
+            disabled={isLoading || !email}
+            className="bg-gray-800 hover:bg-gray-700 text-white h-12 px-4 rounded-lg transition-colors"
+          >
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
-                <Input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1"
-                  required
-                />
-                <Button type="submit" disabled={isLoading} className="bg-rose-600 hover:bg-rose-700 px-8">
-                  {isLoading ? "Subscribing..." : "Subscribe"}
-                </Button>
-              </form>
+              <ArrowRight className="w-5 h-5" />
             )}
+          </Button>
+        </form>
 
-            <p className="text-xs text-gray-500 mt-4">We respect your privacy. Unsubscribe at any time.</p>
-          </CardContent>
-        </Card>
+        {message && (
+          <p className={`mt-4 text-sm ${message.includes("Successfully") ? "text-green-200" : "text-red-200"}`}>
+            {message}
+          </p>
+        )}
       </div>
-    </section>
+    </div>
   )
 }

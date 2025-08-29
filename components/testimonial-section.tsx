@@ -1,73 +1,66 @@
-import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
-import Image from "next/image"
 
-export default function TestimonialSection() {
-  const testimonials = [
-    {
-      name: "Sarah M.",
-      location: "Lagos, Nigeria",
-      content:
-        "FertiTerra gave me the answers I'd been searching for. The at-home testing was so convenient, and the consultation helped me understand my fertility health better than any doctor visit I'd had before.",
-      rating: 5,
-      image: "/placeholder.svg?height=60&width=60&text=SM",
-    },
-    {
-      name: "David & Grace K.",
-      location: "Nairobi, Kenya",
-      content:
-        "After trying to conceive for over a year, FertiTerra's TTC plan provided the guidance we needed. We're now expecting our first child!",
-      rating: 5,
-      image: "/placeholder.svg?height=60&width=60&text=DG",
-    },
-    {
-      name: "Amina T.",
-      location: "Accra, Ghana",
-      content:
-        "The community support and expert consultations made all the difference in my fertility journey. I finally felt heard and supported.",
-      rating: 5,
-      image: "/placeholder.svg?height=60&width=60&text=AT",
-    },
-  ]
-
+export function TestimonialSection() {
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-white">
       <div className="container">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">What Our Families Say</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Real stories from families who've found hope and answers through FertiTerra
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">What Our Patients Say</h2>
+          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            Hear from women who have transformed their fertility journey with FertiTerra.
           </p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {testimonials.map((testimonial, i) => (
-            <Card key={i} className="border-0 shadow-lg">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, j) => (
-                    <Star key={j} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+          {testimonials.map((testimonial, index) => (
+            <div key={index} className="flex flex-col p-6 rounded-lg border bg-white shadow-sm">
+              <div className="flex mb-4">
+                {Array(5)
+                  .fill(0)
+                  .map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-5 w-5 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                    />
                   ))}
-                </div>
-                <p className="text-gray-600 mb-6 italic">"{testimonial.content}"</p>
-                <div className="flex items-center gap-3">
-                  <Image
-                    src={testimonial.image || "/placeholder.svg"}
-                    alt={testimonial.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full"
-                  />
-                  <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500">{testimonial.location}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+              <blockquote className="flex-1 mb-4">
+                <p className="text-gray-700 italic">"{testimonial.quote}"</p>
+              </blockquote>
+              <div className="mt-auto">
+                <p className="font-semibold">{testimonial.name}</p>
+                <p className="text-sm text-gray-500">{testimonial.location}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </section>
   )
 }
+
+const testimonials = [
+  {
+    name: "Sarah J.",
+    location: "New York, NY",
+    rating: 5,
+    quote:
+      "FertiTerra changed my life. After years of struggling with infertility, their at-home testing and personalized care helped me understand my body better. I'm now expecting my first child!",
+  },
+  {
+    name: "Michelle T.",
+    location: "Austin, TX",
+    rating: 5,
+    quote:
+      "The convenience of testing at home combined with expert virtual consultations made all the difference. The doctors truly listened and created a plan specifically for me.",
+  },
+  {
+    name: "Rebecca L.",
+    location: "Chicago, IL",
+    rating: 4,
+    quote:
+      "I was hesitant about telemedicine for fertility care, but FertiTerra exceeded my expectations. The test kits were easy to use, and the follow-up care was exceptional.",
+  },
+]
+
+export default TestimonialSection

@@ -6,12 +6,14 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { CartProvider } from "@/context/cart-context"
 import { AuthProvider } from "@/context/auth-context"
 import { Toaster } from "@/components/ui/toaster"
+import { WelcomeChatbotPopup } from "@/components/welcome-chatbot-popup"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - Fertility Testing & Support",
-  description: "Comprehensive fertility testing and support services for African families",
+  title: "FertiTerra Technologies - AI-Powered Fertility Health Platform",
+  description:
+    "Africa's first AI-powered, digital fertility health platform. Comprehensive fertility testing, telemedicine consultations, and personalized care plans.",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -45,6 +47,7 @@ export default function RootLayout({
             <CartProvider>
               {children}
               <Toaster />
+              <WelcomeChatbotPopup />
             </CartProvider>
           </AuthProvider>
         </ThemeProvider>

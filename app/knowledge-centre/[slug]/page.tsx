@@ -1,341 +1,365 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
+import { Header } from "@/components/header"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { ArrowLeft, Heart, Share2, BookOpen, Clock, User } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, Clock, Eye, Heart, Share2, BookOpen, Calendar, User, Tag } from "lucide-react"
-import { Header } from "@/components/header"
 
 interface Article {
-  id: number
+  id: string
   title: string
-  slug: string
+  content: string
   author: string
+  date: string
+  readTime: string
   category: string
   tags: string[]
-  date: string
-  featuredImage: string
-  videoEmbed?: string
-  summary: string
-  content: string
-  readTime: number
-  views: number
-  likes: number
-  shares: number
+  image?: string
 }
 
-export default function ArticlePage() {
-  const params = useParams()
+export default function ArticlePage({ params }: { params: { slug: string } }) {
   const [article, setArticle] = useState<Article | null>(null)
-  const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const response = await fetch(`/api/knowledge-centre?slug=${params.slug}`)
+        if (response.ok) {
+          const data = await response.json()
+          setArticle(data)
+        }
+      } catch (error) {
+        console.error("Error fetching article:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchArticle()
   }, [params.slug])
 
-  const fetchArticle = async () => {
-    try {
-      setLoading(true)
-      // In a real app, you'd fetch by slug from your API
-      // For now, we'll simulate with the mock data
-      const mockArticle: Article = {
-        id: 1,
-        title: "Why Talking About Infertility Matters: Breaking the Stigma in Africa",
-        slug: "why-talking-about-infertility-matters",
-        author: "FertiTerra Editorial Team",
-        category: "Awareness & Education",
-        tags: ["Infertility Awareness", "Africa", "Fertility Support", "Breaking the Stigma"],
-        date: "2025-08-15",
-        featuredImage: "/infertility-awareness-africa.png",
-        videoEmbed: `<iframe width="560" height="315" 
-    src="https://www.youtube.com/embed/ZBRYe9_0X0w?si=fOKeTvNbgG6CfYTI" 
-    title="YouTube video player" 
-    frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-    referrerpolicy="strict-origin-when-cross-origin" 
-    allowfullscreen>
-</iframe>`,
-        summary:
-          "Infertility affects 1 in 6 couples globally, but in Africa, stigma and silence make the journey even harder. Learn why open conversations matter — and how we can replace stigma with hope.",
-        content: `Infertility affects 1 in 6 couples globally, according to the World Health Organization. But in many African communities, the topic is still whispered about, hidden behind closed doors, and sometimes not spoken about at all.
-
-Instead of compassion and understanding, those struggling with infertility often face stigma, blame, and isolation. This silence causes emotional pain — and delays people from seeking medical help.
-
-At FertiTerra, we believe infertility is not a taboo — it's a medical condition. And open conversations are the first step to changing lives.
-
-## The Weight of Silence
-In certain cultures, infertility is wrongly seen as a woman's problem. Men are rarely tested first, and couples may face pressure from extended family or even risk marital breakdown.
-This silence has real consequences: delayed diagnosis, untreated health conditions, and deep emotional scars.
-
-## Why We Must Speak Up
-**Encourages Early Diagnosis**  
-When people feel safe talking about fertility challenges, they are more likely to seek medical help quickly. Early testing means faster answers and better treatment options.
-
-**Reduces Emotional Isolation**  
-Silence makes people feel alone in their struggles. By sharing our stories, we remind others that they are not the only ones.
-
-**Dismantles Harmful Myths**  
-Myths like "infertility is always the woman's fault" or "traditional medicine can cure everything" keep people from getting accurate diagnoses.
-
-**Builds Supportive Communities**  
-A society that listens and supports makes the journey less lonely and more hopeful.
-
-## A Personal Story
-When Amina and James tried for three years to have a baby, they didn't tell anyone. In their community, fertility problems were seen as a curse.  
-After learning more from a friend, they finally sought testing — and discovered James had a treatable condition.  
-Today, they are expecting their first child. Their only regret? Waiting so long because of fear and stigma.
-
-## FertiTerra's Role in Breaking the Silence
-We provide affordable, discreet fertility test kits and education for African couples and individuals.  
-Our mission is simple: make fertility care accessible, remove the shame, and give families hope.
-
-## Your Voice Matters
-You can help break the stigma:
-- Talk openly about fertility with friends and family.
-- Share accurate information and challenge myths.
-- Support those going through fertility struggles without judgment.
-
-💬 **Final Thought:** Infertility does not define anyone's worth. With understanding, education, and open conversation, we can replace silence with support — and stigma with hope.`,
-        readTime: 8,
-        views: 1250,
-        likes: 89,
-        shares: 23,
-      }
-
-      if (params.slug === mockArticle.slug) {
-        setArticle(mockArticle)
-      }
-    } catch (error) {
-      console.error("Error fetching article:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleLike = () => {
-    setLiked(!liked)
-    if (article) {
-      setArticle({
-        ...article,
-        likes: liked ? article.likes - 1 : article.likes + 1,
-      })
-    }
-  }
-
-  const handleShare = async () => {
-    if (navigator.share && article) {
-      try {
-        await navigator.share({
-          title: article.title,
-          text: article.summary,
-          url: window.location.href,
-        })
-      } catch (error) {
-        console.log("Error sharing:", error)
-      }
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href)
-      alert("Link copied to clipboard!")
-    }
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header />
-        <main className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
-            <div className="h-64 bg-gray-200 rounded mb-8"></div>
-            <div className="h-12 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-            <div className="space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="h-12 bg-gray-200 rounded w-3/4 mb-6"></div>
+            <div className="h-64 bg-gray-200 rounded mb-6"></div>
+            <div className="space-y-3">
               <div className="h-4 bg-gray-200 rounded"></div>
               <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-              <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+              <div className="h-4 bg-gray-200 rounded w-4/6"></div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     )
   }
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Article not found</h1>
-            <p className="text-gray-600 mb-8">The article you're looking for doesn't exist.</p>
-            <Link href="/knowledge-centre">
-              <Button className="bg-rose-500 hover:bg-rose-600">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Knowledge Centre
-              </Button>
-            </Link>
-          </div>
-        </main>
+        <div className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Article Not Found</h1>
+          <p className="text-gray-600 mb-6">The article you're looking for doesn't exist.</p>
+          <Link href="/knowledge-centre">
+            <Button>Back to Knowledge Centre</Button>
+          </Link>
+        </div>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+  // Special handling for the infertility stigma article
+  if (params.slug === "infertility-stigma-africa") {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Link href="/knowledge-centre" className="inline-flex items-center text-rose-500 hover:text-rose-600 mb-8">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Knowledge Centre
-        </Link>
+        <article className="container mx-auto px-4 py-8 max-w-4xl">
+          {/* Back Navigation */}
+          <Link href="/knowledge-centre" className="inline-flex items-center text-rose-600 hover:text-rose-700 mb-6">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Knowledge Centre
+          </Link>
 
-        <article className="max-w-4xl mx-auto">
           {/* Article Header */}
           <header className="mb-8">
-            <Badge className="bg-rose-500 mb-4">{article.category}</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
-            <p className="text-xl text-gray-600 mb-6">{article.summary}</p>
-
-            {/* Article Meta */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500 mb-6">
-              <div className="flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                {article.author}
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+              <span className="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-medium">
+                Awareness & Education
+              </span>
+              <span>•</span>
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>8 min read</span>
               </div>
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2" />
-                {formatDate(article.date)}
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
-                {article.readTime} min read
-              </div>
-              <div className="flex items-center">
-                <Eye className="h-4 w-4 mr-2" />
-                {article.views} views
+              <span>•</span>
+              <div className="flex items-center gap-1">
+                <User className="w-4 h-4" />
+                <span>Dr. Sarah Adebayo</span>
               </div>
             </div>
 
-            {/* Social Actions */}
-            <div className="flex items-center gap-4 pb-6 border-b">
-              <button
-                onClick={handleLike}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
-                  liked ? "bg-rose-100 text-rose-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
-                {article.likes}
-              </button>
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-              >
-                <Share2 className="h-4 w-4" />
-                Share
-              </button>
-            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+              Breaking the Silence: Addressing Infertility Stigma in Africa
+            </h1>
+
+            <p className="text-xl text-gray-600 leading-relaxed">
+              Exploring the cultural, social, and emotional challenges surrounding infertility in African communities
+              and how we can create more supportive environments for affected families.
+            </p>
           </header>
 
-          {/* Featured Image */}
-          <div className="relative h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
+          {/* Article Image */}
+          <div className="mb-8">
             <Image
-              src={article.featuredImage || "/placeholder.svg"}
-              alt={article.title}
-              fill
-              className="object-cover"
+              src="/infertility-awareness-africa.png"
+              alt="Infertility awareness in Africa"
+              width={800}
+              height={400}
+              className="w-full h-64 object-cover rounded-lg"
             />
           </div>
 
-          {/* Video Embed */}
-          {article.videoEmbed && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4">Watch the Video</h3>
-              <div className="relative w-full flex justify-center">
-                <div dangerouslySetInnerHTML={{ __html: article.videoEmbed }} />
+          {/* Video Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Understanding the Impact</h2>
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <p className="text-gray-700 mb-4">
+                Watch this insightful discussion about the challenges and stigma surrounding infertility in African
+                communities:
+              </p>
+              <div className="flex justify-center">
+                <iframe
+                  width="560"
+                  height="315"
+                  src="https://www.youtube.com/embed/ZBRYe9_0X0w?si=fOKeTvNbgG6CfYTI"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="max-w-full h-auto"
+                ></iframe>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Article Content */}
           <div className="prose prose-lg max-w-none mb-8">
-            {article.content.split("\n\n").map((paragraph, index) => {
-              if (paragraph.startsWith("## ")) {
-                return (
-                  <h2 key={index} className="text-2xl font-bold text-gray-900 mt-8 mb-4">
-                    {paragraph.replace("## ", "")}
-                  </h2>
-                )
-              } else if (paragraph.startsWith("**") && paragraph.endsWith("**")) {
-                return (
-                  <h3 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-2">
-                    {paragraph.replace(/\*\*/g, "")}
-                  </h3>
-                )
-              } else if (paragraph.startsWith("- ")) {
-                const listItems = paragraph.split("\n").filter((item) => item.startsWith("- "))
-                return (
-                  <ul key={index} className="list-disc list-inside space-y-2 mb-4">
-                    {listItems.map((item, itemIndex) => (
-                      <li key={itemIndex} className="text-gray-700">
-                        {item.replace("- ", "")}
-                      </li>
-                    ))}
-                  </ul>
-                )
-              } else {
-                return (
-                  <p key={index} className="text-gray-700 mb-4 leading-relaxed">
-                    {paragraph}
-                  </p>
-                )
-              }
-            })}
+            <h2>The Hidden Struggle</h2>
+            <p>
+              Infertility affects millions of couples across Africa, yet it remains one of the most stigmatized health
+              conditions on the continent. The silence surrounding fertility challenges creates additional emotional
+              burden for families already dealing with the medical and psychological aspects of infertility.
+            </p>
+
+            <h2>Cultural and Social Barriers</h2>
+            <p>
+              In many African cultures, fertility is closely tied to identity, social status, and family honor. Women,
+              in particular, often bear the blame for fertility issues, regardless of the medical cause. This cultural
+              pressure can lead to:
+            </p>
+            <ul>
+              <li>Social isolation and discrimination</li>
+              <li>Marital instability and relationship stress</li>
+              <li>Mental health challenges including depression and anxiety</li>
+              <li>Delayed or avoided medical treatment due to shame</li>
+            </ul>
+
+            <h2>Breaking Down Misconceptions</h2>
+            <p>
+              Education is key to addressing infertility stigma. Common misconceptions include the belief that
+              infertility is always the woman's fault, that it's a punishment for past actions, or that traditional
+              remedies are always superior to medical treatment. By promoting accurate information about fertility
+              health, we can begin to change these harmful narratives.
+            </p>
+
+            <h2>Creating Supportive Communities</h2>
+            <p>
+              Building supportive environments requires effort from individuals, families, healthcare providers, and
+              communities. This includes:
+            </p>
+            <ul>
+              <li>Promoting open, compassionate conversations about fertility</li>
+              <li>Training healthcare providers in sensitive, culturally appropriate care</li>
+              <li>Establishing support groups and counseling services</li>
+              <li>Advocating for policy changes that improve access to fertility care</li>
+            </ul>
+
+            <h2>The Role of Technology</h2>
+            <p>
+              Digital health platforms like FertiTerra are helping to address some barriers by providing confidential
+              access to fertility testing and consultations. This technology-enabled approach allows individuals to seek
+              help privately while still receiving professional medical guidance.
+            </p>
+
+            <h2>Moving Forward</h2>
+            <p>
+              Addressing infertility stigma requires a multi-faceted approach that combines education, advocacy, and
+              improved access to care. By working together, we can create a future where fertility challenges are met
+              with understanding and support rather than shame and silence.
+            </p>
           </div>
 
-          {/* Tags */}
-          <div className="flex items-center gap-2 mb-8">
-            <Tag className="h-4 w-4 text-gray-500" />
-            <div className="flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">
-                  {tag}
-                </Badge>
-              ))}
+          {/* Article Actions */}
+          <div className="flex items-center justify-between py-6 border-t border-gray-200">
+            <div className="flex items-center gap-4">
+              <Button
+                variant={liked ? "default" : "outline"}
+                size="sm"
+                onClick={() => setLiked(!liked)}
+                className={liked ? "bg-rose-600 hover:bg-rose-700" : ""}
+              >
+                <Heart className={`w-4 h-4 mr-2 ${liked ? "fill-current" : ""}`} />
+                {liked ? "Liked" : "Like"}
+              </Button>
+
+              <Button variant="outline" size="sm">
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+            </div>
+
+            <div className="text-sm text-gray-500">Published on March 15, 2024</div>
+          </div>
+
+          {/* Related Articles */}
+          <section className="mt-12">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                    <BookOpen className="w-4 h-4" />
+                    <span>Fertility Education</span>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    Understanding Your Fertility: A Comprehensive Guide
+                  </h4>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Learn about the basics of fertility health, including key factors that affect conception and when to
+                    seek help.
+                  </p>
+                  <Link
+                    href="/knowledge-centre/understanding-fertility"
+                    className="text-rose-600 hover:text-rose-700 text-sm font-medium"
+                  >
+                    Read More →
+                  </Link>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                    <BookOpen className="w-4 h-4" />
+                    <span>Mental Health</span>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    Coping with Fertility Challenges: Mental Health Support
+                  </h4>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Practical strategies for managing the emotional aspects of fertility challenges and building
+                    resilience.
+                  </p>
+                  <Link
+                    href="/knowledge-centre/mental-health-support"
+                    className="text-rose-600 hover:text-rose-700 text-sm font-medium"
+                  >
+                    Read More →
+                  </Link>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
+        </article>
+      </div>
+    )
+  }
+
+  // Default article layout for other articles
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      <article className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Back Navigation */}
+        <Link href="/knowledge-centre" className="inline-flex items-center text-rose-600 hover:text-rose-700 mb-6">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Knowledge Centre
+        </Link>
+
+        {/* Article Header */}
+        <header className="mb-8">
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span className="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-medium">
+              {article.category}
+            </span>
+            <span>•</span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{article.readTime}</span>
+            </div>
+            <span>•</span>
+            <div className="flex items-center gap-1">
+              <User className="w-4 h-4" />
+              <span>{article.author}</span>
             </div>
           </div>
 
-          {/* Call to Action */}
-          <Card className="bg-gradient-to-r from-rose-50 to-pink-50 border-rose-200">
-            <CardContent className="p-6 text-center">
-              <BookOpen className="h-12 w-12 text-rose-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Take the Next Step?</h3>
-              <p className="text-gray-600 mb-4">
-                Get personalized insights about your fertility with our comprehensive at-home test kit.
-              </p>
-              <Link href="/test-kits">
-                <Button className="bg-rose-500 hover:bg-rose-600">Order Your Test Kit</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </article>
-      </main>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
+        </header>
+
+        {/* Article Image */}
+        {article.image && (
+          <div className="mb-8">
+            <Image
+              src={article.image || "/placeholder.svg"}
+              alt={article.title}
+              width={800}
+              height={400}
+              className="w-full h-64 object-cover rounded-lg"
+            />
+          </div>
+        )}
+
+        {/* Article Content */}
+        <div className="prose prose-lg max-w-none mb-8">
+          <div dangerouslySetInnerHTML={{ __html: article.content }} />
+        </div>
+
+        {/* Article Actions */}
+        <div className="flex items-center justify-between py-6 border-t border-gray-200">
+          <div className="flex items-center gap-4">
+            <Button
+              variant={liked ? "default" : "outline"}
+              size="sm"
+              onClick={() => setLiked(!liked)}
+              className={liked ? "bg-rose-600 hover:bg-rose-700" : ""}
+            >
+              <Heart className={`w-4 h-4 mr-2 ${liked ? "fill-current" : ""}`} />
+              {liked ? "Liked" : "Like"}
+            </Button>
+
+            <Button variant="outline" size="sm">
+              <Share2 className="w-4 h-4 mr-2" />
+              Share
+            </Button>
+          </div>
+
+          <div className="text-sm text-gray-500">Published on {article.date}</div>
+        </div>
+      </article>
     </div>
   )
 }

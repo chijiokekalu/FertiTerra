@@ -1,135 +1,138 @@
 "use client"
 
+import { Header } from "@/components/header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { ExternalLink, DollarSign, TrendingUp, Users, Globe } from "lucide-react"
-import Link from "next/link"
 
-export default function AdvertisingRevenue() {
+export default function AdvertisingRevenuePage() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Advertising Revenue</h1>
-          <p className="text-gray-600">Monetize your website traffic with established ad networks</p>
-        </div>
+    <div className="min-h-screen bg-white">
+      <Header />
 
-        <div className="grid gap-6">
-          {/* Google AdSense */}
-          <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-700">
-                <Globe className="h-5 w-5" />
-                Use Established Ad Networks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-white p-4 rounded-lg border border-blue-100">
-                <p className="text-gray-700 leading-relaxed">
-                  Google AdSense is a low-maintenance, highly popular option that serves contextually relevant ads (via
-                  responsive/adaptable formats) to visitors, earning revenue per impression or click—especially useful
-                  for sites with consistent traffic.
-                </p>
-                <div className="mt-2">
-                  <Badge variant="outline" className="text-blue-600 border-blue-200">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Wikipedia
-                  </Badge>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Advertising Revenue Streams</h1>
+            <p className="text-xl text-gray-600">
+              Explore established ad networks to monetize your website traffic and generate sustainable revenue.
+            </p>
+          </div>
+
+          <div className="grid gap-8">
+            {/* Google AdSense */}
+            <Card className="border-l-4 border-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-6 h-6 text-blue-600" />
+                  Use Established Ad Networks
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed">
+                    <strong>Google AdSense</strong> is a low-maintenance, highly popular option that serves contextually
+                    relevant ads (via responsive/adaptable formats) to visitors, earning revenue per impression or
+                    click—especially useful for sites with consistent traffic.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-sm text-blue-600 font-medium">Source: Wikipedia</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* High-Earning Networks */}
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-700">
-                <TrendingUp className="h-5 w-5" />
-                High-Earning Networks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-white p-4 rounded-lg border border-green-100">
-                <p className="text-gray-700 leading-relaxed">
-                  Other high-earning networks to explore include SmartyAds SSP, Media.net, and Propeller Ads, known for
-                  competitive CPM and CPC rates.
-                </p>
-                <div className="mt-2">
-                  <Badge variant="outline" className="text-green-600 border-green-200">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    SmartyAds
-                  </Badge>
+            {/* High-Earning Networks */}
+            <Card className="border-l-4 border-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                  High-Earning Networks
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed">
+                    Other high-earning networks to explore include <strong>SmartyAds SSP</strong>,{" "}
+                    <strong>Media.net</strong>, and <strong>Propeller Ads</strong>, known for competitive CPM and CPC
+                    rates.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-sm text-green-600 font-medium">Source: SmartyAds</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Niche Networks */}
-          <Card className="bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-700">
-                <Users className="h-5 w-5" />
-                Niche & Affiliate-Friendly Programs
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-white p-4 rounded-lg border border-purple-100">
-                <p className="text-gray-700 leading-relaxed">
-                  For more niche or affiliate-friendly programs, consider AdCash, Adsterra, Publift, Media.net, or
-                  Propeller Ads.
-                </p>
-                <div className="mt-2 flex gap-2">
-                  <Badge variant="outline" className="text-purple-600 border-purple-200">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Teqblaze
-                  </Badge>
-                  <Badge variant="outline" className="text-purple-600 border-purple-200">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Adcash
-                  </Badge>
+            {/* Niche Networks */}
+            <Card className="border-l-4 border-purple-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-6 h-6 text-purple-600" />
+                  Niche & Affiliate-Friendly Programs
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed">
+                    For more niche or affiliate-friendly programs, consider <strong>AdCash</strong>,{" "}
+                    <strong>Adsterra</strong>, <strong>Publift</strong>, <strong>Media.net</strong>, or{" "}
+                    <strong>Propeller Ads</strong>.
+                  </p>
+                  <div className="mt-3 space-y-1">
+                    <div className="text-sm text-purple-600 font-medium">Source: Teqblaze</div>
+                    <div className="text-sm text-purple-600 font-medium">Source: Adcash</div>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* High-Traffic Networks */}
-          <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-orange-700">
-                <DollarSign className="h-5 w-5" />
-                High-Traffic Networks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-white p-4 rounded-lg border border-orange-100">
-                <p className="text-gray-700 leading-relaxed">
-                  If your site becomes high-traffic, networks like Mediavine and Raptive tend to offer better revenue
-                  share models.
-                </p>
-                <div className="mt-2">
-                  <Badge variant="outline" className="text-orange-600 border-orange-200">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Blogging Explorer
-                  </Badge>
+            {/* High-Traffic Networks */}
+            <Card className="border-l-4 border-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="w-6 h-6 text-orange-600" />
+                  High-Traffic Revenue Models
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed">
+                    If your site becomes high-traffic, networks like <strong>Mediavine</strong> and{" "}
+                    <strong>Raptive</strong> tend to offer better revenue share models.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-sm text-orange-600 font-medium">Source: Blogging Explorer</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
 
-        {/* Quick Access Links */}
-        <div className="mt-8 p-6 bg-white rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Access</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Link href="/admin/dashboard" className="text-blue-600 hover:text-blue-800 transition-colors">
-              ← Back to Admin Dashboard
-            </Link>
-            <Link href="/admin/analytics" className="text-blue-600 hover:text-blue-800 transition-colors">
-              View Analytics
-            </Link>
-            <Link href="/knowledge-centre" className="text-blue-600 hover:text-blue-800 transition-colors">
-              Knowledge Centre
-            </Link>
+            {/* Action Section */}
+            <Card className="bg-gray-50">
+              <CardContent className="p-6">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Start Monetizing?</h3>
+                  <p className="text-gray-600 mb-6">
+                    Choose the advertising network that best fits your website's traffic and audience demographics.
+                  </p>
+                  <div className="flex flex-wrap gap-4 justify-center">
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Google AdSense
+                    </Button>
+                    <Button variant="outline">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      SmartyAds SSP
+                    </Button>
+                    <Button variant="outline">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Media.net
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

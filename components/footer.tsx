@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Linkedin, Instagram } from "lucide-react"
 
-export function Footer() {
+export default function Footer() {
   return (
     <footer className="border-t py-8 bg-white">
       <div className="container">

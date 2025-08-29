@@ -10,8 +10,18 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - Fertility Testing & Support",
-  description: "Comprehensive fertility testing and support services for African families",
+  title: "FertiTerra Technologies - AI-Powered Fertility Care for Africa",
+  description:
+    "Transform your fertility journey with FertiTerra's AI-powered platform. Affordable fertility testing, personalized care plans, and expert consultations across Africa.",
+  keywords: "fertility, Africa, AI, healthcare, reproductive health, fertility testing, IVF, fertility clinic",
+  authors: [{ name: "FertiTerra Technologies" }],
+  creator: "FertiTerra Technologies",
+  publisher: "FertiTerra Technologies",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },

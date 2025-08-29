@@ -12,7 +12,7 @@ const teamMembers = [
     name: "Kalu Chijioke Ugorji",
     role: "Founder & CEO",
     image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download%20%283%29-7aJEiLOLhBdqPLyXAdtXXjZ3Hs7kSX.png",
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download%20%285%29-u1y6fcOVsdhFiaBp0mNekdRuPrDHwr.png",
     bio: "Chijioke is a polymath and academic scholar with expertise in technology, engineering, and health sciences. He studied Chemistry at Michael Okpara University, Industrial Engineering at Dangote Academy, and is pursuing advanced studies in software engineering and health sciences. Driven by personal experiences with infertility stigma, he founded FertiTerra to transform fertility care in Africa through AI-driven, affordable, and inclusive solutions.",
   },
   {
@@ -25,21 +25,21 @@ const teamMembers = [
   {
     name: "Dr. Simpa Dania",
     role: "Head of Partnerships & Business Development",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download%20%282%29-Mdoo3uuoiddEvG2Zn4eWqKVM58bqpI.png",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_2825.jpg-eDlS1ieHsDEmaAru7g89kXmLXHgaJF.jpeg",
     bio: "Simpa is a strategic business leader with extensive experience in building impactful partnerships and scaling ventures across Africa. With a background in entrepreneurship and social innovation, he drives FertiTerra's external collaborations, ensuring strong stakeholder engagement with hospitals, research centers, and industry players.",
   },
   {
     name: "Dr. Kelechi Okoro",
     role: "Head of Public Health Education & Advocacy (Healthertainer)",
     image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download%20%285%29-u1y6fcOVsdhFiaBp0mNekdRuPrDHwr.png",
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download%20%283%29-7aJEiLOLhBdqPLyXAdtXXjZ3Hs7kSX.png",
     bio: "Dr. Kelechi, popularly known as The Healthertainer, is a Medical doctor and a passionate health educator and advocate. With years of experience in public health communications, she leads FertiTerra's education and awareness campaigns, reducing stigma around infertility and promoting reproductive health literacy across communities.",
   },
   {
     name: "Dr. Smart Akuma",
     role: "Head of Medical Affairs (Gynecology & Fertility Care)",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_2825.jpg-eDlS1ieHsDEmaAru7g89kXmLXHgaJF.jpeg",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download%20%282%29-Mdoo3uuoiddEvG2Zn4eWqKVM58bqpI.png",
     bio: "Dr. Smart is a medical doctor and gynecologist with over 7 years of clinical experience in women's reproductive health. He leads FertiTerra's medical advisory, ensuring that all solutions are evidence-based, safe, and patient-centered. His passion lies in helping couples overcome infertility challenges and creating inclusive reproductive health systems across Africa.",
   },
   {

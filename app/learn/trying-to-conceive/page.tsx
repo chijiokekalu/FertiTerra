@@ -210,7 +210,7 @@ export default function TryingToConceivedPage() {
 
               <div className="mt-6">
                 <Link href="/appointments/nutrition">
-                  <Button variant="outline" className="border-rose-500 text-rose-500 hover:bg-rose-50">
+                  <Button variant="outline" className="border-rose-500 text-rose-500 hover:bg-rose-50 bg-transparent">
                     Book Fertility Nutrition Consultation
                   </Button>
                 </Link>
@@ -329,7 +329,7 @@ export default function TryingToConceivedPage() {
 
               <div className="mt-6">
                 <Link href="/appointments/counselling">
-                  <Button variant="outline" className="border-rose-500 text-rose-500 hover:bg-rose-50">
+                  <Button variant="outline" className="border-rose-500 text-rose-500 hover:bg-rose-50 bg-transparent">
                     Book Fertility Counselling
                   </Button>
                 </Link>
@@ -348,10 +348,18 @@ export default function TryingToConceivedPage() {
                 <Button className="bg-rose-500 hover:bg-rose-600 text-white">Order Fertility Test</Button>
               </Link>
               <Link href="/appointments/advisor-call">
-                <Button variant="outline" className="border-rose-500 text-rose-500 hover:bg-rose-50">
+                <Button variant="outline" className="border-rose-500 text-rose-500 hover:bg-rose-50 bg-transparent">
                   Speak to a Fertility Advisor
                 </Button>
               </Link>
+              <a
+                href="https://buy.stripe.com/test_9B628rfL1aHwb9W8qqaR200"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
+              >
+                <Button className="bg-[#635bff] hover:bg-[#5a52e8] text-white px-6 py-3">Pay $200 - TTC Plan</Button>
+              </a>
             </div>
           </div>
         </div>

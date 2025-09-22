@@ -2,33 +2,22 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
 import { CartProvider } from "@/context/cart-context"
 import { AuthProvider } from "@/context/auth-context"
+import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - Transforming Fertility Care in Africa",
+  title: "FertiTerra Technologies - Fertility Health & Wellness",
   description:
-    "AI-driven, affordable, and inclusive fertility solutions for Africa. Get personalized fertility testing, expert consultations, and comprehensive reproductive health support.",
-  keywords:
-    "fertility, reproductive health, Africa, AI healthcare, fertility testing, telemedicine, infertility treatment",
+    "Comprehensive fertility health solutions, telemedicine consultations, and wellness products for your reproductive journey.",
+  keywords: "fertility, reproductive health, telemedicine, wellness, fertility testing, consultation",
   authors: [{ name: "FertiTerra Technologies" }],
-  creator: "FertiTerra Technologies",
-  publisher: "FertiTerra Technologies",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL("https://fertiterratechnologies.com"),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
-    title: "FertiTerra Technologies - Transforming Fertility Care in Africa",
-    description: "AI-driven, affordable, and inclusive fertility solutions for Africa",
+    title: "FertiTerra Technologies - Fertility Health & Wellness",
+    description:
+      "Comprehensive fertility health solutions, telemedicine consultations, and wellness products for your reproductive journey.",
     url: "https://fertiterratechnologies.com",
     siteName: "FertiTerra Technologies",
     images: [
@@ -44,8 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FertiTerra Technologies - Transforming Fertility Care in Africa",
-    description: "AI-driven, affordable, and inclusive fertility solutions for Africa",
+    title: "FertiTerra Technologies - Fertility Health & Wellness",
+    description:
+      "Comprehensive fertility health solutions, telemedicine consultations, and wellness products for your reproductive journey.",
     images: ["/images/fertiterra-logo-main.png"],
   },
   robots: {
@@ -65,13 +55,6 @@ export const metadata: Metadata = {
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-    other: [
-      {
-        rel: "mask-icon",
-        url: "/safari-pinned-tab.svg",
-        color: "#ef4444",
-      },
-    ],
   },
   manifest: "/site.webmanifest",
     generator: 'v0.app'
@@ -83,21 +66,29 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        {/* Google AdSense */}
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9375281731859570"
           crossOrigin="anonymous"
-        ></script>
+        />
       </head>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-          <AuthProvider>
-            <CartProvider>{children}</CartProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
+
+        {/* Google Analytics */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'GA_MEASUREMENT_ID');
+          `}
+        </Script>
       </body>
     </html>
   )

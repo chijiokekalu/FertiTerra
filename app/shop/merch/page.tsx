@@ -1,708 +1,622 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Header } from "@/components/header"
-import { Cart } from "@/components/cart"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCart } from "@/context/cart-context"
-import { Star, ShoppingCart, ArrowRight, Filter, Heart, Zap, Sparkles, Users, Globe } from "lucide-react"
+import { Heart, ShoppingCart, Star, X, Plus, Minus, Filter, Sparkles } from "lucide-react"
+import Image from "next/image"
 
-// Product collections data
+interface Product {
+  id: string
+  name: string
+  price: number
+  image: string
+  collection: string
+  type: "T-Shirt" | "Tote Bag" | "Hat"
+  colors: string[]
+  sizes?: string[]
+  rating: number
+  reviews: number
+  featured?: boolean
+  description: string
+}
+
 const collections = [
   {
     id: "seeds-of-hope",
     name: "Seeds of Hope",
-    description: "Nurturing dreams and planting hope for every fertility journey",
-    color: "from-green-400 to-emerald-600",
+    description: "Hope and fertility awareness",
+    color: "from-pink-500 to-rose-500",
   },
   {
     id: "fertithreads",
     name: "FertiThreads",
-    description: "Weaving stories of strength, resilience, and empowerment",
-    color: "from-purple-400 to-indigo-600",
+    description: "Strength and empowerment",
+    color: "from-purple-500 to-indigo-500",
   },
   {
     id: "bloom-collection",
     name: "Bloom Collection",
-    description: "Celebrating growth, transformation, and new beginnings",
-    color: "from-pink-400 to-rose-600",
+    description: "Growth and new beginnings",
+    color: "from-green-500 to-emerald-500",
   },
   {
     id: "conceive-celebrate",
     name: "Conceive & Celebrate",
-    description: "Honoring every step of the conception journey",
-    color: "from-yellow-400 to-orange-600",
+    description: "Journey milestones",
+    color: "from-yellow-500 to-orange-500",
   },
   {
     id: "terrawear",
     name: "TerraWear",
-    description: "Earth-conscious fashion for fertility awareness",
-    color: "from-teal-400 to-cyan-600",
+    description: "Eco-conscious fertility advocacy",
+    color: "from-teal-500 to-cyan-500",
   },
 ]
 
-const products = [
+const products: Product[] = [
   // Seeds of Hope Collection
   {
     id: "seeds-hope-tshirt",
     name: "Seeds of Hope T-Shirt",
-    collection: "seeds-of-hope",
-    category: "t-shirt",
     price: 25,
-    originalPrice: 25,
-    rating: 4.9,
-    reviews: 234,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_2047.JPG-40GcqfKlneX3w3IJFRc7Q1rfvQ7EVm.jpeg",
-    description: "Comfortable cotton t-shirt spreading hope and fertility awareness",
+    image: "/images/merch/tshirt-black-1.jpeg",
+    collection: "seeds-of-hope",
+    type: "T-Shirt",
+    colors: ["Black", "White", "Blue"],
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Black", "White", "Navy"],
+    rating: 4.8,
+    reviews: 124,
     featured: true,
+    description: "Spread hope and awareness with our signature fertility journey message.",
   },
   {
     id: "seeds-hope-tote",
     name: "Seeds of Hope Tote Bag",
-    collection: "seeds-of-hope",
-    category: "tote",
     price: 15,
-    originalPrice: 15,
-    rating: 4.8,
-    reviews: 156,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_2057.JPG-KX9RUdE0a0xFlUAKAyIyQEcoVVgrLD.jpeg",
-    description: "Eco-friendly tote bag with inspiring fertility message",
-    sizes: ["One Size"],
-    colors: ["White", "Natural", "Black"],
-    featured: true,
+    image: "/images/merch/tote-bag-white.jpeg",
+    collection: "seeds-of-hope",
+    type: "Tote Bag",
+    colors: ["White", "Black", "Blue"],
+    rating: 4.9,
+    reviews: 89,
+    description: "Carry your message of hope wherever you go with this eco-friendly tote.",
   },
   {
     id: "seeds-hope-hat",
-    name: "Seeds of Hope Cap",
-    collection: "seeds-of-hope",
-    category: "hat",
+    name: "Seeds of Hope Hat",
     price: 15,
-    originalPrice: 15,
+    image: "/images/merch/hat-white.jpeg",
+    collection: "seeds-of-hope",
+    type: "Hat",
+    colors: ["White", "Black", "Blue"],
+    sizes: ["S", "M", "L", "XL"],
     rating: 4.7,
-    reviews: 89,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_2061.JPG-Z9NdfWAH3IoMzxTGWwdcMTdDmfFl0t.jpeg",
-    description: "Adjustable cap with embroidered fertility awareness message",
-    sizes: ["One Size"],
-    colors: ["White", "Black", "Navy"],
-    featured: true,
+    reviews: 67,
+    description: "Show your support with this comfortable and stylish baseball cap.",
   },
-
   // FertiThreads Collection
   {
     id: "fertithreads-tshirt",
-    name: "FertiThreads Classic Tee",
-    collection: "fertithreads",
-    category: "t-shirt",
+    name: "FertiThreads Empowerment Tee",
     price: 25,
-    originalPrice: 25,
-    rating: 4.8,
-    reviews: 198,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_2053.JPG-C2CYqTkEafnrJw9CI8Cq7R2idRoLT5.jpeg",
-    description: "Premium cotton tee with bold fertility empowerment design",
-    sizes: ["S", "M", "L", "XL"],
+    image: "/fertithreads-tote-bag-with-empowerment-design.jpg",
+    collection: "fertithreads",
+    type: "T-Shirt",
     colors: ["Black", "White", "Purple"],
-    featured: false,
+    sizes: ["S", "M", "L", "XL"],
+    rating: 4.8,
+    reviews: 156,
+    featured: true,
+    description: "Embrace your strength with empowering fertility messaging.",
   },
   {
     id: "fertithreads-tote",
-    name: "FertiThreads Tote",
-    collection: "fertithreads",
-    category: "tote",
+    name: "FertiThreads Power Tote",
     price: 15,
-    originalPrice: 15,
-    rating: 4.6,
-    reviews: 112,
-    image: "/placeholder-efz0c.png",
-    description: "Stylish tote bag for the modern fertility advocate",
-    sizes: ["One Size"],
-    colors: ["Purple", "White", "Black"],
-    featured: false,
+    image: "/fertithreads-tote-bag-with-empowerment-design.jpg",
+    collection: "fertithreads",
+    type: "Tote Bag",
+    colors: ["Black", "White", "Purple"],
+    rating: 4.9,
+    reviews: 98,
+    description: "Carry your power and strength with this empowering tote bag.",
   },
   {
     id: "fertithreads-hat",
-    name: "FertiThreads Snapback",
-    collection: "fertithreads",
-    category: "hat",
+    name: "FertiThreads Strength Cap",
     price: 15,
-    originalPrice: 15,
-    rating: 4.5,
-    reviews: 67,
-    image: "/placeholder-6fvhy.png",
-    description: "Trendy snapback with embroidered FertiThreads branding",
-    sizes: ["One Size"],
-    colors: ["Purple", "Black", "White"],
-    featured: false,
+    image: "/fertithreads-baseball-cap-with-strength-message.jpg",
+    collection: "fertithreads",
+    type: "Hat",
+    colors: ["Black", "White", "Purple"],
+    sizes: ["S", "M", "L", "XL"],
+    rating: 4.6,
+    reviews: 73,
+    description: "Wear your strength proudly with this motivational cap.",
   },
-
   // Bloom Collection
   {
     id: "bloom-tshirt",
-    name: "Bloom Collection Tee",
-    collection: "bloom-collection",
-    category: "t-shirt",
+    name: "Bloom Growth Tee",
     price: 25,
-    originalPrice: 25,
-    rating: 4.9,
-    reviews: 267,
-    image: "/placeholder-urord.png",
-    description: "Soft cotton tee celebrating growth and new beginnings",
+    image: "/bloom-collection-t-shirt-with-growth-and-flower-de.jpg",
+    collection: "bloom-collection",
+    type: "T-Shirt",
+    colors: ["White", "Green", "Pink"],
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Pink", "White", "Sage Green"],
-    featured: false,
+    rating: 4.9,
+    reviews: 142,
+    description: "Celebrate growth and new beginnings with beautiful floral designs.",
   },
   {
     id: "bloom-tote",
-    name: "Bloom Tote Bag",
-    collection: "bloom-collection",
-    category: "tote",
+    name: "Bloom Floral Tote",
     price: 15,
-    originalPrice: 15,
-    rating: 4.7,
-    reviews: 143,
-    image: "/placeholder-ki229.png",
-    description: "Beautiful tote with botanical fertility-inspired design",
-    sizes: ["One Size"],
-    colors: ["Pink", "Sage Green", "White"],
-    featured: false,
+    image: "/bloom-collection-tote-bag-with-floral-fertility-de.jpg",
+    collection: "bloom-collection",
+    type: "Tote Bag",
+    colors: ["White", "Green", "Pink"],
+    rating: 4.8,
+    reviews: 87,
+    featured: true,
+    description: "Carry the beauty of growth with this floral fertility design.",
   },
   {
     id: "bloom-hat",
-    name: "Bloom Baseball Cap",
-    collection: "bloom-collection",
-    category: "hat",
+    name: "Bloom Flower Cap",
     price: 15,
-    originalPrice: 15,
-    rating: 4.6,
-    reviews: 78,
-    image: "/placeholder-q0bt2.png",
-    description: "Comfortable cap with delicate floral embroidery",
-    sizes: ["One Size"],
-    colors: ["Pink", "White", "Sage Green"],
-    featured: false,
+    image: "/bloom-collection-baseball-cap-with-flower-design.jpg",
+    collection: "bloom-collection",
+    type: "Hat",
+    colors: ["White", "Green", "Pink"],
+    sizes: ["S", "M", "L", "XL"],
+    rating: 4.7,
+    reviews: 65,
+    description: "Bloom wherever you go with this delicate flower design cap.",
   },
-
   // Conceive & Celebrate Collection
   {
     id: "conceive-celebrate-tshirt",
     name: "Conceive & Celebrate Tee",
-    collection: "conceive-celebrate",
-    category: "t-shirt",
     price: 25,
-    originalPrice: 25,
-    rating: 4.8,
-    reviews: 189,
-    image: "/placeholder-ue9vy.png",
-    description: "Celebratory tee honoring every fertility milestone",
+    image: "/conceive-and-celebrate-t-shirt-with-milestone-desi.jpg",
+    collection: "conceive-celebrate",
+    type: "T-Shirt",
+    colors: ["Yellow", "Orange", "White"],
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Yellow", "White", "Coral"],
-    featured: false,
+    rating: 4.8,
+    reviews: 118,
+    description: "Celebrate every milestone in your fertility journey.",
   },
   {
     id: "conceive-celebrate-tote",
     name: "Conceive & Celebrate Tote",
-    collection: "conceive-celebrate",
-    category: "tote",
     price: 15,
-    originalPrice: 15,
-    rating: 4.5,
-    reviews: 98,
-    image: "/placeholder-rmbf2.png",
-    description: "Joyful tote bag celebrating fertility journey victories",
-    sizes: ["One Size"],
-    colors: ["Yellow", "Coral", "White"],
-    featured: false,
+    image: "/conceive-and-celebrate-tote-bag-with-celebration-d.jpg",
+    collection: "conceive-celebrate",
+    type: "Tote Bag",
+    colors: ["Yellow", "Orange", "White"],
+    rating: 4.9,
+    reviews: 94,
+    description: "Carry the joy of celebration with this milestone design.",
   },
   {
     id: "conceive-celebrate-hat",
     name: "Conceive & Celebrate Cap",
-    collection: "conceive-celebrate",
-    category: "hat",
     price: 15,
-    originalPrice: 15,
-    rating: 4.4,
-    reviews: 56,
-    image: "/placeholder-ypfyt.png",
-    description: "Uplifting cap with positive fertility affirmations",
-    sizes: ["One Size"],
-    colors: ["Yellow", "White", "Coral"],
-    featured: false,
+    image: "/conceive-and-celebrate-baseball-cap-with-celebrati.jpg",
+    collection: "conceive-celebrate",
+    type: "Hat",
+    colors: ["Yellow", "Orange", "White"],
+    sizes: ["S", "M", "L", "XL"],
+    rating: 4.6,
+    reviews: 71,
+    description: "Celebrate your journey with this uplifting milestone cap.",
   },
-
   // TerraWear Collection
   {
     id: "terrawear-tshirt",
     name: "TerraWear Eco Tee",
-    collection: "terrawear",
-    category: "t-shirt",
     price: 25,
-    originalPrice: 25,
-    rating: 4.7,
-    reviews: 145,
-    image: "/placeholder-reuty.png",
-    description: "Sustainable cotton tee for eco-conscious fertility advocates",
+    image: "/terrawear-eco-friendly-t-shirt-with-earth-and-fert.jpg",
+    collection: "terrawear",
+    type: "T-Shirt",
+    colors: ["Green", "Blue", "White"],
     sizes: ["S", "M", "L", "XL"],
-    colors: ["Teal", "Forest Green", "White"],
-    featured: false,
+    rating: 4.9,
+    reviews: 167,
+    featured: true,
+    description: "Eco-conscious fertility advocacy with earth-friendly messaging.",
   },
   {
     id: "terrawear-tote",
-    name: "TerraWear Eco Tote",
-    collection: "terrawear",
-    category: "tote",
+    name: "TerraWear Earth Tote",
     price: 15,
-    originalPrice: 15,
-    rating: 4.6,
-    reviews: 87,
-    image: "/placeholder-ibexx.png",
-    description: "Recycled material tote bag with earth-conscious messaging",
-    sizes: ["One Size"],
-    colors: ["Teal", "Forest Green", "Natural"],
-    featured: false,
+    image: "/terrawear-eco-friendly-tote-bag-with-earth-design.jpg",
+    collection: "terrawear",
+    type: "Tote Bag",
+    colors: ["Green", "Blue", "White"],
+    rating: 4.8,
+    reviews: 103,
+    description: "Sustainable and stylish with earth-conscious fertility messaging.",
   },
   {
     id: "terrawear-hat",
-    name: "TerraWear Eco Cap",
-    collection: "terrawear",
-    category: "hat",
+    name: "TerraWear Earth Cap",
     price: 15,
-    originalPrice: 15,
-    rating: 4.5,
-    reviews: 63,
-    image: "/placeholder-xnfu7.png",
-    description: "Organic cotton cap with environmental fertility messaging",
-    sizes: ["One Size"],
-    colors: ["Teal", "Forest Green", "White"],
-    featured: false,
+    image: "/terrawear-eco-friendly-baseball-cap-with-earth-the.jpg",
+    collection: "terrawear",
+    type: "Hat",
+    colors: ["Green", "Blue", "White"],
+    sizes: ["S", "M", "L", "XL"],
+    rating: 4.7,
+    reviews: 82,
+    description: "Wear your environmental consciousness with this earth-themed cap.",
   },
 ]
 
 export default function MerchPage() {
-  const [selectedCollection, setSelectedCollection] = useState("all")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedSize, setSelectedSize] = useState<{ [key: string]: string }>({})
-  const [selectedColor, setSelectedColor] = useState<{ [key: string]: string }>({})
-  const { addToCart, isOpen, setIsOpen } = useCart()
+  const [selectedCollection, setSelectedCollection] = useState<string>("all")
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string>("")
+  const [selectedColor, setSelectedColor] = useState<string>("")
+  const [wishlist, setWishlist] = useState<string[]>([])
+  const { addItem, state, toggleCart, openCart, updateQuantity } = useCart()
 
-  const filteredProducts = products.filter((product) => {
-    const collectionMatch = selectedCollection === "all" || product.collection === selectedCollection
-    const categoryMatch = selectedCategory === "all" || product.category === selectedCategory
-    return collectionMatch && categoryMatch
-  })
+  const filteredProducts =
+    selectedCollection === "all" ? products : products.filter((product) => product.collection === selectedCollection)
 
-  const handleAddToCart = (product: any) => {
-    const size = selectedSize[product.id] || product.sizes[0]
-    const color = selectedColor[product.id] || product.colors[0]
+  const featuredProducts = products.filter((product) => product.featured)
 
-    addToCart({
-      id: `${product.id}-${size}-${color}`,
-      name: `${product.name} (${size}, ${color})`,
+  const handleAddToCart = (product: Product, size?: string, color?: string) => {
+    const cartItem = {
+      id: `${product.id}-${size || "default"}-${color || "default"}`,
+      name: product.name,
       price: product.price,
-      quantity: 1,
       image: product.image,
-    })
+      size,
+      color,
+      collection: product.collection,
+    }
+    addItem(cartItem)
+    openCart()
   }
 
-  const handleSizeSelect = (productId: string, size: string) => {
-    setSelectedSize((prev) => ({ ...prev, [productId]: size }))
+  const toggleWishlist = (productId: string) => {
+    setWishlist((prev) => (prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]))
   }
 
-  const handleColorSelect = (productId: string, color: string) => {
-    setSelectedColor((prev) => ({ ...prev, [productId]: color }))
-  }
+  const ProductCard = ({ product }: { product: Product }) => (
+    <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm">
+      <div className="relative overflow-hidden">
+        <Image
+          src={product.image || "/placeholder.svg"}
+          alt={product.name}
+          width={400}
+          height={400}
+          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        {product.featured && (
+          <Badge className="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+            <Star className="w-3 h-3 mr-1" />
+            Featured
+          </Badge>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={`absolute top-3 right-3 rounded-full ${
+            wishlist.includes(product.id)
+              ? "bg-red-500 text-white hover:bg-red-600"
+              : "bg-white/80 text-gray-600 hover:bg-white"
+          } transition-all duration-200`}
+          onClick={() => toggleWishlist(product.id)}
+        >
+          <Heart className={`w-4 h-4 ${wishlist.includes(product.id) ? "fill-current" : ""}`} />
+        </Button>
+      </div>
 
-  return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <Header />
-      <Cart />
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-2">
+          <Badge variant="outline" className="text-xs">
+            {collections.find((c) => c.id === product.collection)?.name}
+          </Badge>
+          <div className="flex items-center space-x-1">
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-sm font-medium">{product.rating}</span>
+            <span className="text-xs text-gray-500">({product.reviews})</span>
+          </div>
+        </div>
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-purple-50 via-white to-rose-50 py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/placeholder-d19al.png')] opacity-5"></div>
-          <div className="container mx-auto px-4 relative">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="flex items-center justify-center gap-2 mb-6">
-                <Sparkles className="h-8 w-8 text-purple-500" />
-                <Badge variant="secondary" className="px-4 py-2 text-sm font-medium bg-purple-100 text-purple-700">
-                  New Collections Available
-                </Badge>
-              </div>
+        <h3 className="font-bold text-lg mb-2 text-gray-900">{product.name}</h3>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
 
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6">
-                FertiTerra
-                <span className="block bg-gradient-to-r from-purple-600 via-rose-500 to-orange-500 bg-clip-text text-transparent">
-                  Merch Store
-                </span>
-              </h1>
-
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Wear your support for fertility awareness with our exclusive collections. Every purchase helps spread
-                education, break stigmas, and empower reproductive health worldwide.
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500 mb-8">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-green-500" />
-                  <span>Worldwide Shipping</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-rose-500" />
-                  <span>Ethically Made</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-yellow-500" />
-                  <span>Premium Quality</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-blue-500" />
-                  <span>Supporting Education</span>
-                </div>
-              </div>
-
+        <div className="flex items-center justify-between">
+          <span className="text-2xl font-bold text-purple-600">${product.price}</span>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button
-                onClick={() => setIsOpen(true)}
-                className="bg-gradient-to-r from-purple-600 to-rose-500 hover:from-purple-700 hover:to-rose-600 text-white px-8 py-3 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full px-6 py-2 transition-all duration-200 transform hover:scale-105"
+                onClick={() => setSelectedProduct(product)}
               >
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                View Cart
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Add to Cart
               </Button>
-            </div>
-          </div>
-        </section>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-gray-900">{product.name}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Image
+                  src={product.image || "/placeholder.svg"}
+                  alt={product.name}
+                  width={200}
+                  height={200}
+                  className="w-full h-48 object-cover rounded-lg"
+                />
 
-        {/* Collections Navigation */}
-        <section className="py-12 bg-white border-b">
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Shop by Collection</h2>
-                <p className="text-gray-600">Each collection tells a unique story of fertility empowerment</p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
-                <Button
-                  variant={selectedCollection === "all" ? "default" : "outline"}
-                  onClick={() => setSelectedCollection("all")}
-                  className="rounded-full px-6 py-2"
-                >
-                  All Collections
-                </Button>
-                {collections.map((collection) => (
-                  <Button
-                    key={collection.id}
-                    variant={selectedCollection === collection.id ? "default" : "outline"}
-                    onClick={() => setSelectedCollection(collection.id)}
-                    className="rounded-full px-6 py-2"
-                  >
-                    {collection.name}
-                  </Button>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button
-                  variant={selectedCategory === "all" ? "secondary" : "ghost"}
-                  onClick={() => setSelectedCategory("all")}
-                  size="sm"
-                  className="rounded-full"
-                >
-                  <Filter className="mr-2 h-4 w-4" />
-                  All Items
-                </Button>
-                <Button
-                  variant={selectedCategory === "t-shirt" ? "secondary" : "ghost"}
-                  onClick={() => setSelectedCategory("t-shirt")}
-                  size="sm"
-                  className="rounded-full"
-                >
-                  T-Shirts
-                </Button>
-                <Button
-                  variant={selectedCategory === "tote" ? "secondary" : "ghost"}
-                  onClick={() => setSelectedCategory("tote")}
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Tote Bags
-                </Button>
-                <Button
-                  variant={selectedCategory === "hat" ? "secondary" : "ghost"}
-                  onClick={() => setSelectedCategory("hat")}
-                  size="sm"
-                  className="rounded-full"
-                >
-                  Hats & Caps
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Products Grid */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-7xl mx-auto">
-              {selectedCollection !== "all" && (
-                <div className="text-center mb-12">
-                  {collections.find((c) => c.id === selectedCollection) && (
-                    <div className="max-w-2xl mx-auto">
-                      <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                        {collections.find((c) => c.id === selectedCollection)?.name}
-                      </h2>
-                      <p className="text-gray-600 text-lg">
-                        {collections.find((c) => c.id === selectedCollection)?.description}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredProducts.map((product) => (
-                  <div key={product.id} className="group">
-                    <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden bg-white hover:bg-gray-50 transform hover:-translate-y-2">
-                      <div className="relative aspect-square overflow-hidden bg-gray-100">
-                        {product.featured && (
-                          <Badge className="absolute top-4 left-4 z-10 bg-gradient-to-r from-purple-500 to-rose-500 text-white">
-                            Featured
-                          </Badge>
-                        )}
-
-                        <Image
-                          src={product.image || "/placeholder.svg"}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        />
-
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-
-                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <Button size="icon" variant="secondary" className="rounded-full shadow-lg">
-                            <Heart className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      <CardContent className="p-6">
-                        <div className="space-y-4">
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Badge variant="outline" className="text-xs">
-                                {collections.find((c) => c.id === product.collection)?.name}
-                              </Badge>
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-300">
-                              {product.name}
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">{product.description}</p>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span className="text-sm font-medium text-gray-700">{product.rating}</span>
-                            </div>
-                            <span className="text-sm text-gray-500">({product.reviews} reviews)</span>
-                          </div>
-
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <span className="text-2xl font-bold text-gray-900">${product.price}</span>
-                              {product.originalPrice !== product.price && (
-                                <span className="text-lg text-gray-500 line-through">${product.originalPrice}</span>
-                              )}
-                            </div>
-
-                            {/* Size Selector */}
-                            {product.sizes.length > 1 && (
-                              <div className="space-y-2">
-                                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Size</p>
-                                <div className="flex flex-wrap gap-2">
-                                  {product.sizes.map((size) => (
-                                    <Button
-                                      key={size}
-                                      variant={selectedSize[product.id] === size ? "default" : "outline"}
-                                      size="sm"
-                                      onClick={() => handleSizeSelect(product.id, size)}
-                                      className="h-8 px-3 text-xs rounded-md"
-                                    >
-                                      {size}
-                                    </Button>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Color Selector */}
-                            <div className="space-y-2">
-                              <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Color</p>
-                              <div className="flex flex-wrap gap-2">
-                                {product.colors.map((color) => (
-                                  <Button
-                                    key={color}
-                                    variant={selectedColor[product.id] === color ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => handleColorSelect(product.id, color)}
-                                    className="h-8 px-3 text-xs rounded-md"
-                                  >
-                                    {color}
-                                  </Button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-
-                      <CardFooter className="p-6 pt-0 space-y-3">
-                        <Button
-                          onClick={() => handleAddToCart(product)}
-                          className="w-full bg-gradient-to-r from-purple-600 to-rose-500 hover:from-purple-700 hover:to-rose-600 text-white font-medium py-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                        >
-                          <ShoppingCart className="mr-2 h-4 w-4" />
-                          Add to Cart
-                        </Button>
-
-                        <Link href={`/shop/${product.id}`} className="block">
-                          <Button
-                            variant="outline"
-                            className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 font-medium py-3 rounded-lg transition-all duration-300 bg-transparent"
-                          >
-                            View Details
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </Link>
-                      </CardFooter>
-                    </Card>
+                {product.colors && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Color</label>
+                    <Select value={selectedColor} onValueChange={setSelectedColor}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {product.colors.map((color) => (
+                          <SelectItem key={color} value={color}>
+                            {color}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+                )}
 
-        {/* Mission Banner */}
-        <section className="py-16 bg-gradient-to-r from-purple-600 via-rose-500 to-orange-500">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center text-white">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Every Purchase Makes a Difference</h2>
-              <p className="text-xl mb-8 opacity-90 leading-relaxed">
-                When you shop FertiTerra merch, you're not just getting premium quality products – you're supporting
-                fertility education, breaking stigmas, and empowering reproductive health awareness across Africa and
-                beyond.
-              </p>
-              <div className="grid md:grid-cols-3 gap-8 text-center">
-                <div>
-                  <div className="text-3xl font-bold mb-2">25%</div>
-                  <p className="text-sm opacity-80">of profits support fertility education programs</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold mb-2">10K+</div>
-                  <p className="text-sm opacity-80">women reached through our awareness campaigns</p>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold mb-2">50+</div>
-                  <p className="text-sm opacity-80">healthcare providers trained in fertility care</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Values Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose FertiTerra Merch?</h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Premium quality meets meaningful impact. Every item is crafted with care and purpose.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div className="text-center group">
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Heart className="h-10 w-10 text-green-600" />
+                {product.sizes && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Size</label>
+                    <Select value={selectedSize} onValueChange={setSelectedSize}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {product.sizes.map((size) => (
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Ethically Made</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Sustainably sourced materials and fair labor practices for conscious consumers.
-                  </p>
-                </div>
+                )}
 
-                <div className="text-center group">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Zap className="h-10 w-10 text-blue-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Premium Quality</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    High-quality materials and printing that lasts, ensuring your message endures.
-                  </p>
-                </div>
-
-                <div className="text-center group">
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Users className="h-10 w-10 text-purple-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Community Impact</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Join thousands of advocates spreading fertility awareness and breaking stigmas.
-                  </p>
-                </div>
-
-                <div className="text-center group">
-                  <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Globe className="h-10 w-10 text-orange-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Global Shipping</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Worldwide delivery to spread fertility awareness across continents.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Wear Your Support, Share Your Story</h2>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Every piece in our collection represents hope, strength, and the belief that every fertility journey
-                matters. Join our community of advocates making a difference.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
-                  onClick={() => setIsOpen(true)}
-                  className="bg-gradient-to-r from-purple-600 to-rose-500 hover:from-purple-700 hover:to-rose-600 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                  onClick={() => {
+                    handleAddToCart(product, selectedSize, selectedColor)
+                    setSelectedProduct(null)
+                    setSelectedSize("")
+                    setSelectedColor("")
+                  }}
+                  disabled={(product.sizes && !selectedSize) || (product.colors && !selectedColor)}
                 >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  View Cart & Checkout
+                  Add to Cart - ${product.price}
                 </Button>
-                <Link href="/about/team">
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  const CartSidebar = () => (
+    <div
+      className={`fixed inset-y-0 right-0 z-50 w-96 bg-white shadow-2xl transform transition-transform duration-300 ${
+        state.isOpen ? "translate-x-0" : "translate-x-full"
+      }`}
+    >
+      <div className="flex items-center justify-between p-6 border-b">
+        <h2 className="text-xl font-bold">Shopping Cart</h2>
+        <Button variant="ghost" size="icon" onClick={toggleCart}>
+          <X className="w-5 h-5" />
+        </Button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6">
+        {state.items.length === 0 ? (
+          <div className="text-center py-12">
+            <ShoppingCart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+            <p className="text-gray-500">Your cart is empty</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {state.items.map((item) => (
+              <div key={item.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                <Image
+                  src={item.image || "/placeholder.svg"}
+                  alt={item.name}
+                  width={60}
+                  height={60}
+                  className="rounded-md"
+                />
+                <div className="flex-1">
+                  <h4 className="font-medium text-sm">{item.name}</h4>
+                  {item.size && <p className="text-xs text-gray-500">Size: {item.size}</p>}
+                  {item.color && <p className="text-xs text-gray-500">Color: {item.color}</p>}
+                  <p className="font-bold text-purple-600">${item.price}</p>
+                </div>
+                <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"
-                    className="px-8 py-3 text-lg font-semibold rounded-lg border-2 border-gray-300 hover:border-purple-400 hover:text-purple-600 transition-all duration-300 bg-transparent"
+                    size="icon"
+                    className="w-8 h-8 bg-transparent"
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
                   >
-                    Meet Our Team
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <Minus className="w-3 h-3" />
                   </Button>
-                </Link>
+                  <span className="w-8 text-center">{item.quantity}</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-8 h-8 bg-transparent"
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  >
+                    <Plus className="w-3 h-3" />
+                  </Button>
+                </div>
               </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {state.items.length > 0 && (
+        <div className="border-t p-6">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-lg font-bold">Total: ${state.total.toFixed(2)}</span>
+          </div>
+          <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+            Checkout
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+      <Header />
+      <CartSidebar />
+
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10" />
+        <div className="relative max-w-4xl mx-auto">
+          <div className="flex items-center justify-center mb-6">
+            <Sparkles className="w-8 h-8 text-purple-600 mr-3" />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              FertiTerra Merch
+            </h1>
+            <Sparkles className="w-8 h-8 text-pink-600 ml-3" />
+          </div>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Wear your support for fertility awareness and empowerment. Every purchase helps fund fertility education and
+            support programs across Africa.
+          </p>
+          <div className="flex items-center justify-center space-x-8 text-sm text-gray-600">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded-full mr-2" />
+              50,000+ Lives Touched
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-blue-500 rounded-full mr-2" />
+              25% Profits Donated
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-purple-500 rounded-full mr-2" />
+              Eco-Friendly Materials
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">Featured Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Collections Filter */}
+      <section className="py-8 px-4 bg-white/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Button
+              variant={selectedCollection === "all" ? "default" : "outline"}
+              onClick={() => setSelectedCollection("all")}
+              className={selectedCollection === "all" ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white" : ""}
+            >
+              <Filter className="w-4 h-4 mr-2" />
+              All Collections
+            </Button>
+            {collections.map((collection) => (
+              <Button
+                key={collection.id}
+                variant={selectedCollection === collection.id ? "default" : "outline"}
+                onClick={() => setSelectedCollection(collection.id)}
+                className={
+                  selectedCollection === collection.id ? `bg-gradient-to-r ${collection.color} text-white` : ""
+                }
+              >
+                {collection.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Products Grid */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-6">Our Mission</h2>
+          <p className="text-xl mb-8 opacity-90">
+            Every purchase supports fertility education, awareness campaigns, and accessible healthcare initiatives
+            across Africa. Together, we're breaking stigmas and building hope.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-2">25%</div>
+              <div className="text-sm opacity-80">of profits donated to fertility education</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-2">50,000+</div>
+              <div className="text-sm opacity-80">lives touched through our programs</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-2">100%</div>
+              <div className="text-sm opacity-80">eco-friendly and ethically sourced</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cart Button */}
+      <Button
+        className="fixed bottom-6 right-6 rounded-full w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-2xl z-40"
+        onClick={toggleCart}
+      >
+        <ShoppingCart className="w-6 h-6" />
+        {state.items.length > 0 && (
+          <Badge className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+            {state.items.reduce((sum, item) => sum + item.quantity, 0)}
+          </Badge>
+        )}
+      </Button>
     </div>
   )
 }

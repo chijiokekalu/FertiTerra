@@ -4,20 +4,22 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "@/context/cart-context"
 import { AuthProvider } from "@/context/auth-context"
-import Script from "next/script"
+import { Toaster } from "@/components/ui/toaster"
+import { NewsletterSignup } from "@/components/newsletter-signup"
+import { WelcomeChatbotPopup } from "@/components/welcome-chatbot-popup"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - Fertility Health & Wellness",
+  title: "FertiTerra Technologies - Your Fertility Journey Matters",
   description:
-    "Comprehensive fertility health solutions, telemedicine consultations, and wellness products for your reproductive journey.",
-  keywords: "fertility, reproductive health, telemedicine, wellness, fertility testing, consultation",
+    "Comprehensive fertility care, telemedicine, and support for your reproductive health journey in Africa.",
+  keywords: "fertility, reproductive health, telemedicine, Africa, fertility testing, consultation",
   authors: [{ name: "FertiTerra Technologies" }],
   openGraph: {
-    title: "FertiTerra Technologies - Fertility Health & Wellness",
+    title: "FertiTerra Technologies - Your Fertility Journey Matters",
     description:
-      "Comprehensive fertility health solutions, telemedicine consultations, and wellness products for your reproductive journey.",
+      "Comprehensive fertility care, telemedicine, and support for your reproductive health journey in Africa.",
     url: "https://fertiterratechnologies.com",
     siteName: "FertiTerra Technologies",
     images: [
@@ -33,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FertiTerra Technologies - Fertility Health & Wellness",
+    title: "FertiTerra Technologies - Your Fertility Journey Matters",
     description:
-      "Comprehensive fertility health solutions, telemedicine consultations, and wellness products for your reproductive journey.",
+      "Comprehensive fertility care, telemedicine, and support for your reproductive health journey in Africa.",
     images: ["/images/fertiterra-logo-main.png"],
   },
   robots: {
@@ -76,19 +78,13 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <AuthProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            {children}
+            <NewsletterSignup />
+            <WelcomeChatbotPopup />
+            <Toaster />
+          </CartProvider>
         </AuthProvider>
-
-        {/* Google Analytics */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'GA_MEASUREMENT_ID');
-          `}
-        </Script>
       </body>
     </html>
   )

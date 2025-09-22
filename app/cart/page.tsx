@@ -11,7 +11,7 @@ import { useCart } from "@/context/cart-context"
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react"
 
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, getTotal, clearCart } = useCart()
+  const { state, updateQuantity, removeItem, clearCart } = useCart()
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
 
@@ -26,11 +26,11 @@ export default function CartPage() {
     }
   }
 
-  const subtotal = getTotal()
+  const subtotal = state.total
   const discountAmount = subtotal * discount
   const total = subtotal - discountAmount
 
-  if (items.length === 0) {
+  if (state.items.length === 0) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
@@ -59,8 +59,8 @@ export default function CartPage() {
 
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-4">
-              {items.map((item) => (
-                <Card key={item.id}>
+              {state.items.map((item) => (
+                <Card key={`${item.id}-${item.size}-${item.color}`}>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
                       <div className="relative h-20 w-20 rounded-md overflow-hidden">
@@ -70,13 +70,17 @@ export default function CartPage() {
                       <div className="flex-1">
                         <h3 className="font-medium">{item.name}</h3>
                         <p className="text-sm text-gray-500">Price: ${item.price}</p>
+                        {item.size && <p className="text-sm text-gray-500">Size: {item.size}</p>}
+                        {item.color && <p className="text-sm text-gray-500">Color: {item.color}</p>}
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                          onClick={() =>
+                            updateQuantity(`${item.id}-${item.size}-${item.color}`, Math.max(0, item.quantity - 1))
+                          }
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
@@ -84,7 +88,7 @@ export default function CartPage() {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(`${item.id}-${item.size}-${item.color}`, item.quantity + 1)}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -95,7 +99,7 @@ export default function CartPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeItem(`${item.id}-${item.size}-${item.color}`)}
                           className="text-red-500 hover:text-red-700"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -146,7 +150,7 @@ export default function CartPage() {
 
                   <div className="space-y-2">
                     <Input placeholder="Promo code" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} />
-                    <Button variant="outline" className="w-full" onClick={applyPromoCode}>
+                    <Button variant="outline" className="w-full bg-transparent" onClick={applyPromoCode}>
                       Apply Code
                     </Button>
                   </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -12,16 +11,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Header } from "@/components/header"
 import { useCart } from "@/context/cart-context"
-import { useAuth } from "@/context/auth-context"
 import { CreditCard, Truck, Shield, ArrowLeft } from "lucide-react"
 
 export default function CheckoutPage() {
-  const { items, getTotal, clearCart } = useCart()
-  const { user } = useAuth()
+  const { state, clearCart } = useCart()
   const router = useRouter()
 
   const [formData, setFormData] = useState({
-    email: user?.email || "",
+    email: "",
     firstName: "",
     lastName: "",
     address: "",
@@ -53,14 +50,9 @@ export default function CheckoutPage() {
     router.push("/checkout/success")
   }
 
-  const total = getTotal()
+  const total = state.total
 
-  if (!user) {
-    router.push("/login?redirect=/checkout")
-    return null
-  }
-
-  if (items.length === 0) {
+  if (state.items.length === 0) {
     router.push("/cart")
     return null
   }
@@ -242,10 +234,12 @@ export default function CheckoutPage() {
                       <CardTitle>Order Summary</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {items.map((item) => (
-                        <div key={item.id} className="flex justify-between">
+                      {state.items.map((item) => (
+                        <div key={`${item.id}-${item.size}-${item.color}`} className="flex justify-between">
                           <span>
                             {item.name} x {item.quantity}
+                            {item.size && ` (${item.size})`}
+                            {item.color && ` - ${item.color}`}
                           </span>
                           <span>${(item.price * item.quantity).toFixed(2)}</span>
                         </div>

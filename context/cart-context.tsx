@@ -30,13 +30,15 @@ type CartAction =
   | { type: "CLOSE_CART" }
   | { type: "LOAD_CART"; payload: CartItem[] }
 
+const generateCartItemId = (item: Omit<CartItem, "quantity">): string => {
+  return `${item.id}-${item.size || "no-size"}-${item.color || "no-color"}`
+}
+
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case "ADD_ITEM": {
-      const existingItemIndex = state.items.findIndex(
-        (item) =>
-          item.id === action.payload.id && item.size === action.payload.size && item.color === action.payload.color,
-      )
+      const cartItemId = generateCartItemId(action.payload)
+      const existingItemIndex = state.items.findIndex((item) => generateCartItemId(item) === cartItemId)
 
       let newItems: CartItem[]
       if (existingItemIndex > -1) {
@@ -52,7 +54,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case "REMOVE_ITEM": {
-      const newItems = state.items.filter((item) => item.id !== action.payload)
+      const newItems = state.items.filter((item) => generateCartItemId(item) !== action.payload)
       const total = newItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
       return { ...state, items: newItems, total }
     }
@@ -60,7 +62,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case "UPDATE_QUANTITY": {
       const newItems = state.items
         .map((item) =>
-          item.id === action.payload.id ? { ...item, quantity: Math.max(0, action.payload.quantity) } : item,
+          generateCartItemId(item) === action.payload.id
+            ? { ...item, quantity: Math.max(0, action.payload.quantity) }
+            : item,
         )
         .filter((item) => item.quantity > 0)
 
@@ -113,27 +117,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem("fertiterra-cart")
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart)
-        // Ensure we're loading an array of items
-        if (Array.isArray(parsedCart)) {
-          dispatch({ type: "LOAD_CART", payload: parsedCart })
-        } else if (parsedCart && Array.isArray(parsedCart.items)) {
-          dispatch({ type: "LOAD_CART", payload: parsedCart.items })
+    if (typeof window !== "undefined") {
+      const savedCart = localStorage.getItem("fertiterra-cart")
+      if (savedCart) {
+        try {
+          const parsedCart = JSON.parse(savedCart)
+          // Ensure we're loading an array of items
+          if (Array.isArray(parsedCart)) {
+            dispatch({ type: "LOAD_CART", payload: parsedCart })
+          } else if (parsedCart && Array.isArray(parsedCart.items)) {
+            dispatch({ type: "LOAD_CART", payload: parsedCart.items })
+          }
+        } catch (error) {
+          console.error("Error loading cart from localStorage:", error)
+          // Clear invalid cart data
+          localStorage.removeItem("fertiterra-cart")
         }
-      } catch (error) {
-        console.error("Error loading cart from localStorage:", error)
-        // Clear invalid cart data
-        localStorage.removeItem("fertiterra-cart")
       }
     }
   }, [])
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("fertiterra-cart", JSON.stringify(state.items))
+    if (typeof window !== "undefined") {
+      localStorage.setItem("fertiterra-cart", JSON.stringify(state.items))
+    }
   }, [state.items])
 
   const addItem = (item: Omit<CartItem, "quantity">) => {

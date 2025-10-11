@@ -16,14 +16,26 @@ import {
   TestTube,
   Linkedin,
   Instagram,
+  Activity,
+  TrendingUp,
 } from "lucide-react"
 import { Header } from "@/components/header"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function HomePage() {
+  // Added for navigation bar update
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/wombs", label: "Wombs App", badge: "New" },
+    { href: "/test-kits", label: "Test Kits" },
+    { href: "/shop", label: "Shop" },
+    { href: "/blog", label: "Blog" },
+    { href: "/community", label: "Community" },
+  ]
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <Header navLinks={navLinks} /> {/* Updated Header to include navLinks */}
       <main className="flex-1">
         {/* Hero Section with New Message */}
         <section className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-purple-50 to-pink-50 py-20 md:py-32">
@@ -120,6 +132,68 @@ export default function HomePage() {
                       >
                         <Link href="/consultation">Speak to an expert</Link>
                       </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Wombs App CTA Banner - Added */}
+                <div className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 rounded-2xl p-8 md:p-12 shadow-2xl max-w-4xl mx-auto lg:mx-0">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.1),transparent)]"></div>
+                  <div className="relative z-10">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                      <div className="flex-1 text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                            <Heart className="h-8 w-8 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-3xl font-bold">Wombs App</h3>
+                            <p className="text-purple-100">Your Complete Fertility Companion</p>
+                          </div>
+                        </div>
+                        <p className="text-lg text-purple-50 mb-6">
+                          Track your cycle, get AI-powered insights, connect with specialists, and join a supportive
+                          community—all in one beautiful app.
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                          <Badge className="bg-white/20 text-white hover:bg-white/30 text-sm py-1">
+                            <Activity className="h-3 w-3 mr-1" />
+                            Cycle Tracking
+                          </Badge>
+                          <Badge className="bg-white/20 text-white hover:bg-white/30 text-sm py-1">
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                            AI Insights
+                          </Badge>
+                          <Badge className="bg-white/20 text-white hover:bg-white/30 text-sm py-1">
+                            <Video className="h-3 w-3 mr-1" />
+                            Telemedicine
+                          </Badge>
+                          <Badge className="bg-white/20 text-white hover:bg-white/30 text-sm py-1">
+                            <Users className="h-3 w-3 mr-1" />
+                            Community
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        <Button
+                          asChild
+                          size="lg"
+                          className="bg-white text-purple-600 hover:bg-gray-100 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
+                        >
+                          <Link href="/wombs">
+                            Launch Wombs App
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Link>
+                        </Button>
+                        <Button
+                          asChild
+                          size="lg"
+                          variant="outline"
+                          className="border-2 border-white text-white hover:bg-white hover:text-purple-600 text-lg px-8 py-6 bg-transparent"
+                        >
+                          <Link href="/wombs/signup">Create Free Account</Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -977,7 +1051,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
       <footer className="border-t py-8 bg-white">
         <div className="container">
           <div className="grid gap-8 md:grid-cols-4">

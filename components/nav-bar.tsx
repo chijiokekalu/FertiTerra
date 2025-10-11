@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,6 +26,7 @@ export function NavBar() {
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/wombs", label: "Wombs App", badge: "New" },
     { href: "/test-kits", label: "Test Kits" },
     { href: "/shop", label: "Shop" },
     { href: "/blog", label: "Blog" },
@@ -50,8 +52,17 @@ export function NavBar() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="text-sm font-medium transition-colors hover:text-primary">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-2"
+            >
               {link.label}
+              {link.badge && (
+                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-2 py-0.5">
+                  {link.badge}
+                </Badge>
+              )}
             </Link>
           ))}
         </nav>
@@ -121,10 +132,15 @@ export function NavBar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium py-2"
+                className="text-sm font-medium py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.label}
+                {link.badge && (
+                  <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-2 py-0.5">
+                    {link.badge}
+                  </Badge>
+                )}
               </Link>
             ))}
             <div className="border-t pt-4 mt-2">
@@ -155,7 +171,7 @@ export function NavBar() {
               ) : (
                 <div className="flex flex-col space-y-2">
                   <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full bg-transparent">
                       Sign In
                     </Button>
                   </Link>

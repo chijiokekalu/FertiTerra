@@ -604,7 +604,7 @@ export function Header() {
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-4">
-                <Link href="/login" className="text-sm font-medium">
+                <Link href="/wombs" className="text-sm font-medium">
                   Login
                 </Link>
                 <Link href="/test-kits">
@@ -1280,7 +1280,7 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/login" onClick={toggleMobileMenu}>
+                  <Link href="/wombs" onClick={toggleMobileMenu}>
                     <Button variant="outline" className="w-full bg-transparent">
                       Login
                     </Button>

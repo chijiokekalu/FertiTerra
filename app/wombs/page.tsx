@@ -1,65 +1,94 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Calendar,
   Heart,
   TrendingUp,
   Video,
   Users,
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  User,
   Smartphone,
   Apple,
-  Chrome,
+  Loader2,
+  Shield,
+  CheckCircle2,
 } from "lucide-react"
+import { login, handleCallback, checkLoggedIn } from "@/lib/cognito-auth"
 
 export default function WombsApp() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [name, setName] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    // Simulate login
-    setTimeout(() => {
-      setIsLoading(false)
-      window.location.href = "/wombs/dashboard"
-    }, 1500)
+  useEffect(() => {
+    const initAuth = async () => {
+      // Check if we're returning from Cognito with a code
+      const urlParams = new URLSearchParams(window.location.search)
+      const code = urlParams.get("code")
+
+      if (code) {
+        setIsAuthenticating(true)
+        setError(null)
+
+        try {
+          const success = await handleCallback()
+
+          if (success) {
+            // Redirect to dashboard after successful authentication
+            setTimeout(() => {
+              router.push("/wombs/dashboard")
+            }, 1000)
+          } else {
+            setError("Authentication failed. Please try again.")
+            setIsAuthenticating(false)
+          }
+        } catch (err) {
+          console.error("Authentication error:", err)
+          setError("An error occurred during authentication. Please try again.")
+          setIsAuthenticating(false)
+        }
+
+        setIsLoading(false)
+        return
+      }
+
+      // Check if user is already logged in
+      const isLoggedIn = await checkLoggedIn()
+      if (isLoggedIn) {
+        router.push("/wombs/dashboard")
+      } else {
+        setIsLoading(false)
+      }
+    }
+
+    initAuth()
+  }, [router])
+
+  const handleLoginClick = () => {
+    setError(null)
+    login()
   }
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    // Simulate signup
-    setTimeout(() => {
-      setIsLoading(false)
-      window.location.href = "/wombs/dashboard"
-    }, 1500)
-  }
-
-  const handleSocialAuth = (provider: string) => {
-    setIsLoading(true)
-    // Simulate social auth
-    setTimeout(() => {
-      setIsLoading(false)
-      window.location.href = "/wombs/dashboard"
-    }, 1500)
+  if (isLoading || isAuthenticating) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
+        <div className="text-center">
+          <Loader2 className="h-16 w-16 animate-spin text-purple-600 mx-auto mb-4" />
+          <p className="text-lg font-medium text-gray-700">
+            {isAuthenticating ? "Authenticating with Cognito..." : "Loading Wombs..."}
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            {isAuthenticating ? "Please wait while we verify your credentials" : "Preparing your fertility journey"}
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -68,21 +97,18 @@ export default function WombsApp() {
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/images/fertiterra-logo.png"
-                alt="FertiTerra"
-                width={40}
-                height={40}
-                className="h-10 w-auto"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10">
+                <Image src="/images/fertiterra-logo.png" alt="Wombs by FertiTerra" fill className="object-contain" />
+              </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                   Wombs
                 </h1>
-                <p className="text-xs text-gray-600">by FertiTerra Technologies</p>
+                <p className="text-xs text-gray-500">by FertiTerra Technologies</p>
               </div>
-            </Link>
+            </div>
+
             <Link href="/">
               <Button variant="ghost">Back to Home</Button>
             </Link>
@@ -176,7 +202,7 @@ export default function WombsApp() {
             <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 rounded-2xl p-6 text-white">
               <h3 className="text-xl font-bold mb-3">Mobile App Coming Soon!</h3>
               <p className="mb-4 text-purple-100">
-                Get early access to our iOS and Android apps. Sign up now to be notified when we launch.
+                Get early access to our iOS and Android apps. Sign in now to use the web version.
               </p>
               <div className="flex gap-3">
                 <Button
@@ -199,227 +225,107 @@ export default function WombsApp() {
             </div>
           </div>
 
-          {/* Right Side - Auth Forms */}
+          {/* Right Side - Login Card */}
           <div className="lg:sticky lg:top-24">
             <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-8 w-8 text-purple-600" />
+                </div>
                 <CardTitle className="text-2xl">Welcome to Wombs</CardTitle>
                 <CardDescription>Your fertility journey starts here</CardDescription>
               </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="login">Log In</TabsTrigger>
-                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                  </TabsList>
+              <CardContent className="space-y-6">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm flex items-start gap-3">
+                    <svg
+                      className="w-5 h-5 flex-shrink-0 mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div>
+                      <p className="font-medium">Authentication Error</p>
+                      <p className="mt-1">{error}</p>
+                    </div>
+                  </div>
+                )}
 
-                  {/* Login Tab */}
-                  <TabsContent value="login" className="space-y-4">
-                    <form onSubmit={handleLogin} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="login-email">Email</Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <Input
-                            id="login-email"
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="pl-10"
-                            required
-                          />
+                <div className="space-y-4">
+                  <Button
+                    id="login-wombs-btn"
+                    onClick={handleLoginClick}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 h-12 text-base font-semibold"
+                  >
+                    Sign In with Cognito
+                  </Button>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-200" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="bg-white px-4 text-gray-500">Secure AWS Cognito Authentication</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100 rounded-lg p-5">
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                          <Shield className="h-5 w-5 text-purple-600" />
                         </div>
                       </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="login-password">Password</Label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <Input
-                            id="login-password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="pl-10 pr-10"
-                            required
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                          >
-                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <label className="flex items-center gap-2 text-sm">
-                          <input type="checkbox" className="rounded" />
-                          Remember me
-                        </label>
-                        <Link href="/forgot-password" className="text-sm text-purple-600 hover:underline">
-                          Forgot password?
-                        </Link>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? "Logging in..." : "Log In"}
-                      </Button>
-                    </form>
-
-                    <div className="relative my-6">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200" />
-                      </div>
-                      <div className="relative flex justify-center text-sm">
-                        <span className="bg-white px-4 text-gray-500">Or continue with</span>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-1">Enterprise-Grade Security</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                          Your data is protected with AWS Cognito's enterprise-grade security. We use OAuth 2.0 and
+                          OpenID Connect for secure authentication.
+                        </p>
                       </div>
                     </div>
+                  </div>
+                </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("google")}
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        <Chrome className="mr-2 h-5 w-5" />
-                        Google
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("apple")}
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        <Apple className="mr-2 h-5 w-5" />
-                        Apple
-                      </Button>
-                    </div>
-                  </TabsContent>
-
-                  {/* Signup Tab */}
-                  <TabsContent value="signup" className="space-y-4">
-                    <form onSubmit={handleSignup} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-name">Full Name</Label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <Input
-                            id="signup-name"
-                            type="text"
-                            placeholder="Jane Doe"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="pl-10"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-email">Email</Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <Input
-                            id="signup-email"
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="pl-10"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-password">Password</Label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                          <Input
-                            id="signup-password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="pl-10 pr-10"
-                            required
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                          >
-                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-500">Must be at least 8 characters</p>
-                      </div>
-
-                      <label className="flex items-start gap-2 text-sm">
-                        <input type="checkbox" className="rounded mt-1" required />
-                        <span className="text-gray-600">
-                          I agree to the{" "}
-                          <Link href="/terms" className="text-purple-600 hover:underline">
-                            Terms of Service
-                          </Link>{" "}
-                          and{" "}
-                          <Link href="/privacy" className="text-purple-600 hover:underline">
-                            Privacy Policy
-                          </Link>
-                        </span>
-                      </label>
-
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? "Creating account..." : "Create Account"}
-                      </Button>
-                    </form>
-
-                    <div className="relative my-6">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200" />
-                      </div>
-                      <div className="relative flex justify-center text-sm">
-                        <span className="bg-white px-4 text-gray-500">Or sign up with</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("google")}
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        <Chrome className="mr-2 h-5 w-5" />
-                        Google
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => handleSocialAuth("apple")}
-                        disabled={isLoading}
-                        className="w-full"
-                      >
-                        <Apple className="mr-2 h-5 w-5" />
-                        Apple
-                      </Button>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                <div className="space-y-3 pt-4 border-t">
+                  <h4 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-rose-500" />
+                    What you'll get:
+                  </h4>
+                  <ul className="space-y-2">
+                    {[
+                      "Smart cycle tracking & predictions",
+                      "AI-powered fertility insights",
+                      "Direct access to specialists",
+                      "Private community support",
+                      "Comprehensive health reports",
+                    ].map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                        <CheckCircle2 className="h-4 w-4 text-purple-600 flex-shrink-0" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </CardContent>
             </Card>
+
+            <p className="text-center text-sm text-gray-500 mt-4">
+              By signing in, you agree to our{" "}
+              <Link href="/terms" className="text-purple-600 hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-purple-600 hover:underline">
+                Privacy Policy
+              </Link>
+            </p>
           </div>
         </div>
       </div>

@@ -5,25 +5,21 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/context/auth-context"
 import { CartProvider } from "@/context/cart-context"
-import WelcomeChatbotPopup from "@/components/welcome-chatbot-popup"
+import { WelcomeChatbotPopup } from "@/components/welcome-chatbot-popup"
 import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - Your Fertility Journey Partner",
+  title: "FertiTerra - Your Fertility Journey Starts Here",
   description:
-    "Comprehensive fertility testing, personalized insights, and expert support for your reproductive health journey in Africa.",
-  keywords: "fertility testing, reproductive health, fertility clinic, Africa, hormone testing, fertility consultation",
-  icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: [{ url: "/apple-touch-icon.png" }],
+    "Comprehensive fertility testing, expert consultations, and personalized care plans. Take control of your reproductive health with FertiTerra.",
+  keywords: "fertility, reproductive health, fertility testing, telemedicine, women's health",
+  openGraph: {
+    title: "FertiTerra - Your Fertility Journey Starts Here",
+    description: "Comprehensive fertility testing and expert consultations",
+    type: "website",
   },
-  manifest: "/site.webmanifest",
     generator: 'v0.app'
 }
 
@@ -40,12 +36,6 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8194933386433768"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
       </head>
       <body className={inter.className}>
         <AuthProvider>

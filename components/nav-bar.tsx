@@ -14,14 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
+import { Badge } from "@/components/ui/badge"
 
 export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -31,40 +24,13 @@ export function NavBar() {
     setIsMenuOpen(!isMenuOpen)
   }
 
-  const hormonesAndFertilityLinks = [
-    { href: "/test-kits/hormone-fertility", label: "Hormone & Fertility Test" },
-    { href: "/learn/planning-future-children", label: "Planning for Future Children" },
-    { href: "/learn/struggling-to-conceive", label: "Struggling to Conceive" },
-    { href: "/appointments/egg-freezing", label: "Egg Freezing" },
-  ]
-
-  const symptomsLinks = [
-    { href: "/appointments/gynaecologist", label: "Gynaecologist Consultation" },
-    { href: "/appointments/menopause-specialist", label: "Menopause Specialist" },
-    { href: "/appointments/skin-consultation", label: "Skin Consultation" },
-    { href: "/appointments/nutrition", label: "Nutrition Consultation" },
-  ]
-
-  const clinicalCareLinks = [
-    { href: "/appointments/advisor-call", label: "Advisor Call" },
-    { href: "/appointments/ultrasound", label: "Ultrasound" },
-    { href: "/appointments/gynaecologist", label: "Gynaecologist" },
-    { href: "/appointments/counselling", label: "Counselling" },
-    { href: "/plans/basic-fertility-checkup", label: "Basic Fertility Checkup" },
-  ]
-
-  const learnLinks = [
-    { href: "/learn/trying-to-conceive", label: "Trying to Conceive" },
-    { href: "/learn/lgbtqia-family", label: "LGBTQIA+ Family Building" },
-    { href: "/learn/get-started-kit", label: "Get Started Kit" },
-    { href: "/knowledge-centre", label: "Knowledge Centre" },
-    { href: "/blog", label: "Blog" },
-  ]
-
-  const shopLinks = [
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/wombs", label: "Wombs App", badge: "New" },
     { href: "/test-kits", label: "Test Kits" },
-    { href: "/shop/merch", label: "FertiThreads Merchandise" },
-    { href: "/shop", label: "All Products" },
+    { href: "/shop", label: "Shop" },
+    { href: "/blog", label: "Blog" },
+    { href: "/community", label: "Community" },
   ]
 
   return (
@@ -84,123 +50,22 @@ export function NavBar() {
         </div>
 
         {/* Desktop Navigation */}
-        <NavigationMenu className="hidden lg:flex">
-          <NavigationMenuList>
-            {/* Hormones & Fertility */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Hormones & Fertility</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  {hormonesAndFertilityLinks.map((link) => (
-                    <li key={link.href}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={link.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{link.label}</div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Symptoms */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Symptoms</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  {symptomsLinks.map((link) => (
-                    <li key={link.href}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={link.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{link.label}</div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Clinical Care */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Clinical Care</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  {clinicalCareLinks.map((link) => (
-                    <li key={link.href}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={link.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{link.label}</div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Learn */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Learn</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  {learnLinks.map((link) => (
-                    <li key={link.href}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={link.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{link.label}</div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Shop */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Shop</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4">
-                  {shopLinks.map((link) => (
-                    <li key={link.href}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={link.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">{link.label}</div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* For Employers */}
-            <NavigationMenuItem>
-              <Link href="/for-employers" legacyBehavior passHref>
-                <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
-                  For Employers
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+        <nav className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-2"
+            >
+              {link.label}
+              {link.badge && (
+                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-2 py-0.5">
+                  {link.badge}
+                </Badge>
+              )}
+            </Link>
+          ))}
+        </nav>
 
         <div className="flex items-center gap-4">
           <CartButton />
@@ -236,9 +101,9 @@ export function NavBar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden lg:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <Link href="/login">
-                <Button variant="ghost">Login</Button>
+                <Button variant="ghost">Sign In</Button>
               </Link>
               <Link href="/signup">
                 <Button>Sign Up</Button>
@@ -250,7 +115,7 @@ export function NavBar() {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className="md:hidden"
             onClick={toggleMenu}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -261,93 +126,23 @@ export function NavBar() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden border-t">
+        <div className="md:hidden border-t">
           <div className="container flex flex-col space-y-3 py-4 px-4">
-            {/* Hormones & Fertility - Mobile */}
-            <div className="space-y-2">
-              <div className="text-sm font-semibold text-gray-900">Hormones & Fertility</div>
-              {hormonesAndFertilityLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block text-sm py-2 pl-4 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Symptoms - Mobile */}
-            <div className="space-y-2 border-t pt-3">
-              <div className="text-sm font-semibold text-gray-900">Symptoms</div>
-              {symptomsLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block text-sm py-2 pl-4 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Clinical Care - Mobile */}
-            <div className="space-y-2 border-t pt-3">
-              <div className="text-sm font-semibold text-gray-900">Clinical Care</div>
-              {clinicalCareLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block text-sm py-2 pl-4 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Learn - Mobile */}
-            <div className="space-y-2 border-t pt-3">
-              <div className="text-sm font-semibold text-gray-900">Learn</div>
-              {learnLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block text-sm py-2 pl-4 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Shop - Mobile */}
-            <div className="space-y-2 border-t pt-3">
-              <div className="text-sm font-semibold text-gray-900">Shop</div>
-              {shopLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block text-sm py-2 pl-4 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* For Employers - Mobile */}
-            <Link
-              href="/for-employers"
-              className="text-sm font-medium py-2 border-t pt-3"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              For Employers
-            </Link>
-
-            {/* Auth Section - Mobile */}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium py-2 flex items-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {link.label}
+                {link.badge && (
+                  <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-2 py-0.5">
+                    {link.badge}
+                  </Badge>
+                )}
+              </Link>
+            ))}
             <div className="border-t pt-4 mt-2">
               {user ? (
                 <>
@@ -377,7 +172,7 @@ export function NavBar() {
                 <div className="flex flex-col space-y-2">
                   <Link href="/login" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="outline" className="w-full bg-transparent">
-                      Login
+                      Sign In
                     </Button>
                   </Link>
                   <Link href="/signup" onClick={() => setIsMenuOpen(false)}>

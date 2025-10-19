@@ -25,14 +25,14 @@ const OPTION_MAP: Record<string, { reply: string; link?: string }> = {
   },
   learn: {
     reply: "Wonderful! Check out our knowledge centre for in-depth resources.",
-    link: "/learn/knowledge-centre",
+    link: "/knowledge-centre",
   },
   browse: {
     reply: "No problem. Feel free to look around!",
   },
 }
 
-export function WelcomeChatbotPopup() {
+export default function WelcomeChatbotPopup() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([{ id: 0, sender: "bot", text: initialBotMessage }])
   const [showEmailStep, setShowEmailStep] = useState(false)
@@ -60,7 +60,7 @@ export function WelcomeChatbotPopup() {
   const handleSelect = (key: keyof typeof OPTION_MAP) => {
     const userMsg = {
       id: messages.length + 1,
-      sender: "user",
+      sender: "user" as const,
       text: (() => {
         switch (key) {
           case "tests":
@@ -77,7 +77,7 @@ export function WelcomeChatbotPopup() {
     const botData = OPTION_MAP[key]
     const botMsg = {
       id: messages.length + 2,
-      sender: "bot",
+      sender: "bot" as const,
       text: botData.reply,
     }
     setMessages((prev) => [...prev, userMsg, botMsg])
@@ -105,12 +105,12 @@ export function WelcomeChatbotPopup() {
         ...prev,
         {
           id: prev.length + 1,
-          sender: "user",
+          sender: "user" as const,
           text: email,
         },
         {
           id: prev.length + 2,
-          sender: "bot",
+          sender: "bot" as const,
           text: success
             ? "You're on the list! 🎉  Expect helpful fertility insights soon."
             : `Oops: ${message ?? "something went wrong"}`,
@@ -124,7 +124,7 @@ export function WelcomeChatbotPopup() {
         ...prev,
         {
           id: prev.length + 1,
-          sender: "bot",
+          sender: "bot" as const,
           text: "Sorry, an error occurred. Please try again later.",
         },
       ])

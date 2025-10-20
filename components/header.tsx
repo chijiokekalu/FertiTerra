@@ -33,9 +33,13 @@ export function Header() {
   useEffect(() => {
     const user = localStorage.getItem("fertiterra_user")
     if (user) {
-      const userData = JSON.parse(user)
-      setIsLoggedIn(true)
-      setUserName(userData.name || userData.email)
+      try {
+        const userData = JSON.parse(user)
+        setIsLoggedIn(true)
+        setUserName(userData.name || userData.email || "User")
+      } catch (error) {
+        console.error("Error parsing user data:", error)
+      }
     }
   }, [])
 
@@ -46,7 +50,9 @@ export function Header() {
     window.location.href = "/"
   }
 
-  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0)
+  // Safely calculate cart item count with fallback
+  const cartItemCount =
+    items && Array.isArray(items) ? items.reduce((total, item) => total + (item.quantity || 0), 0) : 0
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">

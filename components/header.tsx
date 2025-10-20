@@ -5,7 +5,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Badge } from "@/components/ui/badge"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,35 +14,23 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Menu, ShoppingCart, User, LogOut } from "lucide-react"
+import { useCart } from "@/context/cart-context"
 import {
-  Menu,
-  User,
-  LogOut,
-  Settings,
-  Heart,
-  TestTube,
-  Stethoscope,
-  ShoppingBag,
-  Activity,
-  Thermometer,
-  AlertCircle,
-  Video,
-  Calendar,
-  Baby,
-  Apple,
-  BookOpen,
-  Users,
-  Smartphone,
-} from "lucide-react"
-import { CartButton } from "./cart-button"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState("")
   const [open, setOpen] = useState(false)
+  const { items } = useCart()
 
   useEffect(() => {
-    // Check if user is logged in
     const user = localStorage.getItem("fertiterra_user")
     if (user) {
       const userData = JSON.parse(user)
@@ -59,34 +46,40 @@ export function Header() {
     window.location.href = "/"
   }
 
+  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0)
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <Image src="/images/fertiterra-logo.png" alt="FertiTerra" width={40} height={40} className="h-10 w-auto" />
-          <span className="text-xl font-bold">FertiTerra</span>
+          <span className="text-2xl font-bold">
+            fertiterra<sup className="text-xs">®</sup>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <NavigationMenu className="hidden lg:flex">
-          <NavigationMenuList>
+          <NavigationMenuList className="space-x-1">
             {/* Hormones & Fertility */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Hormones & Fertility</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-gray-50 data-[state=open]:bg-gray-50">
+                Hormones & fertility
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Test Kits</h4>
+                <div className="w-[400px] p-4">
+                  <div className="space-y-3">
                     <Link
                       href="/test-kits/hormone-fertility"
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <TestTube className="h-5 w-5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">Hormone & Fertility Test</div>
-                        <div className="text-sm text-gray-500">Comprehensive at-home testing</div>
-                      </div>
+                      <div className="font-medium text-sm mb-1">Hormone & Fertility Test</div>
+                      <div className="text-sm text-gray-600">Comprehensive at-home testing kit</div>
+                    </Link>
+                    <Link href="/test-kits" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">All Test Kits</div>
+                      <div className="text-sm text-gray-600">View our complete range</div>
                     </Link>
                   </div>
                 </div>
@@ -95,147 +88,84 @@ export function Header() {
 
             {/* Symptoms */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Symptoms</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-gray-50 data-[state=open]:bg-gray-50">
+                Symptoms
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  <Link
-                    href="/symptoms/irregular-periods"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <Activity className="h-5 w-5 text-pink-600" />
-                    <div>
-                      <div className="font-medium">Irregular Periods</div>
-                      <div className="text-sm text-gray-500">Track and understand your cycle</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/symptoms/pcos"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <AlertCircle className="h-5 w-5 text-rose-600" />
-                    <div>
-                      <div className="font-medium">PCOS</div>
-                      <div className="text-sm text-gray-500">Management and support</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/symptoms/hot-flashes"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <Thermometer className="h-5 w-5 text-orange-600" />
-                    <div>
-                      <div className="font-medium">Hot Flashes</div>
-                      <div className="text-sm text-gray-500">Relief and guidance</div>
-                    </div>
-                  </Link>
+                <div className="w-[400px] p-4">
+                  <div className="space-y-3">
+                    <Link
+                      href="/symptoms/irregular-periods"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">Irregular periods</div>
+                      <div className="text-sm text-gray-600">Track and understand your cycle</div>
+                    </Link>
+                    <Link href="/symptoms/pcos" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">PCOS</div>
+                      <div className="text-sm text-gray-600">Polycystic ovary syndrome support</div>
+                    </Link>
+                    <Link
+                      href="/symptoms/hot-flashes"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">Hot flashes</div>
+                      <div className="text-sm text-gray-600">Menopause symptom management</div>
+                    </Link>
+                  </div>
                 </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
 
             {/* Clinical Care */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Clinical Care</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-gray-50 data-[state=open]:bg-gray-50">
+                Clinical care
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[500px] md:grid-cols-2">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Appointments</h4>
+                <div className="w-[500px] p-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <Link
                       href="/appointments/advisor-call"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <Video className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm">Advisor Call</span>
+                      <div className="font-medium text-sm mb-1">Advisor call</div>
+                      <div className="text-sm text-gray-600">Video consultation</div>
                     </Link>
                     <Link
                       href="/appointments/ultrasound"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <Stethoscope className="h-4 w-4 text-pink-600" />
-                      <span className="text-sm">Ultrasound</span>
+                      <div className="font-medium text-sm mb-1">Ultrasound scan</div>
+                      <div className="text-sm text-gray-600">Pelvic ultrasound</div>
                     </Link>
                     <Link
                       href="/appointments/gynaecologist"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <Calendar className="h-4 w-4 text-rose-600" />
-                      <span className="text-sm">Gynaecologist</span>
+                      <div className="font-medium text-sm mb-1">Gynaecologist</div>
+                      <div className="text-sm text-gray-600">Specialist consultation</div>
                     </Link>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Specialists</h4>
                     <Link
                       href="/appointments/nutrition"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <Apple className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">Nutrition</span>
+                      <div className="font-medium text-sm mb-1">Nutrition</div>
+                      <div className="text-sm text-gray-600">Fertility nutrition advice</div>
                     </Link>
                     <Link
                       href="/appointments/counselling"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <Heart className="h-4 w-4 text-red-600" />
-                      <span className="text-sm">Counselling</span>
+                      <div className="font-medium text-sm mb-1">Counselling</div>
+                      <div className="text-sm text-gray-600">Mental health support</div>
                     </Link>
                     <Link
                       href="/appointments/egg-freezing"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <Baby className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm">Egg Freezing</span>
-                    </Link>
-                  </div>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Learn */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Learn</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[500px] md:grid-cols-2">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">FertiTerra</h4>
-                    <Link
-                      href="/learn/fertiterra-app"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
-                    >
-                      <Smartphone className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm">FertiTerra App</span>
-                      <Badge className="ml-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs">
-                        New
-                      </Badge>
-                    </Link>
-                    <Link
-                      href="/learn/planning-future-children"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Baby className="h-4 w-4 text-pink-600" />
-                      <span className="text-sm">Planning Future Children</span>
-                    </Link>
-                    <Link
-                      href="/learn/struggling-to-conceive"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Heart className="h-4 w-4 text-rose-600" />
-                      <span className="text-sm">Struggling to Conceive</span>
-                    </Link>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Resources</h4>
-                    <Link
-                      href="/learn/lgbtqia-family"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Users className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm">LGBTQIA+ Family Building</span>
-                    </Link>
-                    <Link
-                      href="/learn/get-started-kit"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <BookOpen className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm">Get Started Kit</span>
+                      <div className="font-medium text-sm mb-1">Egg freezing</div>
+                      <div className="text-sm text-gray-600">Fertility preservation</div>
                     </Link>
                   </div>
                 </div>
@@ -244,94 +174,151 @@ export function Header() {
 
             {/* Shop */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Shop</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-gray-50 data-[state=open]:bg-gray-50">
+                Shop
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  <Link
-                    href="/shop/merch"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <ShoppingBag className="h-5 w-5 text-purple-600" />
-                    <div>
-                      <div className="font-medium">Merchandise</div>
-                      <div className="text-sm text-gray-500">FertiThreads collection</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/test-kits"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <TestTube className="h-5 w-5 text-pink-600" />
-                    <div>
-                      <div className="font-medium">Test Kits</div>
-                      <div className="text-sm text-gray-500">At-home fertility testing</div>
-                    </div>
-                  </Link>
+                <div className="w-[400px] p-4">
+                  <div className="space-y-3">
+                    <Link href="/shop/merch" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">Merchandise</div>
+                      <div className="text-sm text-gray-600">FertiThreads collection</div>
+                    </Link>
+                    <Link href="/test-kits" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">Test kits</div>
+                      <div className="text-sm text-gray-600">At-home fertility testing</div>
+                    </Link>
+                    <Link href="/shop" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">All products</div>
+                      <div className="text-sm text-gray-600">Browse everything</div>
+                    </Link>
+                  </div>
                 </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* For Employers */}
+            {/* Learn */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-gray-50 data-[state=open]:bg-gray-50">
+                Learn
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[500px] p-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Link
+                      href="/learn/planning-future-children"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">Planning future children</div>
+                      <div className="text-sm text-gray-600">Prepare for pregnancy</div>
+                    </Link>
+                    <Link
+                      href="/learn/struggling-to-conceive"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">Struggling to conceive</div>
+                      <div className="text-sm text-gray-600">Fertility support</div>
+                    </Link>
+                    <Link
+                      href="/learn/lgbtqia-family"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">LGBTQIA+ family building</div>
+                      <div className="text-sm text-gray-600">Inclusive fertility care</div>
+                    </Link>
+                    <Link
+                      href="/learn/get-started-kit"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">Get started kit</div>
+                      <div className="text-sm text-gray-600">Begin your journey</div>
+                    </Link>
+                    <Link href="/knowledge-centre" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">Knowledge centre</div>
+                      <div className="text-sm text-gray-600">Educational resources</div>
+                    </Link>
+                    <Link href="/blog" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">Blog</div>
+                      <div className="text-sm text-gray-600">Latest articles</div>
+                    </Link>
+                    <Link
+                      href="/about/founders-story"
+                      className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="font-medium text-sm mb-1">Founder's story</div>
+                      <div className="text-sm text-gray-600">Our mission</div>
+                    </Link>
+                    <Link href="/meet-the-team" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="font-medium text-sm mb-1">Meet the team</div>
+                      <div className="text-sm text-gray-600">The people behind FertiTerra</div>
+                    </Link>
+                  </div>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+
+            {/* For Employers - Standalone Link */}
             <NavigationMenuItem>
               <Link href="/for-employers" legacyBehavior passHref>
-                <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                  For Employers
+                <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  For employers
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Right Side - Cart, Login/User */}
+        {/* Right Side - Cart, Login, CTA Button */}
         <div className="flex items-center gap-4">
-          <CartButton />
+          {/* Cart Icon */}
+          <Link href="/cart" className="relative hover:opacity-70 transition-opacity">
+            <ShoppingCart className="h-6 w-6" />
+            {cartItemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
 
+          {/* Login / User Menu */}
           {isLoggedIn ? (
-            <NavigationMenu className="hidden lg:flex">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
-                    <User className="h-4 w-4 mr-2" />
-                    {userName}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid gap-3 p-4 w-[200px]">
-                      <Link
-                        href="/profile"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <User className="h-4 w-4" />
-                        <span className="text-sm">Profile</span>
-                      </Link>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <Settings className="h-4 w-4" />
-                        <span className="text-sm">Dashboard</span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors text-red-600 w-full text-left"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span className="text-sm">Logout</span>
-                      </button>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden md:inline">{userName}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer">
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="cursor-pointer">
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <div className="hidden lg:flex items-center gap-2">
-              <Link href="/wombs">
-                <Button variant="ghost">Login</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </div>
+            <Link href="/wombs">
+              <Button variant="ghost" size="sm">
+                Login
+              </Button>
+            </Link>
           )}
+
+          {/* Personalise My Test Button */}
+          <Link href="/test-kits/hormone-fertility" className="hidden lg:block">
+            <Button className="bg-black text-white hover:bg-gray-800 px-6">Personalise my test</Button>
+          </Link>
 
           {/* Mobile Menu */}
           <Sheet open={open} onOpenChange={setOpen}>
@@ -341,25 +328,31 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto">
-              <div className="flex flex-col gap-4 py-4">
-                {/* User Section for Mobile */}
-                {isLoggedIn ? (
+              <div className="flex flex-col gap-6 py-6">
+                {/* Mobile CTA */}
+                <Link href="/test-kits/hormone-fertility" onClick={() => setOpen(false)}>
+                  <Button className="w-full bg-black text-white hover:bg-gray-800">Personalise my test</Button>
+                </Link>
+
+                {/* User Section */}
+                {isLoggedIn && (
                   <div className="border-b pb-4">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-purple-600" />
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <User className="h-5 w-5" />
                       </div>
                       <div>
                         <p className="font-medium">{userName}</p>
-                        <Link href="/profile" className="text-sm text-gray-500 hover:text-purple-600">
-                          View Profile
-                        </Link>
                       </div>
                     </div>
                     <div className="space-y-2">
+                      <Link href="/profile" onClick={() => setOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start">
+                          Profile
+                        </Button>
+                      </Link>
                       <Link href="/dashboard" onClick={() => setOpen(false)}>
                         <Button variant="ghost" className="w-full justify-start">
-                          <Settings className="h-4 w-4 mr-2" />
                           Dashboard
                         </Button>
                       </Link>
@@ -376,175 +369,167 @@ export function Header() {
                       </Button>
                     </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col gap-2 border-b pb-4">
-                    <Link href="/wombs" onClick={() => setOpen(false)}>
-                      <Button variant="outline" className="w-full bg-transparent">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link href="/signup" onClick={() => setOpen(false)}>
-                      <Button className="w-full">Sign Up</Button>
-                    </Link>
-                  </div>
                 )}
 
+                {/* Mobile Navigation */}
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="hormones">
-                    <AccordionTrigger>Hormones & Fertility</AccordionTrigger>
+                    <AccordionTrigger className="text-base font-medium">Hormones & fertility</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 pl-4">
                         <Link
                           href="/test-kits/hormone-fertility"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
                           Hormone & Fertility Test
+                        </Link>
+                        <Link href="/test-kits" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          All Test Kits
                         </Link>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="symptoms">
-                    <AccordionTrigger>Symptoms</AccordionTrigger>
+                    <AccordionTrigger className="text-base font-medium">Symptoms</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 pl-4">
                         <Link
                           href="/symptoms/irregular-periods"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Irregular Periods
+                          Irregular periods
                         </Link>
-                        <Link
-                          href="/symptoms/pcos"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
+                        <Link href="/symptoms/pcos" onClick={() => setOpen(false)} className="block py-2 text-sm">
                           PCOS
                         </Link>
                         <Link
                           href="/symptoms/hot-flashes"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Hot Flashes
+                          Hot flashes
                         </Link>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="clinical">
-                    <AccordionTrigger>Clinical Care</AccordionTrigger>
+                    <AccordionTrigger className="text-base font-medium">Clinical care</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 pl-4">
                         <Link
                           href="/appointments/advisor-call"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Advisor Call
+                          Advisor call
                         </Link>
                         <Link
                           href="/appointments/ultrasound"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Ultrasound
+                          Ultrasound scan
                         </Link>
                         <Link
                           href="/appointments/gynaecologist"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
                           Gynaecologist
                         </Link>
                         <Link
                           href="/appointments/nutrition"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
                           Nutrition
                         </Link>
                         <Link
                           href="/appointments/counselling"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
                           Counselling
                         </Link>
                         <Link
                           href="/appointments/egg-freezing"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Egg Freezing
-                        </Link>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  <AccordionItem value="learn">
-                    <AccordionTrigger>Learn</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-4">
-                        <Link
-                          href="/learn/fertiterra-app"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center justify-between py-2 text-sm hover:text-purple-600"
-                        >
-                          <span>FertiTerra App</span>
-                          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs">New</Badge>
-                        </Link>
-                        <Link
-                          href="/learn/planning-future-children"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Planning Future Children
-                        </Link>
-                        <Link
-                          href="/learn/struggling-to-conceive"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Struggling to Conceive
-                        </Link>
-                        <Link
-                          href="/learn/lgbtqia-family"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          LGBTQIA+ Family Building
-                        </Link>
-                        <Link
-                          href="/learn/get-started-kit"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Get Started Kit
+                          Egg freezing
                         </Link>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="shop">
-                    <AccordionTrigger>Shop</AccordionTrigger>
+                    <AccordionTrigger className="text-base font-medium">Shop</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2 pl-4">
+                        <Link href="/shop/merch" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          Merchandise
+                        </Link>
+                        <Link href="/test-kits" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          Test kits
+                        </Link>
+                        <Link href="/shop" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          All products
+                        </Link>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="learn">
+                    <AccordionTrigger className="text-base font-medium">Learn</AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-2 pl-4">
                         <Link
-                          href="/shop/merch"
+                          href="/learn/planning-future-children"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Merchandise
+                          Planning future children
                         </Link>
                         <Link
-                          href="/test-kits"
+                          href="/learn/struggling-to-conceive"
                           onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="block py-2 text-sm"
                         >
-                          Test Kits
+                          Struggling to conceive
+                        </Link>
+                        <Link
+                          href="/learn/lgbtqia-family"
+                          onClick={() => setOpen(false)}
+                          className="block py-2 text-sm"
+                        >
+                          LGBTQIA+ family building
+                        </Link>
+                        <Link
+                          href="/learn/get-started-kit"
+                          onClick={() => setOpen(false)}
+                          className="block py-2 text-sm"
+                        >
+                          Get started kit
+                        </Link>
+                        <Link href="/knowledge-centre" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          Knowledge centre
+                        </Link>
+                        <Link href="/blog" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          Blog
+                        </Link>
+                        <Link
+                          href="/about/founders-story"
+                          onClick={() => setOpen(false)}
+                          className="block py-2 text-sm"
+                        >
+                          Founder's story
+                        </Link>
+                        <Link href="/meet-the-team" onClick={() => setOpen(false)} className="block py-2 text-sm">
+                          Meet the team
                         </Link>
                       </div>
                     </AccordionContent>
@@ -554,9 +539,9 @@ export function Header() {
                 <Link
                   href="/for-employers"
                   onClick={() => setOpen(false)}
-                  className="py-3 font-medium hover:text-purple-600"
+                  className="py-2 font-medium text-base hover:text-purple-600"
                 >
-                  For Employers
+                  For employers
                 </Link>
               </div>
             </SheetContent>

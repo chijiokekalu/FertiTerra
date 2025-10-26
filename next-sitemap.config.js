@@ -1,7 +1,8 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://fertiterratechnologies.com",
+  siteUrl: process.env.SITE_URL || "https://fertiterratechnologies.com",
   generateRobotsTxt: true,
+  generateIndexSitemap: false,
   changefreq: "weekly",
   priority: 0.7,
   sitemapSize: 7000,
@@ -37,15 +38,14 @@ module.exports = {
       }
     }
 
-    // High priority pages - Main services and shopping
+    // High priority pages
     const highPriorityPages = [
+      "/learn",
       "/shop",
       "/shop/merch",
-      "/learn",
       "/knowledge-centre",
       "/plans/basic-fertility-checkup",
       "/plans/ttc",
-      "/test-kits/hormone-fertility",
     ]
 
     if (highPriorityPages.includes(path)) {
@@ -57,28 +57,28 @@ module.exports = {
       }
     }
 
-    // Service pages (appointments and clinical care)
+    // Service pages (appointments)
     if (path.startsWith("/appointments/")) {
       return {
         loc: path,
-        changefreq: "monthly",
+        changefreq: "weekly",
         priority: 0.8,
         lastmod: new Date().toISOString(),
       }
     }
 
-    // Educational content (blog, knowledge centre, learn pages)
-    if (path.startsWith("/learn/") || path.startsWith("/knowledge-centre/") || path.startsWith("/blog/")) {
+    // Educational content
+    if (path.startsWith("/learn/") || path.startsWith("/knowledge-centre/")) {
       return {
         loc: path,
         changefreq: "weekly",
-        priority: 0.85,
+        priority: 0.8,
         lastmod: new Date().toISOString(),
       }
     }
 
-    // About and company pages
-    if (path.startsWith("/about/") || path === "/meet-the-team" || path === "/for-employers" || path === "/community") {
+    // About and info pages
+    if (path.startsWith("/about/") || path === "/meet-the-team" || path === "/for-employers") {
       return {
         loc: path,
         changefreq: "monthly",
@@ -87,22 +87,7 @@ module.exports = {
       }
     }
 
-    // Authentication and user pages
-    if (
-      path.startsWith("/login") ||
-      path.startsWith("/signup") ||
-      path.startsWith("/wombs") ||
-      path.startsWith("/profile")
-    ) {
-      return {
-        loc: path,
-        changefreq: "monthly",
-        priority: 0.6,
-        lastmod: new Date().toISOString(),
-      }
-    }
-
-    // Default for all other pages
+    // Default
     return {
       loc: path,
       changefreq: config.changefreq,
@@ -136,6 +121,6 @@ module.exports = {
         ],
       },
     ],
-    additionalSitemaps: [`${process.env.NEXT_PUBLIC_SITE_URL || "https://fertiterratechnologies.com"}/sitemap.xml`],
+    additionalSitemaps: ["https://fertiterratechnologies.com/sitemap.xml"],
   },
 }

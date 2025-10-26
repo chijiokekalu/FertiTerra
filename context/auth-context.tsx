@@ -4,7 +4,7 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import type { User, Session } from "@supabase/supabase-js"
-import { createClientInstance as createClient, isSupabaseAvailable } from "@/lib/supabase"
+import { createClientInstance as createClient } from "@/lib/supabase"
 
 type UserRole = "admin" | "doctor" | "patient" | "support"
 
@@ -25,7 +25,6 @@ type AuthContextType = {
   isLoading: boolean
   isAdmin: boolean
   isEmailConfirmed: boolean
-  isSupabaseConfigured: boolean
   signUp: (
     email: string,
     password: string,
@@ -43,29 +42,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isSupabaseConfigured, setIsSupabaseConfigured] = useState(false)
   const router = useRouter()
+  const supabase = createClient()
 
   const isAdmin = profile?.role === "admin"
   const isEmailConfirmed = user?.email_confirmed_at !== null
 
   useEffect(() => {
-    // Check if Supabase is configured
-    const supabaseConfigured = isSupabaseAvailable()
-    setIsSupabaseConfigured(supabaseConfigured)
-
-    if (!supabaseConfigured) {
-      setIsLoading(false)
-      console.warn("Supabase authentication is not available. Using alternative auth method.")
-      return
-    }
-
-    const supabase = createClient()
-    if (!supabase) {
-      setIsLoading(false)
-      return
-    }
-
     const getSession = async () => {
       try {
         const {
@@ -91,24 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase.auth])
 
   const signUp = async (email: string, password: string) => {
-    if (!isSupabaseConfigured) {
-      return {
-        error: { message: "Supabase authentication is not configured" },
-        success: false,
-      }
-    }
-
-    const supabase = createClient()
-    if (!supabase) {
-      return {
-        error: { message: "Authentication service unavailable" },
-        success: false,
-      }
-    }
-
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -126,21 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signIn = async (email: string, password: string) => {
-    if (!isSupabaseConfigured) {
-      return {
-        error: { message: "Supabase authentication is not configured" },
-        success: false,
-      }
-    }
-
-    const supabase = createClient()
-    if (!supabase) {
-      return {
-        error: { message: "Authentication service unavailable" },
-        success: false,
-      }
-    }
-
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -167,21 +120,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const resendConfirmation = async (email: string) => {
-    if (!isSupabaseConfigured) {
-      return {
-        error: { message: "Supabase authentication is not configured" },
-        success: false,
-      }
-    }
-
-    const supabase = createClient()
-    if (!supabase) {
-      return {
-        error: { message: "Authentication service unavailable" },
-        success: false,
-      }
-    }
-
     try {
       const { error } = await supabase.auth.resend({
         type: "signup",
@@ -199,24 +137,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    if (!isSupabaseConfigured) {
-      console.warn("Supabase is not configured, signing out locally only")
-      setProfile(null)
-      setUser(null)
-      setSession(null)
-      router.push("/")
-      return
-    }
-
-    const supabase = createClient()
-    if (!supabase) {
-      setProfile(null)
-      setUser(null)
-      setSession(null)
-      router.push("/")
-      return
-    }
-
     try {
       await supabase.auth.signOut()
       setProfile(null)
@@ -239,7 +159,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAdmin,
         isEmailConfirmed,
-        isSupabaseConfigured,
         signUp,
         signIn,
         signOut,

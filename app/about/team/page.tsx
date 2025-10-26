@@ -126,6 +126,261 @@ export default function TeamPage() {
         </div>
       </section>
 
+      {/* Cofounder Application Form Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-green-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">
+                Join FertiTerra as a Cofounder – Medical Team
+              </h2>
+              <p className="text-lg text-gray-600 mb-8 text-center leading-relaxed">
+                FertiTerra is transforming fertility care across Africa through technology, innovation, and compassion.
+                We are looking for a passionate female cofounder with a medical background to join our leadership team.
+                If you are driven to make fertility care more accessible and equitable, we would love to hear from you.
+              </p>
+
+              <form action="https://formspree.io/f/xldodngw" method="POST" className="space-y-6">
+                {/* Full Name */}
+                <div>
+                  <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Full Name <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    required
+                    placeholder="Enter your full name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Email Address */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Email Address <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="your.email@example.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number (with country code) <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    placeholder="+234 812 345 6789"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Country of Residence */}
+                <div>
+                  <label htmlFor="country" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Country of Residence <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    required
+                    placeholder="e.g., Nigeria, Kenya, South Africa"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Professional Title */}
+                <div>
+                  <label htmlFor="professionalTitle" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Professional Title / Background <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="professionalTitle"
+                    name="professionalTitle"
+                    required
+                    placeholder="e.g., Gynecologist, Nurse, Fertility Specialist"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Years of Experience */}
+                <div>
+                  <label htmlFor="experience" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Years of Experience in Healthcare <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="experience"
+                    name="experience"
+                    required
+                    min="0"
+                    placeholder="e.g., 5"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Current Organization */}
+                <div>
+                  <label htmlFor="organization" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Current Organization / Affiliation <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="organization"
+                    name="organization"
+                    required
+                    placeholder="e.g., Lagos University Teaching Hospital"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Why interested */}
+                <div>
+                  <label htmlFor="whyInterested" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Why are you interested in joining FertiTerra as a cofounder?{" "}
+                    <span className="text-rose-600">*</span>
+                  </label>
+                  <textarea
+                    id="whyInterested"
+                    name="whyInterested"
+                    required
+                    rows={4}
+                    placeholder="Share your motivation and vision for fertility care in Africa..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all resize-none"
+                  />
+                </div>
+
+                {/* Unique skills */}
+                <div>
+                  <label htmlFor="uniqueSkills" className="block text-sm font-semibold text-gray-700 mb-2">
+                    What unique skills or expertise will you bring to the FertiTerra medical team?{" "}
+                    <span className="text-rose-600">*</span>
+                  </label>
+                  <textarea
+                    id="uniqueSkills"
+                    name="uniqueSkills"
+                    required
+                    rows={4}
+                    placeholder="Describe your specific expertise, skills, and value proposition..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all resize-none"
+                  />
+                </div>
+
+                {/* Fertility experience */}
+                <div>
+                  <label htmlFor="fertilityExperience" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Have you previously worked in fertility or reproductive health?{" "}
+                    <span className="text-rose-600">*</span>
+                  </label>
+                  <select
+                    id="fertilityExperience"
+                    name="fertilityExperience"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  >
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+
+                {/* Optional details for fertility experience */}
+                <div>
+                  <label htmlFor="fertilityDetails" className="block text-sm font-semibold text-gray-700 mb-2">
+                    If yes, please provide details (Optional)
+                  </label>
+                  <textarea
+                    id="fertilityDetails"
+                    name="fertilityDetails"
+                    rows={3}
+                    placeholder="Describe your experience in fertility or reproductive health..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all resize-none"
+                  />
+                </div>
+
+                {/* LinkedIn Profile */}
+                <div>
+                  <label htmlFor="linkedinProfile" className="block text-sm font-semibold text-gray-700 mb-2">
+                    LinkedIn Profile or Portfolio URL <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="url"
+                    id="linkedinProfile"
+                    name="linkedinProfile"
+                    required
+                    placeholder="https://linkedin.com/in/yourprofile"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Upload CV */}
+                <div>
+                  <label htmlFor="cv" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Upload CV (PDF or DOCX only) <span className="text-rose-600">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    id="cv"
+                    name="cv"
+                    required
+                    accept=".pdf,.doc,.docx"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 file:cursor-pointer"
+                  />
+                </div>
+
+                {/* How soon can you commit */}
+                <div>
+                  <label htmlFor="commitmentTime" className="block text-sm font-semibold text-gray-700 mb-2">
+                    How soon can you commit to joining the team? <span className="text-rose-600">*</span>
+                  </label>
+                  <select
+                    id="commitmentTime"
+                    name="commitmentTime"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                  >
+                    <option value="">Select a timeframe</option>
+                    <option value="immediately">Immediately</option>
+                    <option value="1-3-months">1–3 months</option>
+                    <option value="3-6-months">3–6 months</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-rose-500 to-green-500 text-white font-bold py-4 px-8 rounded-lg hover:from-rose-600 hover:to-green-600 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Submit Application
+                  </button>
+                </div>
+
+                {/* Footer Text */}
+                <p className="text-sm text-gray-600 text-center pt-4">
+                  Thank you for your interest in joining FertiTerra. We review every application carefully and will
+                  reach out to shortlisted candidates via email.
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action */}
       <section className="py-20 bg-gradient-to-r from-rose-500 to-green-500">
         <div className="container mx-auto px-4">

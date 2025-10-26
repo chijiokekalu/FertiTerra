@@ -21,17 +21,9 @@ import { Header } from "@/components/header"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function HomePage() {
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/test-kits", label: "Test Kits" },
-    { href: "/shop", label: "Shop" },
-    { href: "/blog", label: "Blog" },
-    { href: "/community", label: "Community" },
-  ]
-
   return (
     <div className="flex min-h-screen flex-col">
-      <Header navLinks={navLinks} />
+      <Header />
       <main className="flex-1">
         {/* Hero Section with New Message */}
         <section className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-purple-50 to-pink-50 py-20 md:py-32">
@@ -81,7 +73,7 @@ export default function HomePage() {
                         <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
                           <Image
                             src="/images/couple-fertility-struggle-1.png"
-                            alt="Concerned couple sitting on couch discussing fertility challenges"
+                            alt="Concerned couple sitting on couch discussing fertility challenges - woman looking at pregnancy test while man supports her with head in hands showing emotional stress of fertility journey"
                             width={280}
                             height={160}
                             className="object-cover w-full h-full"
@@ -111,7 +103,7 @@ export default function HomePage() {
                         <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
                           <Image
                             src="/images/couple-fertility-struggle-2.png"
-                            alt="Couple on bed dealing with fertility disappointment"
+                            alt="Couple on bed dealing with fertility disappointment - woman covering face in distress while holding pregnancy test, man providing emotional support and comfort during difficult fertility journey"
                             width={280}
                             height={160}
                             className="object-cover w-full h-full"
@@ -141,6 +133,7 @@ export default function HomePage() {
                       </div>
 
                       <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
+                        {/* Rwanda Development Board */}
                         <div className="flex items-center justify-center">
                           <Image
                             src="/images/rdb-logo.png"
@@ -151,6 +144,7 @@ export default function HomePage() {
                           />
                         </div>
 
+                        {/* Care Quality Commission */}
                         <div className="flex items-center justify-center">
                           <Image
                             src="/placeholder.svg?height=40&width=120&text=CQC"
@@ -161,6 +155,7 @@ export default function HomePage() {
                           />
                         </div>
 
+                        {/* BSI ISO 13485 */}
                         <div className="flex items-center justify-center">
                           <Image
                             src="/placeholder.svg?height=40&width=80&text=BSI+ISO+13485"
@@ -171,6 +166,7 @@ export default function HomePage() {
                           />
                         </div>
 
+                        {/* BSI ISO 9001 */}
                         <div className="flex items-center justify-center">
                           <Image
                             src="/placeholder.svg?height=40&width=80&text=BSI+ISO+9001"
@@ -181,6 +177,7 @@ export default function HomePage() {
                           />
                         </div>
 
+                        {/* CE Marking */}
                         <div className="flex items-center justify-center">
                           <Image
                             src="/placeholder.svg?height=40&width=60&text=CE"
@@ -201,7 +198,7 @@ export default function HomePage() {
                 <div className="relative">
                   <Image
                     src="/images/woman-with-test-kit.png"
-                    alt="Happy woman holding FertiTerra test kit at home"
+                    alt="Happy woman holding FertiTerra test kit at home - comfortable and easy fertility testing"
                     width={600}
                     height={600}
                     className="rounded-2xl shadow-2xl"
@@ -209,6 +206,7 @@ export default function HomePage() {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                   />
 
+                  {/* Floating care elements */}
                   <div className="absolute -top-4 -right-4 bg-white rounded-full p-4 shadow-lg">
                     <Users className="h-8 w-8 text-purple-500" />
                   </div>
@@ -217,6 +215,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
+                {/* Community testimonial overlay */}
                 <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
                   <div className="flex items-center gap-3">
                     <div className="flex -space-x-2">
@@ -240,6 +239,7 @@ export default function HomePage() {
         <section className="py-16 bg-white">
           <div className="container">
             <div className="grid gap-12 lg:grid-cols-2 items-center">
+              {/* Left side - Text content */}
               <div className="space-y-6">
                 <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
                   We're all at different stages of our <em className="italic text-rose-500">journey</em>
@@ -247,13 +247,15 @@ export default function HomePage() {
                 <p className="text-xl text-gray-600">What's most important to you?</p>
               </div>
 
+              {/* Right side - Journey cards */}
               <div className="space-y-4">
+                {/* Managing symptoms card */}
                 <Link href="/appointments/menopause-specialist" className="block">
                   <div className="relative overflow-hidden rounded-2xl h-48 group cursor-pointer transition-transform hover:scale-105">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-800/60 z-10 group-hover:from-blue-900/90 group-hover:to-blue-800/70 transition-all"></div>
                     <Image
                       src="/images/couple-fertility-journey-2.png"
-                      alt="Happy couple at home"
+                      alt="Happy couple at home - woman in red headwrap and man in gray cardigan smiling together"
                       fill
                       className="object-cover transition-transform group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
@@ -276,12 +278,13 @@ export default function HomePage() {
                   </div>
                 </Link>
 
+                {/* Fertility card */}
                 <Link href="/plans/ttc" className="block">
                   <div className="relative overflow-hidden rounded-2xl h-48 group cursor-pointer transition-transform hover:scale-105">
                     <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-green-800/60 z-10 group-hover:from-green-900/90 group-hover:to-green-800/70 transition-all"></div>
                     <Image
                       src="/images/couple-fertility-journey-1.png"
-                      alt="Loving couple in kitchen"
+                      alt="Loving couple in kitchen - man embracing woman from behind, both smiling warmly"
                       fill
                       className="object-cover transition-transform group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
@@ -302,12 +305,13 @@ export default function HomePage() {
                   </div>
                 </Link>
 
+                {/* Perimenopause or Menopause card */}
                 <Link href="/learn/experiencing-symptoms" className="block">
                   <div className="relative overflow-hidden rounded-2xl h-48 group cursor-pointer transition-transform hover:scale-105">
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-purple-800/60 z-10 group-hover:from-purple-900/90 group-hover:to-purple-800/70 transition-all"></div>
                     <Image
                       src="/images/couple-fertility-journey-3.png"
-                      alt="Joyful couple outdoors at sunset"
+                      alt="Joyful couple outdoors at sunset - man giving woman piggyback ride, both laughing"
                       fill
                       className="object-cover transition-transform group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
@@ -332,7 +336,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Why You Deserve Better Section */}
+        {/* Why You Deserve Better Section - Enhanced with Images */}
         <section className="py-20 bg-gradient-to-br from-gray-50 via-rose-50/30 to-purple-50/30">
           <div className="container">
             <div className="text-center mb-16">
@@ -346,6 +350,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-3 max-w-7xl mx-auto">
+              {/* No More Waiting Card */}
               <Card className="group relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-rose-50/50">
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-rose-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <CardHeader className="relative z-10 text-center pb-4">
@@ -353,7 +358,7 @@ export default function HomePage() {
                     <div className="h-48 w-full overflow-hidden rounded-xl mb-4">
                       <Image
                         src="/images/healthcare-provider-hands.png"
-                        alt="Healthcare provider in teal scrubs holding patient's hands"
+                        alt="Healthcare provider in teal scrubs holding patient's hands in supportive gesture"
                         width={400}
                         height={200}
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
@@ -382,6 +387,7 @@ export default function HomePage() {
                 </CardContent>
               </Card>
 
+              {/* Personalized Care Card */}
               <Card className="group relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-purple-50/50">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <CardHeader className="relative z-10 text-center pb-4">
@@ -389,7 +395,7 @@ export default function HomePage() {
                     <div className="h-48 w-full overflow-hidden rounded-xl mb-4">
                       <Image
                         src="/images/woman-health-checkup.png"
-                        alt="Smiling Black woman having comfortable health checkup"
+                        alt="Smiling Black woman having comfortable health checkup with healthcare provider"
                         width={400}
                         height={200}
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
@@ -418,6 +424,7 @@ export default function HomePage() {
                 </CardContent>
               </Card>
 
+              {/* Expert Community Card */}
               <Card className="group relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-gradient-to-br from-white to-pink-50/50">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <CardHeader className="relative z-10 text-center pb-4">
@@ -425,7 +432,7 @@ export default function HomePage() {
                     <div className="h-48 w-full overflow-hidden rounded-xl mb-4">
                       <Image
                         src="/images/supportive-hands.png"
-                        alt="Supportive hands holding each other"
+                        alt="Supportive hands holding each other in caring, comforting gesture representing community support"
                         width={400}
                         height={200}
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
@@ -455,6 +462,7 @@ export default function HomePage() {
               </Card>
             </div>
 
+            {/* Additional Trust Indicators */}
             <div className="mt-16 text-center">
               <div className="inline-flex items-center gap-8 bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 shadow-lg border border-gray-100">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -485,6 +493,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {/* Basic Fertility Checkup Plan */}
               <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -521,6 +530,7 @@ export default function HomePage() {
                 </CardFooter>
               </Card>
 
+              {/* TTC Plan */}
               <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
                 <div className="bg-rose-50 p-2">
                   <Badge className="bg-rose-500 hover:bg-rose-600">Most Popular</Badge>
@@ -563,6 +573,7 @@ export default function HomePage() {
                 </CardFooter>
               </Card>
 
+              {/* Perimenopausal/Menopausal Health Plan */}
               <Card className="overflow-hidden border-0 shadow-lg opacity-75">
                 <CardHeader className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -587,6 +598,7 @@ export default function HomePage() {
                 </CardFooter>
               </Card>
 
+              {/* General Wellness Plan */}
               <Card className="overflow-hidden border-0 shadow-lg opacity-75">
                 <CardHeader className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -612,6 +624,7 @@ export default function HomePage() {
               </Card>
             </div>
 
+            {/* Additional Features for Available Plans */}
             <div className="mt-12 grid gap-6 md:grid-cols-2">
               <Card className="border-rose-100 bg-rose-50/50">
                 <CardHeader>
@@ -964,6 +977,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
       <footer className="border-t py-8 bg-white">
         <div className="container">
           <div className="grid gap-8 md:grid-cols-4">

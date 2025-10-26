@@ -2,28 +2,28 @@
 
 import { ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useCart } from "@/context/cart-context"
-import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import { useCart } from "@/context/cart-context"
 
 export function CartButton() {
-  const { itemCount } = useCart()
-  const router = useRouter()
+  const { getItemCount } = useCart()
+  const itemCount = getItemCount()
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="relative"
-      onClick={() => router.push("/cart")}
-      aria-label={`Shopping cart with ${itemCount} items`}
-    >
-      <ShoppingCart className="h-5 w-5" />
-      {itemCount > 0 && (
-        <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-purple-600 text-white text-xs">
-          {itemCount}
-        </Badge>
-      )}
-    </Button>
+    <Link href="/cart">
+      <Button variant="ghost" size="icon" className="relative">
+        <ShoppingCart className="h-5 w-5" />
+        {itemCount > 0 && (
+          <Badge
+            variant="destructive"
+            className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+          >
+            {itemCount}
+          </Badge>
+        )}
+        <span className="sr-only">Cart ({itemCount} items)</span>
+      </Button>
+    </Link>
   )
 }

@@ -4,565 +4,1304 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Badge } from "@/components/ui/badge"
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import {
-  Menu,
-  User,
-  LogOut,
-  Settings,
-  Heart,
-  TestTube,
-  Stethoscope,
-  ShoppingBag,
-  Activity,
-  Thermometer,
-  AlertCircle,
-  Video,
-  Calendar,
-  Baby,
-  Apple,
-  BookOpen,
-  Users,
-  Smartphone,
-} from "lucide-react"
-import { CartButton } from "./cart-button"
+import { useAuth } from "@/context/auth-context"
+import { Menu, X, ShoppingBag, Linkedin, Instagram } from "lucide-react"
 
 export function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userName, setUserName] = useState("")
-  const [open, setOpen] = useState(false)
+  const { user, profile, isAdmin, signOut } = useAuth()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem("fertiterra_user")
-    if (user) {
-      const userData = JSON.parse(user)
-      setIsLoggedIn(true)
-      setUserName(userData.name || userData.email)
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeDropdown && !(event.target as Element).closest(".dropdown-container")) {
+        setActiveDropdown(null)
+      }
     }
-  }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem("fertiterra_user")
-    setIsLoggedIn(false)
-    setUserName("")
-    window.location.href = "/"
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [activeDropdown])
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <Image src="/images/fertiterra-logo.png" alt="FertiTerra" width={40} height={40} className="h-10 w-auto" />
-          <span className="text-xl font-bold">FertiTerra</span>
+    <header className="w-full bg-white">
+      {/* Banner */}
+      <div className="w-full bg-[#e5d6c9] py-2 px-4 text-center text-sm">
+        <div className="flex items-center justify-center gap-4">
+          <span>Download a sample Advanced Hormone and Fertility Test report.</span>
+          <Link href="/sample-report" className="font-medium">
+            Download it here
+          </Link>
+          <div className="hidden sm:flex items-center gap-3 ml-4">
+            <a
+              href="https://www.linkedin.com/company/fertiterra-technologies/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 transition-colors"
+              aria-label="Follow us on LinkedIn"
+            >
+              <Linkedin className="h-4 w-4" />
+            </a>
+            <a
+              href="https://www.instagram.com/fertiterra_technologies?igsh=MXMyZmN3cGRraTJzcg=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pink-600 hover:text-pink-800 transition-colors"
+              aria-label="Follow us on Instagram"
+            >
+              <Instagram className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main header */}
+      <div className="container flex h-16 items-center justify-between">
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/images/fertiterra-logo.png"
+            alt="FertiTerra Logo"
+            width={140}
+            height={40}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
-        {/* Desktop Navigation */}
-        <NavigationMenu className="hidden lg:flex">
-          <NavigationMenuList>
-            {/* Hormones & Fertility */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Hormones & Fertility</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Test Kits</h4>
-                    <Link
-                      href="/test-kits/hormone-fertility"
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <TestTube className="h-5 w-5 text-purple-600" />
-                      <div>
-                        <div className="font-medium">Hormone & Fertility Test</div>
-                        <div className="text-sm text-gray-500">Comprehensive at-home testing</div>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
+        {/* Right side - Navigation, Cart, Login, Signup */}
+        <div className="flex items-center gap-6">
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-6">
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "hormones" ? null : "hormones")}
+              >
+                Hormones & Fertility
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-1 h-4 w-4"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
 
-            {/* Symptoms */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Symptoms</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  <Link
-                    href="/symptoms/irregular-periods"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <Activity className="h-5 w-5 text-pink-600" />
-                    <div>
-                      <div className="font-medium">Irregular Periods</div>
-                      <div className="text-sm text-gray-500">Track and understand your cycle</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/symptoms/pcos"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <AlertCircle className="h-5 w-5 text-rose-600" />
-                    <div>
-                      <div className="font-medium">PCOS</div>
-                      <div className="text-sm text-gray-500">Management and support</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/symptoms/hot-flashes"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <Thermometer className="h-5 w-5 text-orange-600" />
-                    <div>
-                      <div className="font-medium">Hot Flashes</div>
-                      <div className="text-sm text-gray-500">Relief and guidance</div>
-                    </div>
-                  </Link>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Clinical Care */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Clinical Care</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[500px] md:grid-cols-2">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Appointments</h4>
-                    <Link
-                      href="/appointments/advisor-call"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Video className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm">Advisor Call</span>
-                    </Link>
-                    <Link
-                      href="/appointments/ultrasound"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Stethoscope className="h-4 w-4 text-pink-600" />
-                      <span className="text-sm">Ultrasound</span>
-                    </Link>
-                    <Link
-                      href="/appointments/gynaecologist"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Calendar className="h-4 w-4 text-rose-600" />
-                      <span className="text-sm">Gynaecologist</span>
-                    </Link>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Specialists</h4>
-                    <Link
-                      href="/appointments/nutrition"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Apple className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">Nutrition</span>
-                    </Link>
-                    <Link
-                      href="/appointments/counselling"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Heart className="h-4 w-4 text-red-600" />
-                      <span className="text-sm">Counselling</span>
-                    </Link>
-                    <Link
-                      href="/appointments/egg-freezing"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Baby className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm">Egg Freezing</span>
-                    </Link>
-                  </div>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Learn */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Learn</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[500px] md:grid-cols-2">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">FertiTerra</h4>
-                    <Link
-                      href="/learn/fertiterra-app"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
-                    >
-                      <Smartphone className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm">FertiTerra App</span>
-                      <Badge className="ml-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs">
-                        New
-                      </Badge>
-                    </Link>
-                    <Link
-                      href="/learn/planning-future-children"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Baby className="h-4 w-4 text-pink-600" />
-                      <span className="text-sm">Planning Future Children</span>
-                    </Link>
-                    <Link
-                      href="/learn/struggling-to-conceive"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Heart className="h-4 w-4 text-rose-600" />
-                      <span className="text-sm">Struggling to Conceive</span>
-                    </Link>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium leading-none text-gray-500">Resources</h4>
-                    <Link
-                      href="/learn/lgbtqia-family"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <Users className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm">LGBTQIA+ Family Building</span>
-                    </Link>
-                    <Link
-                      href="/learn/get-started-kit"
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <BookOpen className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm">Get Started Kit</span>
-                    </Link>
-                  </div>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Shop */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Shop</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  <Link
-                    href="/shop/merch"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <ShoppingBag className="h-5 w-5 text-purple-600" />
-                    <div>
-                      <div className="font-medium">Merchandise</div>
-                      <div className="text-sm text-gray-500">FertiThreads collection</div>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/test-kits"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <TestTube className="h-5 w-5 text-pink-600" />
-                    <div>
-                      <div className="font-medium">Test Kits</div>
-                      <div className="text-sm text-gray-500">At-home fertility testing</div>
-                    </div>
-                  </Link>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* For Employers */}
-            <NavigationMenuItem>
-              <Link href="/for-employers" legacyBehavior passHref>
-                <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                  For Employers
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {/* Right Side - Cart, Login/User */}
-        <div className="flex items-center gap-4">
-          <CartButton />
-
-          {isLoggedIn ? (
-            <NavigationMenu className="hidden lg:flex">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
-                    <User className="h-4 w-4 mr-2" />
-                    {userName}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid gap-3 p-4 w-[200px]">
-                      <Link
-                        href="/profile"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <User className="h-4 w-4" />
-                        <span className="text-sm">Profile</span>
-                      </Link>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <Settings className="h-4 w-4" />
-                        <span className="text-sm">Dashboard</span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors text-red-600 w-full text-left"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span className="text-sm">Logout</span>
-                      </button>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          ) : (
-            <div className="hidden lg:flex items-center gap-2">
-              <Link href="/wombs">
-                <Button variant="ghost">Login</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </div>
-          )}
-
-          {/* Mobile Menu */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto">
-              <div className="flex flex-col gap-4 py-4">
-                {/* User Section for Mobile */}
-                {isLoggedIn ? (
-                  <div className="border-b pb-4">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{userName}</p>
-                        <Link href="/profile" className="text-sm text-gray-500 hover:text-purple-600">
-                          View Profile
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "hormones" ? "block" : "hidden"}`}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Buy an at-home test</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/test-kits/hormone-fertility" className="text-sm hover:text-rose-500 block">
+                          Hormone & Fertility Test
                         </Link>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Link href="/dashboard" onClick={() => setOpen(false)}>
-                        <Button variant="ghost" className="w-full justify-start">
-                          <Settings className="h-4 w-4 mr-2" />
-                          Dashboard
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          handleLogout()
-                          setOpen(false)
-                        }}
-                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Logout
-                      </Button>
-                    </div>
+                      </li>
+                    </ul>
                   </div>
-                ) : (
-                  <div className="flex flex-col gap-2 border-b pb-4">
-                    <Link href="/wombs" onClick={() => setOpen(false)}>
-                      <Button variant="outline" className="w-full bg-transparent">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link href="/signup" onClick={() => setOpen(false)}>
-                      <Button className="w-full">Sign Up</Button>
-                    </Link>
-                  </div>
-                )}
 
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="hormones">
-                    <AccordionTrigger>Hormones & Fertility</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Book an appointment</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/appointments/advisor-call" className="text-sm hover:text-rose-500 block">
+                          Hormone & Fertility Advisor Call
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/ultrasound" className="text-sm hover:text-rose-500 block">
+                          Pelvic Ultrasound Scan
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/gynaecologist" className="text-sm hover:text-rose-500 block">
+                          Private Gynaecologist Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/nutrition" className="text-sm hover:text-rose-500 block">
+                          Fertility Nutrition Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/counselling" className="text-sm hover:text-rose-500 block">
+                          Fertility Counselling
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/egg-freezing" className="text-sm hover:text-rose-500 block">
+                          Egg Freezing
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Learn</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/learn/planning-future-children" className="text-sm hover:text-rose-500 block">
+                          Planning future children
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/trying-to-conceive" className="text-sm hover:text-rose-500 block">
+                          Trying to conceive
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/struggling-to-conceive" className="text-sm hover:text-rose-500 block">
+                          Struggling to conceive
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/lgbtqia-family" className="text-sm hover:text-rose-500 block">
+                          Starting an LGBTQIA+ family
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/get-started-kit" className="text-sm hover:text-rose-500 block">
+                          Get started kit
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <h3 className="font-medium text-gray-900 mb-2">Not sure where to start?</h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Tell us what brought you here and we'll let you know how we can help.
+                    </p>
+                    <Link href="/quiz" className="text-sm font-medium text-rose-500 hover:text-rose-600">
+                      Start here
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "symptoms" ? null : "symptoms")}
+              >
+                Symptoms
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-1 h-4 w-4"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "symptoms" ? "block" : "hidden"}`}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Buy an at-home test</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/test-kits/hormone-fertility" className="text-sm hover:text-rose-500 block">
+                          Hormone & Fertility Test
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Book an appointment</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/appointments/advisor-call" className="text-sm hover:text-rose-500 block">
+                          Hormone & Fertility Advisor Call
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/ultrasound" className="text-sm hover:text-rose-500 block">
+                          Pelvic Ultrasound Scan
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/gynaecologist" className="text-sm hover:text-rose-500 block">
+                          Private Gynaecologist Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/menopause-specialist" className="text-sm hover:text-rose-500 block">
+                          Menopause Specialist Consultation
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Learn</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/learn/experiencing-symptoms" className="text-sm hover:text-rose-500 block">
+                          Experiencing symptoms
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/get-started-kit" className="text-sm hover:text-rose-500 block">
+                          Get started kit
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <h3 className="font-medium text-gray-900 mb-2">Not sure where to start?</h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Tell us what brought you here and we'll let you know how we can help.
+                    </p>
+                    <Link href="/quiz" className="text-sm font-medium text-rose-500 hover:text-rose-600">
+                      Start here
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "clinical" ? null : "clinical")}
+              >
+                Clinical Care
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-1 h-4 w-4"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "clinical" ? "block" : "hidden"}`}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">At-home test</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/test-kits/hormone-fertility" className="text-sm hover:text-rose-500 block">
+                          Hormone & Fertility Test
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Appointments</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/appointments/advisor-call" className="text-sm hover:text-rose-500 block">
+                          Hormone & Fertility Advisor Call
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/nutrition" className="text-sm hover:text-rose-500 block">
+                          Fertility Nutrition Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/counselling" className="text-sm hover:text-rose-500 block">
+                          Fertility Counselling
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Treatments</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/appointments/ultrasound" className="text-sm hover:text-rose-500 block">
+                          Pelvic Ultrasound Scan
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/gynaecologist" className="text-sm hover:text-rose-500 block">
+                          Private Gynaecologist Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/menopause-specialist" className="text-sm hover:text-rose-500 block">
+                          Menopause Specialist Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/egg-freezing" className="text-sm hover:text-rose-500 block">
+                          Egg Freezing
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/appointments/skin-consultation" className="text-sm hover:text-rose-500 block">
+                          Skin Consultation
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/trusted-clinics" className="text-sm hover:text-rose-500 block font-medium">
+                          Trusted Clinics
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/get-started-kit" className="text-sm hover:text-rose-500 block font-medium">
+                          Get started kit
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <h3 className="font-medium text-gray-900 mb-2">Not sure where to start?</h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Tell us what brought you here and we'll let you know how we can help.
+                    </p>
+                    <Link href="/quiz" className="text-sm font-medium text-rose-500 hover:text-rose-600">
+                      Start here
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "learn" ? null : "learn")}
+              >
+                Learn
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-1 h-4 w-4"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "learn" ? "block" : "hidden"}`}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">FertiTerra</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/about/founders-story" className="text-sm hover:text-rose-500 block">
+                          Founder's story
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/about/research" className="text-sm hover:text-rose-500 block">
+                          Research
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/about/team" className="text-sm hover:text-rose-500 block">
+                          Team
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/about/diversity-inclusion" className="text-sm hover:text-rose-500 block">
+                          Diversity and inclusion
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">Resources</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link href="/knowledge-centre" className="text-sm hover:text-rose-500 block">
+                          Knowledge centre
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/guides" className="text-sm hover:text-rose-500 block">
+                          Guides
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/real-stories" className="text-sm hover:text-rose-500 block">
+                          Real stories
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/get-started-kit" className="text-sm hover:text-rose-500 block">
+                          Get started kit
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <h3 className="font-medium text-gray-900 mb-2">Not sure where to start?</h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Tell us what brought you here and we'll let you know how we can help.
+                    </p>
+                    <Link href="/quiz" className="text-sm font-medium text-rose-500 hover:text-rose-600">
+                      Start here
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative dropdown-container">
+              <button
+                className="text-sm font-medium hover:text-rose-500 flex items-center gap-1"
+                onClick={() => setActiveDropdown(activeDropdown === "shop" ? null : "shop")}
+              >
+                Shop
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="ml-1 h-4 w-4"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-50 ${activeDropdown === "shop" ? "block" : "hidden"}`}
+              >
+                <div className="space-y-4">
+                  <div>
+                    <ul className="space-y-2">
+                      <li>
                         <Link
                           href="/test-kits/hormone-fertility"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
+                          className="text-sm hover:text-rose-500 block font-medium"
                         >
                           Hormone & Fertility Test
                         </Link>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                      </li>
+                      <li>
+                        <Link href="/shop/merch" className="text-sm hover:text-rose-500 block font-medium">
+                          FertiTerra Merch
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/shop/gift-cards" className="text-sm hover:text-rose-500 block font-medium">
+                          Gift cards
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/learn/get-started-kit" className="text-sm hover:text-rose-500 block font-medium">
+                          Get started kit
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
 
-                  <AccordionItem value="symptoms">
-                    <AccordionTrigger>Symptoms</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-4">
-                        <Link
-                          href="/symptoms/irregular-periods"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Irregular Periods
-                        </Link>
-                        <Link
-                          href="/symptoms/pcos"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          PCOS
-                        </Link>
-                        <Link
-                          href="/symptoms/hot-flashes"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Hot Flashes
-                        </Link>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <h3 className="font-medium text-gray-900 mb-2">Not sure where to start?</h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Tell us what brought you here and we'll let you know how we can help.
+                    </p>
+                    <Link href="/quiz" className="text-sm font-medium text-rose-500 hover:text-rose-600">
+                      Start here
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                  <AccordionItem value="clinical">
-                    <AccordionTrigger>Clinical Care</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-4">
-                        <Link
-                          href="/appointments/advisor-call"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Advisor Call
-                        </Link>
-                        <Link
-                          href="/appointments/ultrasound"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Ultrasound
-                        </Link>
-                        <Link
-                          href="/appointments/gynaecologist"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Gynaecologist
-                        </Link>
-                        <Link
-                          href="/appointments/nutrition"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Nutrition
-                        </Link>
-                        <Link
-                          href="/appointments/counselling"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Counselling
-                        </Link>
-                        <Link
-                          href="/appointments/egg-freezing"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Egg Freezing
-                        </Link>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+            <Link href="/for-employers" className="text-sm font-medium hover:text-rose-500">
+              For Employers
+            </Link>
+          </nav>
 
-                  <AccordionItem value="learn">
-                    <AccordionTrigger>Learn</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-4">
-                        <Link
-                          href="/learn/fertiterra-app"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center justify-between py-2 text-sm hover:text-purple-600"
-                        >
-                          <span>FertiTerra App</span>
-                          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs">New</Badge>
-                        </Link>
-                        <Link
-                          href="/learn/planning-future-children"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Planning Future Children
-                        </Link>
-                        <Link
-                          href="/learn/struggling-to-conceive"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Struggling to Conceive
-                        </Link>
-                        <Link
-                          href="/learn/lgbtqia-family"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          LGBTQIA+ Family Building
-                        </Link>
-                        <Link
-                          href="/learn/get-started-kit"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Get Started Kit
-                        </Link>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+          {/* Cart, Login, and CTA */}
+          <div className="flex items-center gap-4">
+            <Link href="/cart" className="hidden md:block">
+              <ShoppingBag className="h-5 w-5" />
+            </Link>
 
-                  <AccordionItem value="shop">
-                    <AccordionTrigger>Shop</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-4">
-                        <Link
-                          href="/shop/merch"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Merchandise
-                        </Link>
-                        <Link
-                          href="/test-kits"
-                          onClick={() => setOpen(false)}
-                          className="block py-2 text-sm hover:text-purple-600"
-                        >
-                          Test Kits
-                        </Link>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-
-                <Link
-                  href="/for-employers"
-                  onClick={() => setOpen(false)}
-                  className="py-3 font-medium hover:text-purple-600"
-                >
-                  For Employers
+            {user ? (
+              <div className="hidden md:flex items-center gap-4">
+                {isAdmin && (
+                  <Link href="/admin/dashboard">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                    >
+                      Admin
+                    </Button>
+                  </Link>
+                )}
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="sm" onClick={signOut}>
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center gap-4">
+                <Link href="/login" className="text-sm font-medium">
+                  Login
+                </Link>
+                <Link href="/test-kits">
+                  <Button className="bg-black hover:bg-gray-800 text-white rounded-md">Personalise my test</Button>
                 </Link>
               </div>
-            </SheetContent>
-          </Sheet>
+            )}
+
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={toggleMobileMenu}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t bg-white">
+          <div className="container flex flex-col space-y-4 py-4">
+            {/* Mobile navigation sections */}
+            <div className="space-y-3">
+              <div className="border-b pb-2">
+                <button
+                  className="flex items-center justify-between w-full font-medium"
+                  onClick={() => setExpandedSection(expandedSection === "hormones" ? null : "hormones")}
+                >
+                  Hormones & Fertility
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSection === "hormones" ? "rotate-180" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                {expandedSection === "hormones" && (
+                  <div className="mt-2 pl-4 space-y-4">
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Buy an at-home test</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/test-kits/hormone-fertility"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Test
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Book an appointment</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/appointments/advisor-call"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Advisor Call
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/ultrasound"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Pelvic Ultrasound Scan
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/gynaecologist"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Private Gynaecologist Consultation
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/nutrition"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Fertility Nutrition Consultation
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/counselling"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Fertility Counselling
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/egg-freezing"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Egg Freezing
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Learn</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/learn/planning-future-children"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Planning future children
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/learn/trying-to-conceive"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Trying to conceive
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/learn/struggling-to-conceive"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Struggling to conceive
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/learn/lgbtqia-family" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Starting an LGBTQIA+ family
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/learn/get-started-kit" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Get started kit
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Not sure where to start?</h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        Tell us what brought you here and we'll let you know how we can help.
+                      </p>
+                      <Link href="/quiz" className="text-sm font-medium text-rose-500" onClick={toggleMobileMenu}>
+                        Start here
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-b pb-2">
+                <button
+                  className="flex items-center justify-between w-full font-medium"
+                  onClick={() => setExpandedSection(expandedSection === "symptoms" ? null : "symptoms")}
+                >
+                  Symptoms
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSection === "symptoms" ? "rotate-180" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                {expandedSection === "symptoms" && (
+                  <div className="mt-2 pl-4 space-y-4">
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Buy an at-home test</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/test-kits/hormone-fertility"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Test
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Book an appointment</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/appointments/advisor-call"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Advisor Call
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/ultrasound"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Pelvic Ultrasound Scan
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/gynaecologist"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Private Gynaecologist Consultation
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/menopause-specialist"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Menopause Specialist Consultation
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Learn</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/learn/experiencing-symptoms"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Experiencing symptoms
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/learn/get-started-kit" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Get started kit
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Not sure where to start?</h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        Tell us what brought you here and we'll let you know how we can help.
+                      </p>
+                      <Link href="/quiz" className="text-sm font-medium text-rose-500" onClick={toggleMobileMenu}>
+                        Start here
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-b pb-2">
+                <button
+                  className="flex items-center justify-between w-full font-medium"
+                  onClick={() => setExpandedSection(expandedSection === "clinical" ? null : "clinical")}
+                >
+                  Clinical Care
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSection === "clinical" ? "rotate-180" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                {expandedSection === "clinical" && (
+                  <div className="mt-2 pl-4 space-y-4">
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">At-home test</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/test-kits/hormone-fertility"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Test
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Appointments</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/appointments/advisor-call"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Advisor Call
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/nutrition"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Fertility Nutrition Consultation
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/counselling"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Fertility Counselling
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Treatments</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/appointments/ultrasound"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Pelvic Ultrasound Scan
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/gynaecologist"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Private Gynaecologist Consultation
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/menopause-specialist"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Menopause Specialist Consultation
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/egg-freezing"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Egg Freezing
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/appointments/skin-consultation"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Skin Consultation
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/trusted-clinics"
+                            className="text-sm block py-1 font-medium"
+                            onClick={toggleMobileMenu}
+                          >
+                            Trusted Clinics
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/learn/get-started-kit"
+                            className="text-sm block py-1 font-medium"
+                            onClick={toggleMobileMenu}
+                          >
+                            Get started kit
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Not sure where to start?</h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        Tell us what brought you here and we'll let you know how we can help.
+                      </p>
+                      <Link href="/quiz" className="text-sm font-medium text-rose-500" onClick={toggleMobileMenu}>
+                        Start here
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-b pb-2">
+                <button
+                  className="flex items-center justify-between w-full font-medium"
+                  onClick={() => setExpandedSection(expandedSection === "learn" ? null : "learn")}
+                >
+                  Learn
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSection === "learn" ? "rotate-180" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                {expandedSection === "learn" && (
+                  <div className="mt-2 pl-4 space-y-4">
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">FertiTerra</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link href="/about/founders-story" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Founder's story
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/about/research" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Research
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/about/team" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Team
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/about/diversity-inclusion"
+                            className="text-sm block py-1"
+                            onClick={toggleMobileMenu}
+                          >
+                            Diversity and inclusion
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Resources</h3>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link href="/knowledge-centre" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Knowledge centre
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/learn/guides" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Guides
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/learn/real-stories" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Real stories
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/learn/get-started-kit" className="text-sm block py-1" onClick={toggleMobileMenu}>
+                            Get started kit
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Not sure where to start?</h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        Tell us what brought you here and we'll let you know how we can help.
+                      </p>
+                      <Link href="/quiz" className="text-sm font-medium text-rose-500" onClick={toggleMobileMenu}>
+                        Start here
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-b pb-2">
+                <button
+                  className="flex items-center justify-between w-full font-medium"
+                  onClick={() => setExpandedSection(expandedSection === "shop" ? null : "shop")}
+                >
+                  Shop
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`ml-1 h-4 w-4 transition-transform ${expandedSection === "shop" ? "rotate-180" : ""}`}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                {expandedSection === "shop" && (
+                  <div className="mt-2 pl-4 space-y-4">
+                    <div>
+                      <ul className="space-y-2">
+                        <li>
+                          <Link
+                            href="/test-kits/hormone-fertility"
+                            className="text-sm block py-1 font-medium"
+                            onClick={toggleMobileMenu}
+                          >
+                            Hormone & Fertility Test
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/shop/merch"
+                            className="text-sm block py-1 font-medium"
+                            onClick={toggleMobileMenu}
+                          >
+                            FertiTerra Merch
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/shop/gift-cards"
+                            className="text-sm block py-1 font-medium"
+                            onClick={toggleMobileMenu}
+                          >
+                            Gift cards
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/learn/get-started-kit"
+                            className="text-sm block py-1 font-medium"
+                            onClick={toggleMobileMenu}
+                          >
+                            Get started kit
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-md">
+                      <h3 className="font-medium text-gray-900 mb-2 text-sm">Not sure where to start?</h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        Tell us what brought you here and we'll let you know how we can help.
+                      </p>
+                      <Link href="/quiz" className="text-sm font-medium text-rose-500" onClick={toggleMobileMenu}>
+                        Start here
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Link href="/for-employers" className="block font-medium" onClick={toggleMobileMenu}>
+                For Employers
+              </Link>
+            </div>
+
+            <div className="border-t pt-4 flex flex-col space-y-2">
+              <Link href="/cart" onClick={toggleMobileMenu}>
+                <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                  Cart
+                </Button>
+              </Link>
+
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link href="/admin/dashboard" onClick={toggleMobileMenu}>
+                      <Button variant="outline" className="w-full bg-purple-50 text-purple-700 border-purple-200">
+                        Admin Dashboard
+                      </Button>
+                    </Link>
+                  )}
+                  <Link href="/dashboard" onClick={toggleMobileMenu}>
+                    <Button variant="outline" className="w-full bg-transparent">
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => {
+                      signOut()
+                      toggleMobileMenu()
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={toggleMobileMenu}>
+                    <Button variant="outline" className="w-full bg-transparent">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/test-kits" onClick={toggleMobileMenu}>
+                    <Button className="w-full bg-black text-white">Personalise my test</Button>
+                  </Link>
+                </>
+              )}
+
+              {/* Mobile Social Media Links */}
+              <div className="flex justify-center gap-4 pt-2">
+                <a
+                  href="https://www.linkedin.com/company/fertiterra-technologies/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 transition-colors"
+                  aria-label="Follow us on LinkedIn"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://www.instagram.com/fertiterra_technologies?igsh=MXMyZmN3cGRraTJzcg=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-600 hover:text-pink-800 transition-colors"
+                  aria-label="Follow us on Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
+
+export default Header

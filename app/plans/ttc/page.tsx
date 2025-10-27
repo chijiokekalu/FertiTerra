@@ -4,6 +4,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { CheckCircle, Heart, Users, Calendar } from "lucide-react"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "FertiTerra - TTC Plan - Try to Conceive Support in Africa",
+  description:
+    "Comprehensive TTC support with at-home test kits, expert guidance, and personalized action plans for couples actively trying to conceive in Africa.",
+}
 
 export default function TTCPlanPage() {
   return (
@@ -201,7 +208,7 @@ export default function TTCPlanPage() {
                 </a>
 
                 <p className="text-sm text-gray-500 mt-4">
-                  Secure payment powered by Stripe • 30-day money-back guarantee
+                  Secure payment powered by Stripe &bull; 30-day money-back guarantee
                 </p>
               </div>
             </CardContent>

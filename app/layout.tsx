@@ -9,11 +9,11 @@ import { AuthProvider } from "@/context/auth-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FertiTerra Technologies - Transforming Fertility Care in Africa",
+  title: "FertiTerra Technologies - Fertility Care & Support in Africa",
   description:
-    "AI-driven, affordable, and inclusive fertility solutions for Africa. Get personalized fertility testing, expert consultations, and comprehensive reproductive health support.",
+    "FertiTerra provides affordable fertility tests, expert support, and comprehensive education across Africa to help couples conceive.",
   keywords:
-    "fertility, reproductive health, Africa, AI healthcare, fertility testing, telemedicine, infertility treatment",
+    "fertility, reproductive health, Africa, AI healthcare, fertility testing, telemedicine, infertility treatment, fertility test Africa, fertility support Rwanda, fertility app Africa",
   authors: [{ name: "FertiTerra Technologies" }],
   creator: "FertiTerra Technologies",
   publisher: "FertiTerra Technologies",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "FertiTerra Technologies - Transforming Fertility Care in Africa",
+    title: "FertiTerra Technologies - Fertility Care & Support in Africa",
     description: "AI-driven, affordable, and inclusive fertility solutions for Africa",
     url: "https://fertiterratechnologies.com",
     siteName: "FertiTerra Technologies",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FertiTerra Technologies - Transforming Fertility Care in Africa",
+    title: "FertiTerra Technologies - Fertility Care & Support in Africa",
     description: "AI-driven, affordable, and inclusive fertility solutions for Africa",
     images: ["/images/fertiterra-logo-main.png"],
   },
